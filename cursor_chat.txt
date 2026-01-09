@@ -64,6 +64,16 @@ model类是否需要调整，不需要缓存
 2026-01-09T17:51:07+08:00
 解决CORS error
 
+备注：要用下面才能解决
+```go
+// 跨域
+server := rest.MustNewServer(c.RestConf, rest.WithCustomCors(func(header http.Header) {
+    header.Set("Access-Control-Allow-Headers", "*")
+    header.Set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH")
+    header.Set("Access-Control-Expose-Headers", "Content-Length, Content-Type, Access-Control-Allow-Origin, Access-Control-Allow-Headers")
+    header.Set("Access-Control-Allow-Credentials", "true")
+}, nil, "*"))
+```
 2026-01-09T17:59:19+08:00
 检查多租户是否启用，类似使用以下配置，配置在admin-api.yaml
 
@@ -72,3 +82,25 @@ model类是否需要调整，不需要缓存
 
 2026-01-09T18:24:42+08:00
 生成的验证码图片有点看不清，建议白色背景，数字清晰点
+
+2026-01-09T18:35:26+08:00
+/auth/login传输的加密数据，需要解密再传到logic
+
+2026-01-09T18:45:24+08:00
+/auth/login解密失败。看一下java代码类DecryptRequestBodyWrapper：先通过rsa解密请求头encrypt-key从而解密 AES 密码,再通过AES解密请求body获取请求json
+
+2026-01-09T18:52:49+08:00
+RSA 解密失败: crypto/rsa: 512-bit keys are insecure (see https://go.dev/pkg/crypto/rsa#hdr-Minimum_key_size)
+
+备注：我手动改成rsa密钥前后端都改了
+```
+RSA rsa = SecureUtil.rsa();
+System.out.println("PrivateKey:"+ rsa.getPrivateKeyBase64());
+System.out.println("PublicKey:"+ rsa.getPublicKeyBase64());
+```
+
+2026-01-09T19:19:30+08:00
+/auth/login 请求body要去除前后双引号"
+
+2026-01-09T19:32:09+08:00
+要在aes解决trim才行        

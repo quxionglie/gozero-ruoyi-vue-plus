@@ -7,10 +7,11 @@ import (
 
 type Config struct {
 	rest.RestConf
-	Mysql   MysqlConfig
-	Redis   redis.RedisConf
-	Captcha CaptchaConfig
-	Tenant  TenantConfig
+	Mysql      MysqlConfig
+	Redis      redis.RedisConf
+	Captcha    CaptchaConfig
+	Tenant     TenantConfig
+	ApiDecrypt ApiDecryptConfig
 }
 
 type MysqlConfig struct {
@@ -27,4 +28,11 @@ type CaptchaConfig struct {
 
 type TenantConfig struct {
 	Enable bool `json:",default=false"` // 是否开启多租户
+}
+
+type ApiDecryptConfig struct {
+	Enabled    bool   `json:",default=false"`       // 是否开启全局接口加密
+	HeaderFlag string `json:",default=encrypt-key"` // AES 加密头标识
+	PublicKey  string // 响应加密公钥
+	PrivateKey string // 请求解密私钥
 }

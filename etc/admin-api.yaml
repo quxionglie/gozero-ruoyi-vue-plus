@@ -34,3 +34,14 @@ Captcha:
 # 多租户配置
 Tenant:
   Enable: false     # 是否开启多租户
+
+# API接口加密配置
+ApiDecrypt:
+  Enabled: true     # 是否开启全局接口加密
+  HeaderFlag: encrypt-key  # AES 加密头标识
+  # 响应加密公钥 非对称算法的公私钥 如：SM2，RSA 使用者请自行更换
+  # 对应前端解密私钥
+  PublicKey: 'MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDMJAMz3C6dgv4wgu+A3SmDBuRp9yTDt4HxrOsfKGfZi6iFzyg9n2iMzUdx6nrK8HioWW6rkqFs1fad4plzKfMCyXlixGHNEkl9KB/H7bdUeiMyJbsFNqqrudVd6Q28S+aP2zJRrpG/8pExDRhEuZmY3/AhLuKWPH2X6RjVKyGVjQIDAQAB'
+  # 请求解密私钥 非对称算法的公私钥 如：SM2，RSA 使用者请自行更换
+  # 对应前端加密公钥
+  PrivateKey: 'MIICdQIBADANBgkqhkiG9w0BAQEFAASCAl8wggJbAgEAAoGBAMwkAzPcLp2C/jCC74DdKYMG5Gn3JMO3gfGs6x8oZ9mLqIXPKD2faIzNR3HqesrweKhZbquSoWzV9p3imXMp8wLJeWLEYc0SSX0oH8ftt1R6IzIluwU2qqu51V3pDbxL5o/bMlGukb/ykTENGES5mZjf8CEu4pY8fZfpGNUrIZWNAgMBAAECgYAEsD0Ml117YPNNPOya6o7AriCtLa+/+Pp4iPlQxWD2i5vAEFJtxo1O/TX2BVBy/Gk2VfDR6vO0fV4vy8ZXcUVd/ADzhJIhQrPJIXKfBbm983K96IevEZMob0xeyBp8QKY8B4MSi94tmd055L8auEfBAfsQXEVM00orlobB638nwQJBAPESEykgPCsNrbB68yBT8ba0HpxjN5cpBceZ5WcCL8selMx/QjYZk6HQ6HANtvDN4qJKkksz6mICzmuhl0sBaCECQQDYyHOo7ChNwZQ9UewEG/p/9sv/5ujSAp/jL1phOxUj3NBEvU/iegVcF0O2zw9DirhpdWyIaBmKUMxDUw1Nck/tAkAcUAQiE2AdqliY3ofJZzJ/Q75Inbp8rVu5apCvvWkBkRDmx5duJSjam1+BMYsn0vZoGxv9axZ+9ldp+qt7KqohAkB9d88RRtWw40hUEVUjr7nVVFcP3mqEGkbF68NIoTSEFCpqjpNsxijR+xkS9lakReakCvVtIaseldMTaD87wtylAkAObVdpiKlyf8RH13XkpPdIEGM/j+Eu0vex2885HqiAK+OX0dQ7R/k5nAsQ/Sm/frg9h2Xxln2FD5Q8TQlwEIOP'
