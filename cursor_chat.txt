@@ -42,3 +42,15 @@ main.go改名为admin.go，config.yaml改为admin-api.yaml
 
 2026-01-09T16:06:00+08:00
 如果数据库连接失败，能不能在启动时就报错退出应用
+
+2026-01-09T17:00:04+08:00
+调用goctl model生成表模板代码：sys_client ,sys_config ,sys_dept ,sys_dict_data ,sys_dict_type ,sys_logininfor ,sys_menu ,sys_notice ,sys_oper_log ,sys_oss ,sys_oss_config ,sys_post ,sys_role ,sys_role_dept ,sys_role_menu ,sys_social ,sys_tenant ,sys_tenant_package ,sys_user ,sys_user_post ,sys_user_role。都放在internal/model/sys模块(目录)
+
+2026-01-09T17:05:11+08:00
+ServiceContext包含上面各model，以方便logic调用，不需要缓存。
+
+2026-01-09T17:10:51+08:00
+model类是否需要调整，不需要缓存
+
+2026-01-09T17:16:33+08:00
+启动报错no cache nodes

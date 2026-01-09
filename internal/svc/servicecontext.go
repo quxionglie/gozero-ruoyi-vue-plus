@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"gozero-ruoyi-vue-plus/internal/config"
+	"gozero-ruoyi-vue-plus/internal/model/sys"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -16,6 +17,29 @@ type ServiceContext struct {
 	Config    config.Config
 	RedisConn *redis.Redis
 	DB        sqlx.SqlConn
+
+	// 系统模型 - 按字母顺序
+	SysClientModel        sys.SysClientModel
+	SysConfigModel        sys.SysConfigModel
+	SysDeptModel          sys.SysDeptModel
+	SysDictDataModel      sys.SysDictDataModel
+	SysDictTypeModel      sys.SysDictTypeModel
+	SysLogininforModel    sys.SysLogininforModel
+	SysMenuModel          sys.SysMenuModel
+	SysNoticeModel        sys.SysNoticeModel
+	SysOperLogModel       sys.SysOperLogModel
+	SysOssModel           sys.SysOssModel
+	SysOssConfigModel     sys.SysOssConfigModel
+	SysPostModel          sys.SysPostModel
+	SysRoleModel          sys.SysRoleModel
+	SysRoleDeptModel      sys.SysRoleDeptModel
+	SysRoleMenuModel      sys.SysRoleMenuModel
+	SysSocialModel        sys.SysSocialModel
+	SysTenantModel        sys.SysTenantModel
+	SysTenantPackageModel sys.SysTenantPackageModel
+	SysUserModel          sys.SysUserModel
+	SysUserPostModel      sys.SysUserPostModel
+	SysUserRoleModel      sys.SysUserRoleModel
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -39,6 +63,29 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		Config:    c,
 		RedisConn: rds,
 		DB:        conn,
+
+		// 初始化所有系统模型 - 不使用缓存
+		SysClientModel:        sys.NewSysClientModel(conn),
+		SysConfigModel:        sys.NewSysConfigModel(conn),
+		SysDeptModel:          sys.NewSysDeptModel(conn),
+		SysDictDataModel:      sys.NewSysDictDataModel(conn),
+		SysDictTypeModel:      sys.NewSysDictTypeModel(conn),
+		SysLogininforModel:    sys.NewSysLogininforModel(conn),
+		SysMenuModel:          sys.NewSysMenuModel(conn),
+		SysNoticeModel:        sys.NewSysNoticeModel(conn),
+		SysOperLogModel:       sys.NewSysOperLogModel(conn),
+		SysOssModel:           sys.NewSysOssModel(conn),
+		SysOssConfigModel:     sys.NewSysOssConfigModel(conn),
+		SysPostModel:          sys.NewSysPostModel(conn),
+		SysRoleModel:          sys.NewSysRoleModel(conn),
+		SysRoleDeptModel:      sys.NewSysRoleDeptModel(conn),
+		SysRoleMenuModel:      sys.NewSysRoleMenuModel(conn),
+		SysSocialModel:        sys.NewSysSocialModel(conn),
+		SysTenantModel:        sys.NewSysTenantModel(conn),
+		SysTenantPackageModel: sys.NewSysTenantPackageModel(conn),
+		SysUserModel:          sys.NewSysUserModel(conn),
+		SysUserPostModel:      sys.NewSysUserPostModel(conn),
+		SysUserRoleModel:      sys.NewSysUserRoleModel(conn),
 	}
 }
 
