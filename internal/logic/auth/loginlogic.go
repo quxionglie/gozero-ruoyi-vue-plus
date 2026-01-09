@@ -160,7 +160,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		activeTimeout = 1800 // 默认30分钟（秒）
 	}
 
-	accessToken, err := util.GenerateToken(user.UserId, user.UserName, user.TenantId, timeout)
+	accessToken, err := util.GenerateToken(l.svcCtx.Config.Auth.AccessSecret, user.UserId, user.UserName, user.TenantId, timeout)
 	if err != nil {
 		l.Errorf("生成token失败: %v", err)
 		return &types.LoginResp{
@@ -171,7 +171,7 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		}, err
 	}
 
-	refreshToken, err := util.GenerateToken(user.UserId, user.UserName, user.TenantId, activeTimeout)
+	refreshToken, err := util.GenerateToken(l.svcCtx.Config.Auth.AccessSecret, user.UserId, user.UserName, user.TenantId, activeTimeout)
 	if err != nil {
 		l.Errorf("生成刷新token失败: %v", err)
 		return &types.LoginResp{

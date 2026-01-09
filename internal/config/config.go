@@ -12,6 +12,10 @@ type Config struct {
 	Captcha    CaptchaConfig
 	Tenant     TenantConfig
 	ApiDecrypt ApiDecryptConfig
+	Auth       struct {
+		AccessSecret string
+		AccessExpire int64
+	}
 }
 
 type MysqlConfig struct {

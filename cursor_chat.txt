@@ -103,4 +103,18 @@ System.out.println("PublicKey:"+ rsa.getPublicKeyBase64());
 /auth/login 请求body要去除前后双引号"
 
 2026-01-09T19:32:09+08:00
-要在aes解决trim才行        
+要在aes解决trim才行
+
+备注：手动解决的
+
+2026-01-09T20:52:44+08:00
+检查/system/user/getInfo接口java逻辑，在system.api中定义接口并实现go代码，system.api service开启 jwt 认证
+
+2026-01-09T20:56:59+08:00
+gozero已经有对应jwt实现，只需按照https://go-zero.dev/docs/tutorials/api/jwt 实现就可以
+
+2026-01-09T21:15:44+08:00
+实现jwt util类，从context中获取userId、username、tenantId信息，像userId不一定int64,也可能是json.Number类型
+
+2026-01-09T21:48:08+08:00
+/system/user/getInfo接口响应SysUserVo少了roles字段，permissions 也没值

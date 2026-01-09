@@ -49,6 +49,37 @@ type LoginVo struct {
 	ClientId        string `json:"client_id,omitempty"` // 应用id
 }
 
+type SysRoleVo struct {
+	RoleId     int64  `json:"roleId"`     // 角色ID
+	RoleName   string `json:"roleName"`   // 角色名称
+	RoleKey    string `json:"roleKey"`    // 角色权限字符串
+	RoleSort   int32  `json:"roleSort"`   // 显示顺序
+	DataScope  string `json:"dataScope"`  // 数据范围
+	Status     string `json:"status"`     // 角色状态（0正常 1停用）
+	Remark     string `json:"remark"`     // 备注
+	CreateTime string `json:"createTime"` // 创建时间
+}
+
+type SysUserVo struct {
+	UserId      int64       `json:"userId"`      // 用户ID
+	TenantId    string      `json:"tenantId"`    // 租户ID
+	DeptId      int64       `json:"deptId"`      // 部门ID
+	UserName    string      `json:"userName"`    // 用户账号
+	NickName    string      `json:"nickName"`    // 用户昵称
+	UserType    string      `json:"userType"`    // 用户类型（sys_user系统用户）
+	Email       string      `json:"email"`       // 用户邮箱
+	Phonenumber string      `json:"phonenumber"` // 手机号码
+	Sex         string      `json:"sex"`         // 用户性别（0男 1女 2未知）
+	Avatar      int64       `json:"avatar"`      // 头像地址
+	Status      string      `json:"status"`      // 帐号状态（0正常 1停用）
+	LoginIp     string      `json:"loginIp"`     // 最后登录IP
+	LoginDate   string      `json:"loginDate"`   // 最后登录时间
+	Remark      string      `json:"remark"`      // 备注
+	CreateTime  string      `json:"createTime"`  // 创建时间
+	DeptName    string      `json:"deptName"`    // 部门名
+	Roles       []SysRoleVo `json:"roles"`       // 角色对象
+}
+
 type TenantListResp struct {
 	BaseResp
 	Data LoginTenantVo `json:"data,omitempty"`
@@ -58,4 +89,15 @@ type TenantListVo struct {
 	TenantId    string `json:"tenantId"`    // 租户编号
 	CompanyName string `json:"companyName"` // 企业名称
 	Domain      string `json:"domain"`      // 域名
+}
+
+type UserInfoResp struct {
+	BaseResp
+	Data UserInfoVo `json:"data,omitempty"`
+}
+
+type UserInfoVo struct {
+	User        SysUserVo `json:"user"`        // 用户基本信息
+	Permissions []string  `json:"permissions"` // 菜单权限
+	Roles       []string  `json:"roles"`       // 角色权限
 }

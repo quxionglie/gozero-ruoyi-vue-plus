@@ -5,35 +5,18 @@ clientid: e5cd7e4891bf95d1d19206ce24a7b32e
 ###
 
 ###
-
-# curl 'http://192.168.3.216:58888/auth/login'
-#  -H 'Accept: application/json, text/plain, */*'
-#  -H 'Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6,zh-TW;q=0.5,fr;q=0.4'
-#  -H 'Connection: keep-alive'
-#  -H 'Content-Language: zh_CN'
-#  -H 'Content-Type: application/json;charset=UTF-8'
-#  -H 'Origin: http://localhost'
-#  -H 'Referer: http://localhost/'
-#  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
-#  -H 'clientid: e5cd7e4891bf95d1d19206ce24a7b32e'
-#  -H 'encrypt-key: uq7JJLFSAKQABUL2zjWgJwUQWSOeUlIGOBw/AwPtv+bxTP5ZnAWvJpHMkF+wJ0oFN7fGr7e+nX59MWCIYfyyyodxfGS/yvbJy+SGoWwpmSLVr2Keqry6vmq5MghXBcJGtra29oHZTW6mxdEUB6zcmAYZs7NFI4gCtjTKqN9OHPQ='
-#  -H 'isEncrypt: true'
-#  --data-raw '"lYUqUKoiIriHHGDsQkmrQr2meGpvutBhQ+4pav5xFo+OWbojwgACtNVSgDdqfzE6unIOQ4DWQIZHjPj0i2S0jUoqjA7570fsEl7qg3n86n7BbEkjVJvCwhD3c1ssbe+96BnTP+OrTwsDOeZDTWxjk60N1stw0FEluJWx6QMHS3O8VtoRwkPkGRyYuPTY/n+g0uDtMu0tgvSF4FOySqJYuxu8e6XTCZk0YYIuDPbMb7LBhjEnA3+JdVEJ4xQoTyxwVPk9+WS7xEVDPHe+g9YEQn08ByDEVOfaiMLQLnGNJ3A="'
-
-###
 POST http://192.168.3.216:58888/auth/login
-Accept: application/json, text/plain, */*
-Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6,zh-TW;q=0.5,fr;q=0.4
-Connection: keep-alive
-Content-Language: zh_CN
-Origin: http://localhost
-Referer: http://localhost/
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
 clientid: e5cd7e4891bf95d1d19206ce24a7b32e
 encrypt-key: H5ItCokzNITa8l7is0tPUUeD94ZbAkRVfDzqylJVHmjJpAN0BY+mWCqofnVfzOLd3EW97E9nP7z64YFRhMY0tNRcILYGH70gJq+6byemG43TNclcCnQ3YXyAXy0fPecT77SJa6tS93Knoc/TvThwFL3fRFmgpI6wBhACKd+t7Wg=
 isEncrypt: true
 Content-Type: application/json;charset=UTF-8
 
 "HNDl7vL7cWQ6eB+2v7V1XqyrUi6xJzbUdrK53qkdlZA3irKaZCVrGk9QYIgOa3MzjESm5IlVxXepb0A2FJCLS9SPRXujRlP3t6vNau9xf7hy0ncLMJ/MyApMfZqjopXZjIClilQ6xT5XP+hJt4ITZJvlxs6zhzxfilcT09ELYn1z84rosNAw98GMQz7z0ixqm46/qE+yxyBP9XvAHqRsE6lCGE/X66TdfqjfzMhnjUS5/Za4AXzJvTgvvO0DoMVHEF063/xQ5+7Iaq2ayCd0MPp9qyJJFKuukJZfXFbhHEw="
+
+### /system/user/getInfo
+GET http://192.168.3.216:58888/system/user/getInfo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJ0ZW5hbnRJZCI6IjAwMDAwMCIsImV4cCI6MTc2ODU2MzQ1MiwibmJmIjoxNzY3OTU4NjUyLCJpYXQiOjE3Njc5NTg2NTJ9.-tuVowps-8-YVQLI1cZ1k9u1w4EIEQs41lGYnpzKvgc
+clientid: e5cd7e4891bf95d1d19206ce24a7b32e
+Content-Type: application/json;charset=UTF-8
 
 ###

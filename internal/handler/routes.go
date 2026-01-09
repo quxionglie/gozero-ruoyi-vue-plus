@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	auth "gozero-ruoyi-vue-plus/internal/handler/auth"
+	sys "gozero-ruoyi-vue-plus/internal/handler/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
@@ -38,7 +39,15 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	)
 
 	server.AddRoutes(
-		[]rest.Route{},
+		[]rest.Route{
+			{
+				// 获取用户信息
+				Method:  http.MethodGet,
+				Path:    "/user/getInfo",
+				Handler: sys.GetUserInfoHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/system"),
 	)
 }
