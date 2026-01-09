@@ -36,3 +36,6 @@ auth.api和system.api的service名统一为admin-api
 
 2026-01-09T15:53:00+08:00
 清除多余的文件
+
+2026-01-09T15:56:00+08:00
+main.go改名为admin.go，config.yaml改为admin-api.yaml

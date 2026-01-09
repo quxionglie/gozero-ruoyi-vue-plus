@@ -28,7 +28,7 @@
 ```
 gozero-ruoyi-vue-plus/
 ├── etc/                          # 配置文件目录
-│   └── config.yaml              # 主配置文件
+│   └── admin-api.yaml           # 主配置文件
 ├── internal/                     # 内部代码（不对外暴露）
 │   ├── config/                   # 配置结构定义
 │   │   └── config.go            # 配置结构体
@@ -39,7 +39,7 @@ gozero-ruoyi-vue-plus/
 ├── docs/                         # 文档目录
 ├── logs/                         # 日志文件目录（自动创建）
 ├── bin/                          # 编译输出目录
-├── main.go                       # 应用程序入口
+├── admin.go                      # 应用程序入口
 ├── go.mod                        # Go 模块定义
 ├── go.sum                        # Go 模块校验和
 ├── Makefile                      # Make 命令文件
@@ -92,12 +92,13 @@ CREATE DATABASE IF NOT EXISTS ruoyi DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb
 
 #### 修改配置文件
 
-编辑 `etc/config.yaml` 文件，修改数据库连接信息：
+编辑 `etc/admin-api.yaml` 文件，修改数据库连接信息：
 
 ```yaml
 Name: gozero-ruoyi-vue-plus
 Host: 0.0.0.0
-Port: 8888
+Port: 58888
+Timeout: 60000
 
 # MySQL配置
 Mysql:
@@ -108,12 +109,11 @@ Redis:
   Host: 127.0.0.1:6379
   Type: node
   Pass: ""
-  DB: 0
 
 # 日志配置
 Log:
   ServiceName: gozero-ruoyi-vue-plus
-  Mode: file
+  Mode: console
   Path: logs
   Level: info
   Compress: true
@@ -133,18 +133,18 @@ make run
 
 # 或先编译再运行
 make build
-./bin/gozero-ruoyi-vue-plus -f etc/config.yaml
+./bin/gozero-ruoyi-vue-plus -f etc/admin-api.yaml
 ```
 
 #### 方式二：直接使用 Go 命令
 
 ```bash
 # 开发模式运行
-go run main.go -f etc/config.yaml
+go run admin.go -f etc/admin-api.yaml
 
 # 编译后运行
-go build -o bin/gozero-ruoyi-vue-plus main.go
-./bin/gozero-ruoyi-vue-plus -f etc/config.yaml
+go build -o bin/gozero-ruoyi-vue-plus admin.go
+./bin/gozero-ruoyi-vue-plus -f etc/admin-api.yaml
 ```
 
 ### 6. 验证服务
@@ -343,17 +343,17 @@ curl http://localhost:8888/api/ping
 
 ```bash
 # 开发环境
-go build -o bin/gozero-ruoyi-vue-plus main.go
+go build -o bin/gozero-ruoyi-vue-plus admin.go
 
 # 生产环境（交叉编译）
 # Linux
-GOOS=linux GOARCH=amd64 go build -o bin/gozero-ruoyi-vue-plus main.go
+GOOS=linux GOARCH=amd64 go build -o bin/gozero-ruoyi-vue-plus admin.go
 
 # Windows
-GOOS=windows GOARCH=amd64 go build -o bin/gozero-ruoyi-vue-plus.exe main.go
+GOOS=windows GOARCH=amd64 go build -o bin/gozero-ruoyi-vue-plus.exe admin.go
 
 # macOS
-GOOS=darwin GOARCH=amd64 go build -o bin/gozero-ruoyi-vue-plus main.go
+GOOS=darwin GOARCH=amd64 go build -o bin/gozero-ruoyi-vue-plus admin.go
 ```
 
 ### Docker 部署
@@ -366,7 +366,7 @@ FROM golang:1.21-alpine AS builder
 WORKDIR /app
 COPY . .
 RUN go mod download
-RUN go build -o gozero-ruoyi-vue-plus main.go
+RUN go build -o gozero-ruoyi-vue-plus admin.go
 
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates tzdata
@@ -375,8 +375,8 @@ WORKDIR /root/
 COPY --from=builder /app/gozero-ruoyi-vue-plus .
 COPY --from=builder /app/etc ./etc
 
-EXPOSE 8888
-CMD ["./gozero-ruoyi-vue-plus", "-f", "etc/config.yaml"]
+EXPOSE 58888
+CMD ["./gozero-ruoyi-vue-plus", "-f", "etc/admin-api.yaml"]
 ```
 
 构建和运行:

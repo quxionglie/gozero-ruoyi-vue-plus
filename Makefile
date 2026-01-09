@@ -3,13 +3,13 @@
 # 构建项目
 build:
 	@echo "Building..."
-	@go build -o bin/gozero-ruoyi-vue-plus main.go
+	@go build -o bin/gozero-ruoyi-vue-plus admin.go
 	@echo "Build complete!"
 
 # 运行项目
 run:
 	@echo "Running..."
-	@go run main.go -f etc/config.yaml
+	@go run admin.go -f etc/admin-api.yaml
 
 # 清理构建文件
 clean:
