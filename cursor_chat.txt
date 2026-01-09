@@ -39,3 +39,6 @@ auth.api和system.api的service名统一为admin-api
 
 2026-01-09T15:56:00+08:00
 main.go改名为admin.go，config.yaml改为admin-api.yaml
+
+2026-01-09T16:06:00+08:00
+如果数据库连接失败，能不能在启动时就报错退出应用
