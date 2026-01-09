@@ -4,11 +4,12 @@ import (
 	"flag"
 	"fmt"
 
-	"github.com/zeromicro/go-zero/core/conf"
-	"github.com/zeromicro/go-zero/rest"
 	"gozero-ruoyi-vue-plus/internal/config"
 	"gozero-ruoyi-vue-plus/internal/handler"
 	"gozero-ruoyi-vue-plus/internal/svc"
+
+	"github.com/zeromicro/go-zero/core/conf"
+	"github.com/zeromicro/go-zero/rest"
 )
 
 var configFile = flag.String("f", "etc/config.yaml", "the config file")

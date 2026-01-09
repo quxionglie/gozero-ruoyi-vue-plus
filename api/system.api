@@ -1,0 +1,18 @@
+syntax = "v1"
+
+info (
+	title: "系统管理服务 API"
+	desc: "系统管理相关接口，需要登录验证"
+	version: "1.0.0"
+)
+
+// TODO: 后续添加 /system/ 开头的接口定义
+
+@server (
+	prefix: /system
+	group: system
+	// middleware: Auth  // TODO: 添加接口后再启用认证中间件
+)
+service admin-api {
+	// 后续添加接口定义
+}

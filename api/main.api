@@ -1,0 +1,17 @@
+syntax = "v1"
+
+info (
+	title:   "Go-Zero Ruoyi Vue Plus API"
+	desc:    "主API文件，包含认证服务和系统管理服务"
+	version: "1.0.0"
+)
+
+// 通用响应结构（公共类型，供所有模块使用）
+type BaseResp {
+	Code int32  `json:"code"`
+	Msg  string `json:"msg"`
+}
+
+// 导入子模块
+import "auth.api"
+import "system.api"
