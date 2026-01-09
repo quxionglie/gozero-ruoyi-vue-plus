@@ -5,7 +5,7 @@ Timeout: 60000
 
 # MySQL配置
 Mysql:
-  DataSource: ry-vue:Ryvue!123@tcp(127.0.0.1:3306)/ry-vue?charset=utf8mb4&parseTime=True&loc=Local
+  DataSource: ry-vue:Ryvue&123@tcp(127.0.0.1:3306)/ry-vue?charset=utf8mb4&parseTime=True&loc=Local
 
 # Redis配置
 Redis:
