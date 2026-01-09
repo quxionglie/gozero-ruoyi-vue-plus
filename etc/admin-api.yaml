@@ -22,3 +22,11 @@ Log:
   Compress: true
   KeepDays: 7
   StackCooldownMillis: 100
+
+# 验证码配置
+Captcha:
+  Enable: true      # 是否启用验证码校验
+  Type: CHAR        # 验证码类型: MATH 数组计算, CHAR 字符验证
+  Category: CIRCLE  # line 线段干扰 circle 圆圈干扰 shear 扭曲干扰
+  NumberLength: 1   # 数字验证码位数
+  CharLength: 4     # 字符验证码长度

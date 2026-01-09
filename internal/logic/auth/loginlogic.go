@@ -5,11 +5,17 @@ package auth
 
 import (
 	"context"
+	"fmt"
+	"strings"
+	"time"
 
+	"gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
+	"gozero-ruoyi-vue-plus/internal/util"
 
 	"github.com/zeromicro/go-zero/core/logx"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type LoginLogic struct {
@@ -28,7 +34,228 @@ func NewLoginLogic(ctx context.Context, svcCtx *svc.ServiceContext) *LoginLogic 
 }
 
 func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err error) {
-	// todo: add your logic here and delete this line
+	// 1. 验证客户端ID和授权类型
+	client, err := l.svcCtx.SysClientModel.FindOneByClientId(l.ctx, req.ClientId)
+	if err != nil {
+		if err == sys.ErrNotFound {
+			l.Errorf("客户端id: %s 不存在", req.ClientId)
+			return &types.LoginResp{
+				BaseResp: types.BaseResp{
+					Code: 500,
+					Msg:  "客户端认证类型错误",
+				},
+			}, nil
+		}
+		l.Errorf("查询客户端失败: %v", err)
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "查询客户端失败",
+			},
+		}, err
+	}
 
-	return
+	// 检查客户端状态
+	if client.Status != "0" {
+		l.Errorf("客户端id: %s 已被停用", req.ClientId)
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "客户端已被停用",
+			},
+		}, nil
+	}
+
+	// 检查授权类型是否支持
+	if !client.GrantType.Valid || !strings.Contains(client.GrantType.String, req.GrantType) {
+		l.Errorf("客户端id: %s 不支持授权类型: %s", req.ClientId, req.GrantType)
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "客户端认证类型错误",
+			},
+		}, nil
+	}
+
+	// 2. 校验租户
+	if err := l.checkTenant(req.TenantId); err != nil {
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  err.Error(),
+			},
+		}, nil
+	}
+
+	// 3. 验证验证码（如果启用）
+	if err := l.validateCaptcha(req.TenantId, req.Username, req.Code, req.Uuid); err != nil {
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  err.Error(),
+			},
+		}, nil
+	}
+
+	// 4. 查询用户
+	user, err := l.svcCtx.SysUserModel.FindOneByUserName(l.ctx, req.Username, req.TenantId)
+	if err != nil {
+		if err == sys.ErrNotFound {
+			l.Errorf("登录用户：%s 不存在", req.Username)
+			return &types.LoginResp{
+				BaseResp: types.BaseResp{
+					Code: 500,
+					Msg:  fmt.Sprintf("用户 %s 不存在", req.Username),
+				},
+			}, nil
+		}
+		l.Errorf("查询用户失败: %v", err)
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "查询用户失败",
+			},
+		}, err
+	}
+
+	// 检查用户状态
+	if user.Status != "0" {
+		l.Errorf("登录用户：%s 已被停用", req.Username)
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  fmt.Sprintf("用户 %s 已被停用", req.Username),
+			},
+		}, nil
+	}
+
+	// 5. 验证密码（BCrypt）
+	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(req.Password))
+	if err != nil {
+		l.Errorf("用户 %s 密码错误", req.Username)
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "用户名或密码错误",
+			},
+		}, nil
+	}
+
+	// 6. 生成JWT token
+	timeout := client.Timeout
+	if timeout == 0 {
+		timeout = 1800 // 默认30分钟（秒）
+	}
+	activeTimeout := client.ActiveTimeout
+	if activeTimeout == 0 {
+		activeTimeout = 1800 // 默认30分钟（秒）
+	}
+
+	accessToken, err := util.GenerateToken(user.UserId, user.UserName, user.TenantId, timeout)
+	if err != nil {
+		l.Errorf("生成token失败: %v", err)
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "生成token失败",
+			},
+		}, err
+	}
+
+	refreshToken, err := util.GenerateToken(user.UserId, user.UserName, user.TenantId, activeTimeout)
+	if err != nil {
+		l.Errorf("生成刷新token失败: %v", err)
+		return &types.LoginResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "生成刷新token失败",
+			},
+		}, err
+	}
+
+	// 7. 返回登录信息
+	resp = &types.LoginResp{
+		BaseResp: types.BaseResp{
+			Code: 200,
+			Msg:  "登录成功",
+		},
+		Data: types.LoginVo{
+			AccessToken:     accessToken,
+			RefreshToken:    refreshToken,
+			ExpireIn:        timeout,
+			RefreshExpireIn: activeTimeout,
+			ClientId:        req.ClientId,
+		},
+	}
+
+	return resp, nil
+}
+
+// checkTenant 校验租户
+func (l *LoginLogic) checkTenant(tenantId string) error {
+	// 如果租户ID为空，使用默认租户
+	if tenantId == "" {
+		tenantId = "000000"
+	}
+
+	// 默认租户直接通过
+	if tenantId == "000000" {
+		return nil
+	}
+
+	// 查询租户
+	tenant, err := l.svcCtx.SysTenantModel.FindOneByTenantId(l.ctx, tenantId)
+	if err != nil {
+		if err == sys.ErrNotFound {
+			l.Errorf("登录租户：%s 不存在", tenantId)
+			return fmt.Errorf("租户不存在")
+		}
+		return err
+	}
+
+	// 检查租户状态
+	if tenant.Status != "0" {
+		l.Errorf("登录租户：%s 已被停用", tenantId)
+		return fmt.Errorf("租户已被停用")
+	}
+
+	// 检查租户是否过期
+	if tenant.ExpireTime.Valid && tenant.ExpireTime.Time.Before(time.Now()) {
+		l.Errorf("登录租户：%s 已超过有效期", tenantId)
+		return fmt.Errorf("租户已超过有效期")
+	}
+
+	return nil
+}
+
+// validateCaptcha 验证验证码
+func (l *LoginLogic) validateCaptcha(tenantId, username, code, uuid string) error {
+	// 检查验证码是否启用（从配置文件读取）
+	captchaEnabled := l.svcCtx.Config.Captcha.Enable
+	if !captchaEnabled {
+		return nil // 验证码未启用，直接通过
+	}
+
+	if uuid == "" || code == "" {
+		return fmt.Errorf("验证码不能为空")
+	}
+
+	// 从Redis获取验证码
+	verifyKey := fmt.Sprintf("captcha_code:%s", uuid)
+	captcha, err := l.svcCtx.RedisConn.GetCtx(l.ctx, verifyKey)
+	if err != nil {
+		l.Errorf("获取验证码失败: %v", err)
+		return fmt.Errorf("验证码已过期")
+	}
+
+	// 删除验证码（一次性使用）
+	_, _ = l.svcCtx.RedisConn.DelCtx(l.ctx, verifyKey)
+
+	// 验证验证码（不区分大小写）
+	if !strings.EqualFold(code, captcha) {
+		l.Errorf("用户 %s 验证码错误: 输入=%s, 正确=%s", username, code, captcha)
+		return fmt.Errorf("验证码错误")
+	}
+
+	return nil
 }
