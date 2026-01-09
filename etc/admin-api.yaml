@@ -30,3 +30,7 @@ Captcha:
   Category: CIRCLE  # line 线段干扰 circle 圆圈干扰 shear 扭曲干扰
   NumberLength: 1   # 数字验证码位数
   CharLength: 4     # 字符验证码长度
+
+# 多租户配置
+Tenant:
+  Enable: false     # 是否开启多租户

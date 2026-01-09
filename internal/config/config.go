@@ -10,6 +10,7 @@ type Config struct {
 	Mysql   MysqlConfig
 	Redis   redis.RedisConf
 	Captcha CaptchaConfig
+	Tenant  TenantConfig
 }
 
 type MysqlConfig struct {
@@ -22,4 +23,8 @@ type CaptchaConfig struct {
 	Category     string `json:",default=CIRCLE"` // line 线段干扰 circle 圆圈干扰 shear 扭曲干扰
 	NumberLength int    `json:",default=1"`      // 数字验证码位数
 	CharLength   int    `json:",default=4"`      // 字符验证码长度
+}
+
+type TenantConfig struct {
+	Enable bool `json:",default=false"` // 是否开启多租户
 }

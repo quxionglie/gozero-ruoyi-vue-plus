@@ -1,0 +1,5 @@
+###
+GET http://127.0.0.1:58888/auth/code
+clientid: e5cd7e4891bf95d1d19206ce24a7b32e
+
+###

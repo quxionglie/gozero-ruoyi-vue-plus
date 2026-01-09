@@ -3,9 +3,9 @@ package main
 import (
 	"flag"
 	"fmt"
-
 	"gozero-ruoyi-vue-plus/internal/config"
 	"gozero-ruoyi-vue-plus/internal/handler"
+	"gozero-ruoyi-vue-plus/internal/middleware"
 	"gozero-ruoyi-vue-plus/internal/svc"
 
 	"github.com/zeromicro/go-zero/core/conf"
@@ -22,6 +22,9 @@ func main() {
 
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+
+	// 添加 CORS 中间件
+	server.Use(middleware.NewCorsMiddleware().Handle)
 
 	ctx := svc.NewServiceContext(c)
 	handler.RegisterHandlers(server, ctx)

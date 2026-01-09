@@ -77,14 +77,16 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		}, nil
 	}
 
-	// 2. 校验租户
-	if err := l.checkTenant(req.TenantId); err != nil {
-		return &types.LoginResp{
-			BaseResp: types.BaseResp{
-				Code: 500,
-				Msg:  err.Error(),
-			},
-		}, nil
+	// 2. 校验租户（如果启用多租户）
+	if l.svcCtx.Config.Tenant.Enable {
+		if err := l.checkTenant(req.TenantId); err != nil {
+			return &types.LoginResp{
+				BaseResp: types.BaseResp{
+					Code: 500,
+					Msg:  err.Error(),
+				},
+			}, nil
+		}
 	}
 
 	// 3. 验证验证码（如果启用）
@@ -97,8 +99,15 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		}, nil
 	}
 
-	// 4. 查询用户
-	user, err := l.svcCtx.SysUserModel.FindOneByUserName(l.ctx, req.Username, req.TenantId)
+	// 4. 查询用户（如果租户未启用，使用默认租户ID）
+	tenantId := req.TenantId
+	if !l.svcCtx.Config.Tenant.Enable {
+		tenantId = "000000" // 默认租户
+	}
+	if tenantId == "" {
+		tenantId = "000000" // 默认租户
+	}
+	user, err := l.svcCtx.SysUserModel.FindOneByUserName(l.ctx, req.Username, tenantId)
 	if err != nil {
 		if err == sys.ErrNotFound {
 			l.Errorf("登录用户：%s 不存在", req.Username)

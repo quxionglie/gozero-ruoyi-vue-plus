@@ -5,7 +5,6 @@ package auth
 
 import (
 	"context"
-	"database/sql"
 
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
@@ -29,8 +28,8 @@ func NewTenantListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Tenant
 }
 
 func (l *TenantListLogic) TenantList() (resp *types.TenantListResp, err error) {
-	// 检查租户是否启用
-	tenantEnabled := l.isTenantEnabled()
+	// 检查租户是否启用（从配置文件读取）
+	tenantEnabled := l.svcCtx.Config.Tenant.Enable
 
 	resp = &types.TenantListResp{
 		BaseResp: types.BaseResp{
@@ -81,24 +80,4 @@ func (l *TenantListLogic) TenantList() (resp *types.TenantListResp, err error) {
 	resp.Data.VoList = voList
 
 	return resp, nil
-}
-
-// isTenantEnabled 检查租户是否启用
-func (l *TenantListLogic) isTenantEnabled() bool {
-	// 查询系统配置：sys.tenant.enable
-	query := "SELECT config_value FROM sys_config WHERE config_key = 'sys.tenant.enable' AND del_flag = '0' LIMIT 1"
-	var configValue string
-	err := l.svcCtx.DB.QueryRowCtx(l.ctx, &configValue, query)
-	if err != nil {
-		if err == sql.ErrNoRows {
-			// 如果配置不存在，默认启用租户
-			return true
-		}
-		l.Errorf("查询租户配置失败: %v", err)
-		// 出错时默认启用租户
-		return true
-	}
-
-	// 配置值为 "true" 或 "1" 表示启用
-	return configValue == "true" || configValue == "1"
 }
