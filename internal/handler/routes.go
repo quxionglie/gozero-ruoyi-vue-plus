@@ -29,6 +29,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: auth.LoginHandler(serverCtx),
 			},
 			{
+				// 退出登录
+				Method:  http.MethodPost,
+				Path:    "/logout",
+				Handler: auth.LogoutHandler(serverCtx),
+			},
+			{
 				// 登录页面租户下拉框，获取可用租户列表
 				Method:  http.MethodGet,
 				Path:    "/tenant/list",

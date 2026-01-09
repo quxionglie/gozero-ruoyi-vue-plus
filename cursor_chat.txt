@@ -118,3 +118,12 @@ gozero已经有对应jwt实现，只需按照https://go-zero.dev/docs/tutorials/
 
 2026-01-09T21:48:08+08:00
 /system/user/getInfo接口响应SysUserVo少了roles字段，permissions 也没值
+
+2026-01-09T22:01:29+08:00
+添加/auth/logout接口实现，前面漏了。参考java实现
+
+2026-01-09T22:21:28+08:00
+logout不需要清除redis缓存吗？
+
+2026-01-09T22:31:32+08:00
+login时也没有设置清除 Redis 在线 token 缓存吧

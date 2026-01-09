@@ -4,9 +4,11 @@
 package auth
 
 import (
+	"context"
 	"encoding/base64"
 	"encoding/json"
 	"io"
+	"net"
 	"net/http"
 	"strings"
 
@@ -18,6 +20,35 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
+
+// getClientIP 获取客户端真实 IP 地址
+func getClientIP(r *http.Request) string {
+	// 优先从 X-Forwarded-For 获取（经过代理时）
+	ip := r.Header.Get("X-Forwarded-For")
+	if ip != "" {
+		// X-Forwarded-For 可能包含多个 IP，取第一个
+		ips := strings.Split(ip, ",")
+		if len(ips) > 0 {
+			ip = strings.TrimSpace(ips[0])
+		}
+		if ip != "" {
+			return ip
+		}
+	}
+
+	// 其次从 X-Real-IP 获取
+	ip = r.Header.Get("X-Real-IP")
+	if ip != "" {
+		return ip
+	}
+
+	// 最后从 RemoteAddr 获取
+	ip, _, err := net.SplitHostPort(r.RemoteAddr)
+	if err != nil {
+		return r.RemoteAddr
+	}
+	return ip
+}
 
 // 登录方法，支持密码登录等授权类型
 func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
@@ -86,7 +117,12 @@ func LoginHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			}
 		}
 
-		l := auth.NewLoginLogic(r.Context(), svcCtx)
+		// 将请求信息存储到 context 中，供 logic 使用
+		ctx := r.Context()
+		ctx = context.WithValue(ctx, "clientIP", getClientIP(r))
+		ctx = context.WithValue(ctx, "userAgent", r.Header.Get("User-Agent"))
+
+		l := auth.NewLoginLogic(ctx, svcCtx)
 		resp, err := l.Login(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)

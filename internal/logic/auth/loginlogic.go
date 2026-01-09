@@ -5,6 +5,7 @@ package auth
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"strings"
 	"time"
@@ -182,7 +183,10 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 		}, err
 	}
 
-	// 7. 返回登录信息
+	// 7. 存储在线 token 缓存到 Redis
+	l.saveOnlineToken(accessToken, user, req.ClientId, timeout)
+
+	// 8. 返回登录信息
 	resp = &types.LoginResp{
 		BaseResp: types.BaseResp{
 			Code: 200,
@@ -198,6 +202,117 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	}
 
 	return resp, nil
+}
+
+// saveOnlineToken 存储在线 token 缓存到 Redis
+func (l *LoginLogic) saveOnlineToken(token string, user *sys.SysUser, clientId string, expireSeconds int64) {
+	// 从 context 中获取请求信息
+	clientIP := ""
+	if ipValue := l.ctx.Value("clientIP"); ipValue != nil {
+		if ip, ok := ipValue.(string); ok {
+			clientIP = ip
+		}
+	}
+
+	userAgent := ""
+	if uaValue := l.ctx.Value("userAgent"); uaValue != nil {
+		if ua, ok := uaValue.(string); ok {
+			userAgent = ua
+		}
+	}
+
+	// 解析 User-Agent 获取浏览器和操作系统信息（简化版）
+	browser := parseBrowser(userAgent)
+	os := parseOS(userAgent)
+
+	// 获取部门名称
+	deptName := ""
+	if user.DeptId.Valid {
+		dept, err := l.svcCtx.SysDeptModel.FindOne(l.ctx, user.DeptId.Int64)
+		if err == nil {
+			deptName = dept.DeptName
+		}
+	}
+
+	// 构建在线用户信息
+	onlineInfo := map[string]interface{}{
+		"tokenId":       token,
+		"userName":      user.UserName,
+		"tenantId":      user.TenantId,
+		"clientKey":     clientId,
+		"deviceType":    "web", // 默认设备类型
+		"ipaddr":        clientIP,
+		"loginLocation": "", // 登录地址（需要 IP 地址库，暂时留空）
+		"browser":       browser,
+		"os":            os,
+		"loginTime":     time.Now().UnixMilli(),
+		"deptName":      deptName,
+	}
+
+	// 序列化为 JSON
+	onlineInfoJSON, err := json.Marshal(onlineInfo)
+	if err != nil {
+		l.Errorf("序列化在线用户信息失败: %v", err)
+		return
+	}
+
+	// 存储到 Redis，key: online_tokens:{token}
+	onlineTokenKey := "online_tokens:" + token
+	if expireSeconds > 0 {
+		// 设置过期时间（秒）
+		err = l.svcCtx.RedisConn.SetexCtx(l.ctx, onlineTokenKey, string(onlineInfoJSON), int(expireSeconds))
+	} else {
+		// 永不过期
+		err = l.svcCtx.RedisConn.SetCtx(l.ctx, onlineTokenKey, string(onlineInfoJSON))
+	}
+
+	if err != nil {
+		l.Errorf("存储在线 token 缓存失败: %v", err)
+	} else {
+		l.Infof("已存储在线 token 缓存: %s", onlineTokenKey)
+	}
+}
+
+// parseBrowser 从 User-Agent 解析浏览器类型（简化版）
+func parseBrowser(userAgent string) string {
+	ua := strings.ToLower(userAgent)
+	if strings.Contains(ua, "chrome") && !strings.Contains(ua, "edg") {
+		return "Chrome"
+	}
+	if strings.Contains(ua, "firefox") {
+		return "Firefox"
+	}
+	if strings.Contains(ua, "safari") && !strings.Contains(ua, "chrome") {
+		return "Safari"
+	}
+	if strings.Contains(ua, "edg") {
+		return "Edge"
+	}
+	if strings.Contains(ua, "opera") || strings.Contains(ua, "opr") {
+		return "Opera"
+	}
+	return "Unknown"
+}
+
+// parseOS 从 User-Agent 解析操作系统类型（简化版）
+func parseOS(userAgent string) string {
+	ua := strings.ToLower(userAgent)
+	if strings.Contains(ua, "windows") {
+		return "Windows"
+	}
+	if strings.Contains(ua, "mac") {
+		return "macOS"
+	}
+	if strings.Contains(ua, "linux") {
+		return "Linux"
+	}
+	if strings.Contains(ua, "android") {
+		return "Android"
+	}
+	if strings.Contains(ua, "ios") || strings.Contains(ua, "iphone") || strings.Contains(ua, "ipad") {
+		return "iOS"
+	}
+	return "Unknown"
 }
 
 // checkTenant 校验租户
