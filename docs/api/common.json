@@ -1,0 +1,753 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "标题：RuoYi-Vue-Plus多租户管理系统_接口文档",
+    "description": "描述：用于管理集团旗下公司的人员信息,具体包括XXX,XXX模块...",
+    "contact": {
+      "name": "Lion Li",
+      "url": "https://gitee.com/dromara/RuoYi-Vue-Plus",
+      "email": "crazylionli@163.com"
+    },
+    "version": "版本号: 5.5.2"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "tags": [
+    {
+      "name": "认证",
+      "description": "认证"
+    },
+    {
+      "name": "验证码操作处理",
+      "description": "验证码操作处理"
+    },
+    {
+      "name": "首页",
+      "description": "首页"
+    }
+  ],
+  "paths": {
+    "/auth/social/callback": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "前端回调绑定授权(需要token)",
+        "description": "前端回调绑定授权(需要token)",
+        "operationId": "socialCallback",
+        "requestBody": {
+          "description": "请求体",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SocialLoginBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "结果",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "用户注册",
+        "description": "用户注册",
+        "operationId": "register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterBody"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "退出登录",
+        "description": "退出登录",
+        "operationId": "logout",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "登录方法",
+        "description": "登录方法",
+        "operationId": "login",
+        "requestBody": {
+          "description": "登录信息",
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "结果",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RLoginVo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resource/sms/code": {
+      "get": {
+        "tags": [
+          "验证码操作处理"
+        ],
+        "summary": "短信验证码",
+        "description": "短信验证码",
+        "operationId": "smsCode",
+        "parameters": [
+          {
+            "name": "phonenumber",
+            "in": "query",
+            "description": "用户手机号",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/resource/email/code": {
+      "get": {
+        "tags": [
+          "验证码操作处理"
+        ],
+        "summary": "邮箱验证码",
+        "description": "邮箱验证码",
+        "operationId": "emailCode",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "description": "邮箱",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/tenant/list": {
+      "get": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "登录页面租户下拉框",
+        "description": "登录页面租户下拉框",
+        "operationId": "tenantList",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error"
+          },
+          "200": {
+            "description": "租户列表",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RLoginTenantVo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/code": {
+      "get": {
+        "tags": [
+          "验证码操作处理"
+        ],
+        "summary": "生成验证码",
+        "description": "生成验证码",
+        "operationId": "getCode",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RCaptchaVo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/binding/{source}": {
+      "get": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "获取跳转URL",
+        "description": "获取跳转URL",
+        "operationId": "authBinding",
+        "parameters": [
+          {
+            "name": "source",
+            "in": "path",
+            "description": "登录来源",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "tenantId",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "domain",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "结果",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RString"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/": {
+      "get": {
+        "tags": [
+          "首页"
+        ],
+        "summary": "访问首页，提示语",
+        "description": "访问首页，提示语",
+        "operationId": "index",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/auth/unlock/{socialId}": {
+      "delete": {
+        "tags": [
+          "认证"
+        ],
+        "summary": "取消授权(需要token)",
+        "description": "取消授权(需要token)",
+        "operationId": "unlockSocial",
+        "parameters": [
+          {
+            "name": "socialId",
+            "in": "path",
+            "description": "socialId",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RVoid"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SocialLoginBody": {
+        "type": "object",
+        "description": "三方登录对象",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "description": "客户端id",
+            "minLength": 1
+          },
+          "grantType": {
+            "type": "string",
+            "description": "授权类型",
+            "minLength": 1
+          },
+          "tenantId": {
+            "type": "string",
+            "description": "租户ID"
+          },
+          "code": {
+            "type": "string",
+            "description": "验证码"
+          },
+          "uuid": {
+            "type": "string",
+            "description": "唯一标识"
+          },
+          "source": {
+            "type": "string",
+            "description": "第三方登录平台",
+            "minLength": 1
+          },
+          "socialCode": {
+            "type": "string",
+            "description": "第三方登录code",
+            "minLength": 1
+          },
+          "socialState": {
+            "type": "string",
+            "description": "第三方登录socialState",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "clientId",
+          "grantType",
+          "socialCode",
+          "socialState",
+          "source"
+        ]
+      },
+      "RVoid": {
+        "type": "object",
+        "description": "响应信息主体",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "data": {}
+        }
+      },
+      "RegisterBody": {
+        "type": "object",
+        "description": "用户注册对象",
+        "properties": {
+          "clientId": {
+            "type": "string",
+            "description": "客户端id",
+            "minLength": 1
+          },
+          "grantType": {
+            "type": "string",
+            "description": "授权类型",
+            "minLength": 1
+          },
+          "tenantId": {
+            "type": "string",
+            "description": "租户ID"
+          },
+          "code": {
+            "type": "string",
+            "description": "验证码"
+          },
+          "uuid": {
+            "type": "string",
+            "description": "唯一标识"
+          },
+          "username": {
+            "type": "string",
+            "description": "用户名",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "description": "用户密码",
+            "minLength": 1
+          },
+          "userType": {
+            "type": "string",
+            "description": "用户类型"
+          }
+        },
+        "required": [
+          "clientId",
+          "grantType",
+          "password",
+          "username"
+        ]
+      },
+      "LoginVo": {
+        "type": "object",
+        "description": "登录验证信息",
+        "properties": {
+          "scope": {
+            "type": "string",
+            "description": "令牌权限"
+          },
+          "openid": {
+            "type": "string",
+            "description": "用户 openid"
+          },
+          "access_token": {
+            "type": "string",
+            "description": "授权令牌"
+          },
+          "refresh_token": {
+            "type": "string",
+            "description": "刷新令牌"
+          },
+          "expire_in": {
+            "type": "integer",
+            "format": "int64",
+            "description": "授权令牌 access_token 的有效期"
+          },
+          "refresh_expire_in": {
+            "type": "integer",
+            "format": "int64",
+            "description": "刷新令牌 refresh_token 的有效期"
+          },
+          "client_id": {
+            "type": "string",
+            "description": "应用id"
+          }
+        }
+      },
+      "RLoginVo": {
+        "type": "object",
+        "description": "响应信息主体",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/LoginVo"
+          }
+        }
+      },
+      "LoginTenantVo": {
+        "type": "object",
+        "description": "登录租户对象",
+        "properties": {
+          "tenantEnabled": {
+            "type": "boolean",
+            "description": "租户开关"
+          },
+          "voList": {
+            "type": "array",
+            "description": "租户对象列表",
+            "items": {
+              "$ref": "#/components/schemas/TenantListVo"
+            }
+          }
+        }
+      },
+      "RLoginTenantVo": {
+        "type": "object",
+        "description": "响应信息主体",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/LoginTenantVo"
+          }
+        }
+      },
+      "TenantListVo": {
+        "type": "object",
+        "description": "租户列表",
+        "properties": {
+          "tenantId": {
+            "type": "string",
+            "description": "租户编号"
+          },
+          "companyName": {
+            "type": "string",
+            "description": "企业名称"
+          },
+          "domain": {
+            "type": "string",
+            "description": "域名"
+          }
+        }
+      },
+      "CaptchaVo": {
+        "type": "object",
+        "description": "验证码信息",
+        "properties": {
+          "captchaEnabled": {
+            "type": "boolean",
+            "description": "是否开启验证码"
+          },
+          "uuid": {
+            "type": "string"
+          },
+          "img": {
+            "type": "string",
+            "description": "验证码图片"
+          }
+        }
+      },
+      "RCaptchaVo": {
+        "type": "object",
+        "description": "响应信息主体",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/CaptchaVo"
+          }
+        }
+      },
+      "RString": {
+        "type": "object",
+        "description": "响应信息主体",
+        "properties": {
+          "code": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "msg": {
+            "type": "string"
+          },
+          "data": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

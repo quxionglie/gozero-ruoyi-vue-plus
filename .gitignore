@@ -30,3 +30,4 @@ logs/
 
 # Config files with sensitive info
 etc/config.local.yaml
+/docs/java_src/
