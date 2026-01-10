@@ -1,3 +1,6 @@
+// Code scaffolded by goctl. Safe to edit.
+// goctl 1.9.2
+
 package sys
 
 import (
@@ -11,22 +14,22 @@ import (
 	"github.com/zeromicro/go-zero/core/logx"
 )
 
-type UserDeptTreeLogic struct {
+type PostDeptTreeLogic struct {
 	logx.Logger
 	ctx    context.Context
 	svcCtx *svc.ServiceContext
 }
 
 // 获取部门树列表
-func NewUserDeptTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *UserDeptTreeLogic {
-	return &UserDeptTreeLogic{
+func NewPostDeptTreeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PostDeptTreeLogic {
+	return &PostDeptTreeLogic{
 		Logger: logx.WithContext(ctx),
 		ctx:    ctx,
 		svcCtx: svcCtx,
 	}
 }
 
-func (l *UserDeptTreeLogic) UserDeptTree() (resp *types.DeptTreeResp, err error) {
+func (l *PostDeptTreeLogic) PostDeptTree() (resp *types.DeptTreeResp, err error) {
 	// 1. 获取租户ID（用于后续过滤，当前先不限制）
 	_, err = util.GetTenantIdFromContext(l.ctx)
 	if err != nil {

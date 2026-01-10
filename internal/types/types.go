@@ -172,6 +172,11 @@ type DeptResp struct {
 	Data DeptVo `json:"data,omitempty"`
 }
 
+type DeptTreeResp struct {
+	BaseResp
+	Data []DeptTreeVo `json:"data,omitempty"`
+}
+
 type DeptTreeSelectResp struct {
 	BaseResp
 	Data DeptTreeSelectVo `json:"data,omitempty"`
@@ -184,8 +189,10 @@ type DeptTreeSelectVo struct {
 
 type DeptTreeVo struct {
 	Id       int64        `json:"id,string"`          // 部门ID
-	Label    string       `json:"label"`              // 部门名称
 	ParentId int64        `json:"parentId,string"`    // 父部门ID
+	Label    string       `json:"label"`              // 部门名称
+	Weight   int32        `json:"weight"`             // 排序权重
+	Disabled bool         `json:"disabled"`           // 是否禁用
 	Children []DeptTreeVo `json:"children,omitempty"` // 子部门
 }
 

@@ -268,6 +268,10 @@ service admin-api {
 	@handler PostOptionSelect
 	get /system/post/optionselect (PostOptionSelectReq) returns (PostOptionSelectResp)
 
+	@doc "获取部门树列表"
+	@handler PostDeptTree
+	get /system/post/deptTree returns (DeptTreeResp)
+
 	// ========== 部门管理接口 ==========
 	@doc "查询部门列表"
 	@handler DeptList
@@ -450,7 +454,7 @@ service admin-api {
 
 	@doc "获取部门树列表"
 	@handler UserDeptTree
-	get /system/user/deptTree returns (DeptListResp)
+	get /system/user/deptTree returns (DeptTreeResp)
 
 	@doc "获取部门下的所有用户信息"
 	@handler UserListByDept
@@ -848,6 +852,11 @@ type DeptListResp {
 	Data []DeptVo `json:"data,omitempty"`
 }
 
+type DeptTreeResp {
+	BaseResp
+	Data []DeptTreeVo `json:"data,omitempty"`
+}
+
 type DeptVo {
 	DeptId       int64     `json:"deptId,string"`       // 部门id
 	ParentId     int64     `json:"parentId,string"`     // 父部门id
@@ -1121,8 +1130,10 @@ type DeptTreeSelectVo {
 
 type DeptTreeVo {
 	Id       int64                  `json:"id,string"`       // 部门ID
-	Label    string                 `json:"label"`           // 部门名称
 	ParentId int64                  `json:"parentId,string"` // 父部门ID
+	Label    string                 `json:"label"`           // 部门名称
+	Weight   int32                  `json:"weight"`          // 排序权重
+	Disabled bool                   `json:"disabled"`        // 是否禁用
 	Children []DeptTreeVo           `json:"children,omitempty"` // 子部门
 }
 

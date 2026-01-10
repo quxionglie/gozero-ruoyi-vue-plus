@@ -334,3 +334,261 @@ user_dept_tree_logic.go 中根节点并不一定是0，tree := buildTree(0) 会�
 
 2026-01-10T21:33:00+08:00
 redis可以用go-zero的eval命令代替，类似 eval "return redis.call('info','commandstats')" 0
+
+2026-01-10T21:42:29+08:00
+实现/system/post/deptTree接口，参考SysPostController.java类
+
+2026-01-10T21:49:15+08:00
+返回的deptName不能为空
+
+2026-01-10T22:31:33+08:00
+/system/user/deptTree返回格式应该为java结构返回的代码，要将DeptVo树形结构转为下面TreeVo树形结构。
+
+当前go返回代码
+{
+    "code": 200,
+    "msg": "操作成功",
+    "data": [
+        {
+            "deptId": "100",
+            "parentId": "0",
+            "parentName": "",
+            "ancestors": "0",
+            "deptName": "XXX科技",
+            "deptCategory": "",
+            "orderNum": 0,
+            "leader": "0",
+            "leaderName": "",
+            "phone": "15888888888",
+            "email": "xxx@qq.com",
+            "status": "0",
+            "createTime": "",
+            "children": [
+                {
+                    "deptId": "101",
+                    "parentId": "100",
+                    "parentName": "XXX科技",
+                    "ancestors": "0,100",
+                    "deptName": "深圳总公司",
+                    "deptCategory": "",
+                    "orderNum": 1,
+                    "leader": "0",
+                    "leaderName": "",
+                    "phone": "15888888888",
+                    "email": "xxx@qq.com",
+                    "status": "0",
+                    "createTime": "",
+                    "children": [
+                        {
+                            "deptId": "103",
+                            "parentId": "101",
+                            "parentName": "深圳总公司",
+                            "ancestors": "0,100,101",
+                            "deptName": "研发部门",
+                            "deptCategory": "",
+                            "orderNum": 1,
+                            "leader": "1",
+                            "leaderName": "",
+                            "phone": "15888888888",
+                            "email": "xxx@qq.com",
+                            "status": "0",
+                            "createTime": ""
+                        },
+                        {
+                            "deptId": "104",
+                            "parentId": "101",
+                            "parentName": "深圳总公司",
+                            "ancestors": "0,100,101",
+                            "deptName": "市场部门",
+                            "deptCategory": "",
+                            "orderNum": 2,
+                            "leader": "0",
+                            "leaderName": "",
+                            "phone": "15888888888",
+                            "email": "xxx@qq.com",
+                            "status": "0",
+                            "createTime": ""
+                        },
+                        {
+                            "deptId": "105",
+                            "parentId": "101",
+                            "parentName": "深圳总公司",
+                            "ancestors": "0,100,101",
+                            "deptName": "测试部门",
+                            "deptCategory": "",
+                            "orderNum": 3,
+                            "leader": "0",
+                            "leaderName": "",
+                            "phone": "15888888888",
+                            "email": "xxx@qq.com",
+                            "status": "0",
+                            "createTime": ""
+                        },
+                        {
+                            "deptId": "106",
+                            "parentId": "101",
+                            "parentName": "深圳总公司",
+                            "ancestors": "0,100,101",
+                            "deptName": "财务部门",
+                            "deptCategory": "",
+                            "orderNum": 4,
+                            "leader": "0",
+                            "leaderName": "",
+                            "phone": "15888888888",
+                            "email": "xxx@qq.com",
+                            "status": "0",
+                            "createTime": ""
+                        },
+                        {
+                            "deptId": "107",
+                            "parentId": "101",
+                            "parentName": "深圳总公司",
+                            "ancestors": "0,100,101",
+                            "deptName": "运维部门",
+                            "deptCategory": "",
+                            "orderNum": 5,
+                            "leader": "0",
+                            "leaderName": "",
+                            "phone": "15888888888",
+                            "email": "xxx@qq.com",
+                            "status": "0",
+                            "createTime": ""
+                        }
+                    ]
+                },
+                {
+                    "deptId": "102",
+                    "parentId": "100",
+                    "parentName": "XXX科技",
+                    "ancestors": "0,100",
+                    "deptName": "长沙分公司",
+                    "deptCategory": "",
+                    "orderNum": 2,
+                    "leader": "0",
+                    "leaderName": "",
+                    "phone": "15888888888",
+                    "email": "xxx@qq.com",
+                    "status": "0",
+                    "createTime": "",
+                    "children": [
+                        {
+                            "deptId": "108",
+                            "parentId": "102",
+                            "parentName": "长沙分公司",
+                            "ancestors": "0,100,102",
+                            "deptName": "市场部门",
+                            "deptCategory": "",
+                            "orderNum": 1,
+                            "leader": "0",
+                            "leaderName": "",
+                            "phone": "15888888888",
+                            "email": "xxx@qq.com",
+                            "status": "0",
+                            "createTime": ""
+                        },
+                        {
+                            "deptId": "109",
+                            "parentId": "102",
+                            "parentName": "长沙分公司",
+                            "ancestors": "0,100,102",
+                            "deptName": "财务部门",
+                            "deptCategory": "",
+                            "orderNum": 2,
+                            "leader": "0",
+                            "leaderName": "",
+                            "phone": "15888888888",
+                            "email": "xxx@qq.com",
+                            "status": "0",
+                            "createTime": ""
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}
+
+
+当前java返回代码
+{
+  "code": 200,
+  "msg": "操作成功",
+  "data": [
+    {
+      "id": 100,
+      "parentId": 0,
+      "label": "XXX科技",
+      "weight": 0,
+      "disabled": false,
+      "children": [
+        {
+          "id": 101,
+          "parentId": 100,
+          "label": "深圳总公司",
+          "weight": 1,
+          "disabled": false,
+          "children": [
+            {
+              "id": 103,
+              "parentId": 101,
+              "label": "研发部门",
+              "weight": 1,
+              "disabled": false
+            },
+            {
+              "id": 104,
+              "parentId": 101,
+              "label": "市场部门",
+              "weight": 2,
+              "disabled": false
+            },
+            {
+              "id": 105,
+              "parentId": 101,
+              "label": "测试部门",
+              "weight": 3,
+              "disabled": false
+            },
+            {
+              "id": 106,
+              "parentId": 101,
+              "label": "财务部门",
+              "weight": 4,
+              "disabled": false
+            },
+            {
+              "id": 107,
+              "parentId": 101,
+              "label": "运维部门",
+              "weight": 5,
+              "disabled": false
+            }
+          ]
+        },
+        {
+          "id": 102,
+          "parentId": 100,
+          "label": "长沙分公司",
+          "weight": 2,
+          "disabled": false,
+          "children": [
+            {
+              "id": 108,
+              "parentId": 102,
+              "label": "市场部门",
+              "weight": 1,
+              "disabled": false
+            },
+            {
+              "id": 109,
+              "parentId": 102,
+              "label": "财务部门",
+              "weight": 2,
+              "disabled": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

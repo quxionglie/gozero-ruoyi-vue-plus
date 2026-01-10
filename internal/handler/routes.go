@@ -491,6 +491,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: sys.PostRemoveHandler(serverCtx),
 			},
 			{
+				// 获取部门树列表
+				Method:  http.MethodGet,
+				Path:    "/system/post/deptTree",
+				Handler: sys.PostDeptTreeHandler(serverCtx),
+			},
+			{
 				// 导出岗位列表
 				Method:  http.MethodPost,
 				Path:    "/system/post/export",
