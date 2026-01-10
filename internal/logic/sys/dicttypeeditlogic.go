@@ -39,7 +39,18 @@ func (l *DictTypeEditLogic) DictTypeEdit(req *types.DictTypeReq) (resp *types.Ba
 		}, nil
 	}
 
-	// 1. 校验字典类型唯一性
+	// 1. 参数校验（长度和格式）
+	if err := util.ValidateStringLength(req.DictName, "字典名称", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.DictType, "字典类型", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateDictType(req.DictType); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+
+	// 2. 校验字典类型唯一性
 	unique, err := l.svcCtx.SysDictTypeModel.CheckDictTypeUnique(l.ctx, req.DictType, req.DictId)
 	if err != nil {
 		l.Errorf("校验字典类型唯一性失败: %v", err)
@@ -55,7 +66,7 @@ func (l *DictTypeEditLogic) DictTypeEdit(req *types.DictTypeReq) (resp *types.Ba
 		}, nil
 	}
 
-	// 2. 查询原字典类型
+	// 3. 查询原字典类型
 	oldDictType, err := l.svcCtx.SysDictTypeModel.FindOne(l.ctx, req.DictId)
 	if err != nil {
 		if err == model.ErrNotFound {
@@ -71,10 +82,10 @@ func (l *DictTypeEditLogic) DictTypeEdit(req *types.DictTypeReq) (resp *types.Ba
 		}, err
 	}
 
-	// 3. 获取当前用户ID
+	// 4. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 4. 更新字典类型
+	// 5. 更新字典类型
 	dictType := &model.SysDictType{
 		DictId:   req.DictId,
 		DictName: req.DictName,
@@ -92,7 +103,7 @@ func (l *DictTypeEditLogic) DictTypeEdit(req *types.DictTypeReq) (resp *types.Ba
 		}, err
 	}
 
-	// 5. 如果字典类型改变，需要更新关联的字典数据
+	// 6. 如果字典类型改变，需要更新关联的字典数据
 	if oldDictType.DictType != req.DictType {
 		err = l.svcCtx.SysDictDataModel.UpdateDictTypeByOldDictType(l.ctx, oldDictType.DictType, req.DictType)
 		if err != nil {

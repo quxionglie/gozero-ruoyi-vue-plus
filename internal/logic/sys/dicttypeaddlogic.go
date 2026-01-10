@@ -32,7 +32,18 @@ func NewDictTypeAddLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DictT
 }
 
 func (l *DictTypeAddLogic) DictTypeAdd(req *types.DictTypeReq) (resp *types.BaseResp, err error) {
-	// 1. 校验字典类型唯一性
+	// 1. 参数校验（长度和格式）
+	if err := util.ValidateStringLength(req.DictName, "字典名称", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.DictType, "字典类型", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateDictType(req.DictType); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+
+	// 2. 校验字典类型唯一性
 	unique, err := l.svcCtx.SysDictTypeModel.CheckDictTypeUnique(l.ctx, req.DictType, 0)
 	if err != nil {
 		l.Errorf("校验字典类型唯一性失败: %v", err)
@@ -48,10 +59,10 @@ func (l *DictTypeAddLogic) DictTypeAdd(req *types.DictTypeReq) (resp *types.Base
 		}, nil
 	}
 
-	// 2. 获取当前用户ID
+	// 3. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 3. 构建字典类型实体
+	// 4. 构建字典类型实体
 	dictType := &model.SysDictType{
 		TenantId: "",
 		DictName: req.DictName,
@@ -60,7 +71,7 @@ func (l *DictTypeAddLogic) DictTypeAdd(req *types.DictTypeReq) (resp *types.Base
 		CreateBy: sql.NullInt64{Int64: userId, Valid: userId > 0},
 	}
 
-	// 4. 插入数据库
+	// 5. 插入数据库
 	_, err = l.svcCtx.SysDictTypeModel.Insert(l.ctx, dictType)
 	if err != nil {
 		l.Errorf("新增字典类型失败: %v", err)

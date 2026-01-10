@@ -39,7 +39,23 @@ func (l *DictDataEditLogic) DictDataEdit(req *types.DictDataReq) (resp *types.Ba
 		}, nil
 	}
 
-	// 1. 校验字典数据唯一性
+	// 1. 参数长度校验
+	if err := util.ValidateStringLength(req.DictLabel, "字典标签", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.DictValue, "字典键值", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.DictType, "字典类型", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if req.CssClass != "" {
+		if err := util.ValidateStringLength(req.CssClass, "样式属性", 100); err != nil {
+			return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+		}
+	}
+
+	// 2. 校验字典数据唯一性
 	unique, err := l.svcCtx.SysDictDataModel.CheckDictDataUnique(l.ctx, req.DictType, req.DictValue, req.DictCode)
 	if err != nil {
 		l.Errorf("校验字典数据唯一性失败: %v", err)
@@ -55,10 +71,10 @@ func (l *DictDataEditLogic) DictDataEdit(req *types.DictDataReq) (resp *types.Ba
 		}, nil
 	}
 
-	// 2. 获取当前用户ID
+	// 3. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 3. 更新字典数据
+	// 4. 更新字典数据
 	dictData := &model.SysDictData{
 		DictCode:  req.DictCode,
 		DictSort:  int64(req.DictSort),

@@ -32,7 +32,23 @@ func NewDictDataAddLogic(ctx context.Context, svcCtx *svc.ServiceContext) *DictD
 }
 
 func (l *DictDataAddLogic) DictDataAdd(req *types.DictDataReq) (resp *types.BaseResp, err error) {
-	// 1. 校验字典数据唯一性（同一字典类型下，字典键值唯一）
+	// 1. 参数长度校验
+	if err := util.ValidateStringLength(req.DictLabel, "字典标签", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.DictValue, "字典键值", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.DictType, "字典类型", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if req.CssClass != "" {
+		if err := util.ValidateStringLength(req.CssClass, "样式属性", 100); err != nil {
+			return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+		}
+	}
+
+	// 2. 校验字典数据唯一性（同一字典类型下，字典键值唯一）
 	unique, err := l.svcCtx.SysDictDataModel.CheckDictDataUnique(l.ctx, req.DictType, req.DictValue, 0)
 	if err != nil {
 		l.Errorf("校验字典数据唯一性失败: %v", err)
@@ -48,10 +64,10 @@ func (l *DictDataAddLogic) DictDataAdd(req *types.DictDataReq) (resp *types.Base
 		}, nil
 	}
 
-	// 2. 获取当前用户ID
+	// 3. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 3. 构建字典数据实体
+	// 4. 构建字典数据实体
 	dictData := &model.SysDictData{
 		TenantId:  "",
 		DictSort:  int64(req.DictSort),
@@ -65,7 +81,7 @@ func (l *DictDataAddLogic) DictDataAdd(req *types.DictDataReq) (resp *types.Base
 		CreateBy:  sql.NullInt64{Int64: userId, Valid: userId > 0},
 	}
 
-	// 4. 插入数据库
+	// 5. 插入数据库
 	_, err = l.svcCtx.SysDictDataModel.Insert(l.ctx, dictData)
 	if err != nil {
 		l.Errorf("新增字典数据失败: %v", err)

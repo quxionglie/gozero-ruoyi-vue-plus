@@ -38,7 +38,12 @@ func (l *ConfigUpdateByKeyLogic) ConfigUpdateByKey(req *types.ConfigReq) (resp *
 		}, nil
 	}
 
-	// 根据配置键查询配置
+	// 1. 参数长度校验
+	if err := util.ValidateStringLength(req.ConfigValue, "参数键值", 500); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+
+	// 2. 根据配置键查询配置
 	config, err := l.svcCtx.SysConfigModel.FindByConfigKey(l.ctx, req.ConfigKey)
 	if err != nil {
 		if err == model.ErrNotFound {

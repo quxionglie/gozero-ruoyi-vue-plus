@@ -32,7 +32,18 @@ func NewConfigAddLogic(ctx context.Context, svcCtx *svc.ServiceContext) *ConfigA
 }
 
 func (l *ConfigAddLogic) ConfigAdd(req *types.ConfigReq) (resp *types.BaseResp, err error) {
-	// 1. 校验参数键名唯一性
+	// 1. 参数长度校验
+	if err := util.ValidateStringLength(req.ConfigName, "参数名称", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.ConfigKey, "参数键名", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.ConfigValue, "参数键值", 500); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+
+	// 2. 校验参数键名唯一性
 	unique, err := l.svcCtx.SysConfigModel.CheckConfigKeyUnique(l.ctx, req.ConfigKey, 0)
 	if err != nil {
 		l.Errorf("校验参数键名唯一性失败: %v", err)
@@ -48,10 +59,10 @@ func (l *ConfigAddLogic) ConfigAdd(req *types.ConfigReq) (resp *types.BaseResp, 
 		}, nil
 	}
 
-	// 2. 获取当前用户ID
+	// 3. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 3. 构建参数配置实体
+	// 4. 构建参数配置实体
 	config := &model.SysConfig{
 		TenantId:    "",
 		ConfigName:  req.ConfigName,
@@ -62,7 +73,7 @@ func (l *ConfigAddLogic) ConfigAdd(req *types.ConfigReq) (resp *types.BaseResp, 
 		CreateBy:    sql.NullInt64{Int64: userId, Valid: userId > 0},
 	}
 
-	// 4. 插入数据库
+	// 5. 插入数据库
 	_, err = l.svcCtx.SysConfigModel.Insert(l.ctx, config)
 	if err != nil {
 		l.Errorf("新增参数配置失败: %v", err)

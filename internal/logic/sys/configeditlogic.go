@@ -39,7 +39,18 @@ func (l *ConfigEditLogic) ConfigEdit(req *types.ConfigReq) (resp *types.BaseResp
 		}, nil
 	}
 
-	// 1. 校验参数键名唯一性
+	// 1. 参数长度校验
+	if err := util.ValidateStringLength(req.ConfigName, "参数名称", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.ConfigKey, "参数键名", 100); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+	if err := util.ValidateStringLength(req.ConfigValue, "参数键值", 500); err != nil {
+		return &types.BaseResp{Code: 400, Msg: err.Error()}, nil
+	}
+
+	// 2. 校验参数键名唯一性
 	unique, err := l.svcCtx.SysConfigModel.CheckConfigKeyUnique(l.ctx, req.ConfigKey, req.ConfigId)
 	if err != nil {
 		l.Errorf("校验参数键名唯一性失败: %v", err)
@@ -55,16 +66,16 @@ func (l *ConfigEditLogic) ConfigEdit(req *types.ConfigReq) (resp *types.BaseResp
 		}, nil
 	}
 
-	// 2. 查询原配置（用于清除旧缓存）
+	// 3. 查询原配置（用于清除旧缓存）
 	oldConfig, err := l.svcCtx.SysConfigModel.FindOne(l.ctx, req.ConfigId)
 	if err != nil && err != model.ErrNotFound {
 		l.Errorf("查询参数配置失败: %v", err)
 	}
 
-	// 3. 获取当前用户ID
+	// 4. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 4. 更新参数配置
+	// 5. 更新参数配置
 	config := &model.SysConfig{
 		ConfigId:    req.ConfigId,
 		ConfigName:  req.ConfigName,
