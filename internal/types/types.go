@@ -49,6 +49,31 @@ type LoginVo struct {
 	ClientId        string `json:"client_id,omitempty"` // 应用id
 }
 
+type MetaVo struct {
+	Title   string `json:"title,omitempty"`   // 设置该路由在侧边栏和面包屑中展示的名字
+	Icon    string `json:"icon,omitempty"`    // 设置该路由的图标，对应路径src/assets/icons/svg
+	NoCache bool   `json:"noCache,omitempty"` // 设置为true，则不会被 <keep-alive>缓存
+	Link    string `json:"link,omitempty"`    // 内链地址（http(s)://开头）
+	Remark  string `json:"remark,omitempty"`  // 备注
+}
+
+type RouterResp struct {
+	BaseResp
+	Data []RouterVo `json:"data"`
+}
+
+type RouterVo struct {
+	Name       string     `json:"name,omitempty"`       // 路由名字
+	Path       string     `json:"path,omitempty"`       // 路由地址
+	Hidden     bool       `json:"hidden,omitempty"`     // 是否隐藏路由
+	Redirect   string     `json:"redirect,omitempty"`   // 重定向地址
+	Component  string     `json:"component,omitempty"`  // 组件地址
+	Query      string     `json:"query,omitempty"`      // 路由参数
+	AlwaysShow bool       `json:"alwaysShow,omitempty"` // 是否总是显示
+	Meta       MetaVo     `json:"meta,omitempty"`       // 其他元素
+	Children   []RouterVo `json:"children,omitempty"`   // 子路由
+}
+
 type SysRoleVo struct {
 	RoleId     int64  `json:"roleId"`     // 角色ID
 	RoleName   string `json:"roleName"`   // 角色名称

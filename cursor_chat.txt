@@ -127,3 +127,6 @@ logout不需要清除redis缓存吗？
 
 2026-01-09T22:31:32+08:00
 login时也没有设置清除 Redis 在线 token 缓存吧
+
+2026-01-10T09:50:31+08:00
+实现/system/menu/getRouters接口，参考java代码SysMenuController.java实现

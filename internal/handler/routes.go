@@ -47,6 +47,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 获取路由信息
+				Method:  http.MethodGet,
+				Path:    "/menu/getRouters",
+				Handler: sys.GetRoutersHandler(serverCtx),
+			},
+			{
 				// 获取用户信息
 				Method:  http.MethodGet,
 				Path:    "/user/getInfo",

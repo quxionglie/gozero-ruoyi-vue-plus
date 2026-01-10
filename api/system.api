@@ -49,6 +49,32 @@ type SysRoleVo {
 	CreateTime  string `json:"createTime"`  // 创建时间
 }
 
+// 路由响应
+type RouterResp {
+	BaseResp
+	Data []RouterVo `json:"data"`
+}
+
+type RouterVo {
+	Name       string      `json:"name,omitempty"`        // 路由名字
+	Path       string      `json:"path,omitempty"`        // 路由地址
+	Hidden     bool        `json:"hidden,omitempty"`      // 是否隐藏路由
+	Redirect   string      `json:"redirect,omitempty"`    // 重定向地址
+	Component  string      `json:"component,omitempty"`   // 组件地址
+	Query      string      `json:"query,omitempty"`       // 路由参数
+	AlwaysShow bool        `json:"alwaysShow,omitempty"`  // 是否总是显示
+	Meta       MetaVo      `json:"meta,omitempty"`        // 其他元素
+	Children   []RouterVo  `json:"children,omitempty"`    // 子路由
+}
+
+type MetaVo {
+	Title      string `json:"title,omitempty"`      // 设置该路由在侧边栏和面包屑中展示的名字
+	Icon       string `json:"icon,omitempty"`       // 设置该路由的图标，对应路径src/assets/icons/svg
+	NoCache    bool   `json:"noCache,omitempty"`    // 设置为true，则不会被 <keep-alive>缓存
+	Link       string `json:"link,omitempty"`       // 内链地址（http(s)://开头）
+	Remark     string `json:"remark,omitempty"`     // 备注
+}
+
 @server (
 	prefix: /system
 	group:  sys
@@ -58,4 +84,8 @@ service admin-api {
 	@doc "获取用户信息"
 	@handler GetUserInfo
 	get /user/getInfo returns (UserInfoResp)
+
+	@doc "获取路由信息"
+	@handler GetRouters
+	get /menu/getRouters returns (RouterResp)
 }
