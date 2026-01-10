@@ -275,3 +275,6 @@ CacheController
 SysLogininforController
 SysOperlogController
 SysUserOnlineController
+
+2026-01-10T17:52:13+08:00
+将/auth/**接口列表也更新到"接口列表.md"
