@@ -210,6 +210,93 @@ service admin-api {
 	@doc "删除通知公告"
 	@handler NoticeRemove
 	delete /notice/:noticeIds (NoticeRemoveReq) returns (BaseResp)
+
+	// ========== 客户端管理接口 ==========
+	@doc "查询客户端管理列表"
+	@handler ClientList
+	get /client/list (ClientListReq) returns (TableDataInfoResp)
+
+	@doc "导出客户端管理列表"
+	@handler ClientExport
+	post /client/export returns (BaseResp)
+
+	@doc "查询客户端管理详细"
+	@handler ClientGetInfo
+	get /client/:id (ClientGetInfoReq) returns (ClientResp)
+
+	@doc "新增客户端管理"
+	@handler ClientAdd
+	post /client (ClientReq) returns (BaseResp)
+
+	@doc "修改客户端管理"
+	@handler ClientEdit
+	put /client (ClientReq) returns (BaseResp)
+
+	@doc "状态修改"
+	@handler ClientChangeStatus
+	put /client/changeStatus (ClientReq) returns (BaseResp)
+
+	@doc "删除客户端管理"
+	@handler ClientRemove
+	delete /client/:ids (ClientRemoveReq) returns (BaseResp)
+
+	// ========== 岗位管理接口 ==========
+	@doc "查询岗位列表"
+	@handler PostList
+	get /post/list (PostListReq) returns (TableDataInfoResp)
+
+	@doc "导出岗位列表"
+	@handler PostExport
+	post /post/export returns (BaseResp)
+
+	@doc "查询岗位详细"
+	@handler PostGetInfo
+	get /post/:postId (PostGetInfoReq) returns (PostResp)
+
+	@doc "新增岗位"
+	@handler PostAdd
+	post /post (PostReq) returns (BaseResp)
+
+	@doc "修改岗位"
+	@handler PostEdit
+	put /post (PostReq) returns (BaseResp)
+
+	@doc "删除岗位"
+	@handler PostRemove
+	delete /post/:postIds (PostRemoveReq) returns (BaseResp)
+
+	@doc "获取岗位选择框列表"
+	@handler PostOptionSelect
+	get /post/optionselect (PostOptionSelectReq) returns (PostOptionSelectResp)
+
+	// ========== 部门管理接口 ==========
+	@doc "查询部门列表"
+	@handler DeptList
+	get /dept/list (DeptListReq) returns (DeptListResp)
+
+	@doc "查询部门列表（排除节点）"
+	@handler DeptListExclude
+	get /dept/list/exclude/:deptId (DeptListExcludeReq) returns (DeptListResp)
+
+	@doc "查询部门详细"
+	@handler DeptGetInfo
+	get /dept/:deptId (DeptGetInfoReq) returns (DeptResp)
+
+	@doc "新增部门"
+	@handler DeptAdd
+	post /dept (DeptReq) returns (BaseResp)
+
+	@doc "修改部门"
+	@handler DeptEdit
+	put /dept (DeptReq) returns (BaseResp)
+
+	@doc "删除部门"
+	@handler DeptRemove
+	delete /dept/:deptId (DeptRemoveReq) returns (BaseResp)
+
+	@doc "获取部门选择框列表"
+	@handler DeptOptionSelect
+	get /dept/optionselect (DeptOptionSelectReq) returns (DeptListResp)
 }
 
 // ========== 字典类型相关类型定义 ==========
@@ -409,4 +496,176 @@ type NoticeVo {
 	Status        string `json:"status"`               // 公告状态（0正常 1关闭）
 	Remark        string `json:"remark"`               // 备注
 	CreateTime    string `json:"createTime"`           // 创建时间
+}
+
+// ========== 客户端管理相关类型定义 ==========
+type ClientReq {
+	Id            int64    `json:"id,optional,string"`             // id
+	ClientId      string   `json:"clientId,optional"`              // 客户端id（自动生成）
+	ClientKey     string   `json:"clientKey"`                      // 客户端key（必填）
+	ClientSecret  string   `json:"clientSecret"`                   // 客户端秘钥（必填）
+	GrantTypeList []string `json:"grantTypeList"`                  // 授权类型列表（必填）
+	GrantType     string   `json:"grantType,optional"`             // 授权类型（逗号分隔）
+	DeviceType    string   `json:"deviceType,optional"`            // 设备类型
+	ActiveTimeout int64    `json:"activeTimeout,optional"`         // token活跃超时时间
+	Timeout       int64    `json:"timeout,optional"`               // token固定超时时间
+	Status        string   `json:"status,optional,options=0|1"`    // 状态（0正常 1停用）
+}
+
+type ClientGetInfoReq {
+	Id int64 `path:"id,range=[1:]"` // id（必须大于0）
+}
+
+type ClientListReq {
+	ClientId     string `form:"clientId,optional"`     // 客户端id
+	ClientKey    string `form:"clientKey,optional"`    // 客户端key
+	ClientSecret string `form:"clientSecret,optional"` // 客户端秘钥
+	Status       string `form:"status,optional"`       // 状态（0正常 1停用）
+	PageQuery
+}
+
+type ClientRemoveReq {
+	Ids string `path:"ids"` // id串（逗号分隔，不能为空）
+}
+
+type ClientResp {
+	BaseResp
+	Data ClientVo `json:"data,omitempty"`
+}
+
+type ClientVo {
+	Id            int64    `json:"id,string"`            // id
+	ClientId      string   `json:"clientId"`             // 客户端id
+	ClientKey     string   `json:"clientKey"`            // 客户端key
+	ClientSecret  string   `json:"clientSecret"`         // 客户端秘钥
+	GrantTypeList []string `json:"grantTypeList"`        // 授权类型列表
+	GrantType     string   `json:"grantType"`            // 授权类型（逗号分隔）
+	DeviceType    string   `json:"deviceType"`           // 设备类型
+	ActiveTimeout int64    `json:"activeTimeout,string"` // token活跃超时时间
+	Timeout       int64    `json:"timeout,string"`       // token固定超时时间
+	Status        string   `json:"status"`               // 状态（0正常 1停用）
+}
+
+// ========== 岗位管理相关类型定义 ==========
+type PostReq {
+	PostId       int64  `json:"postId,optional,string"`      // 岗位ID
+	DeptId       int64  `json:"deptId,optional,string"`      // 部门id（单部门）
+	BelongDeptId int64  `json:"belongDeptId,optional,string"` // 归属部门id（部门树）
+	PostCode     string `json:"postCode"`                    // 岗位编码（必填，最大64字符）
+	PostCategory string `json:"postCategory,optional"`       // 岗位类别编码
+	PostName     string `json:"postName"`                    // 岗位名称（必填，最大50字符）
+	PostSort     int32  `json:"postSort,optional"`           // 显示顺序
+	Status       string `json:"status,optional,options=0|1"` // 状态（0正常 1停用）
+	Remark       string `json:"remark,optional"`             // 备注
+}
+
+type PostGetInfoReq {
+	PostId int64 `path:"postId,range=[1:]"` // 岗位ID（必须大于0）
+}
+
+type PostListReq {
+	PostCode     string `form:"postCode,optional"`     // 岗位编码（模糊查询）
+	PostCategory string `form:"postCategory,optional"` // 岗位类别编码（模糊查询）
+	PostName     string `form:"postName,optional"`     // 岗位名称（模糊查询）
+	Status       string `form:"status,optional"`       // 状态（0正常 1停用）
+	DeptId       int64  `form:"deptId,optional,string"` // 部门id（单部门）
+	BelongDeptId int64  `form:"belongDeptId,optional,string"` // 归属部门id（部门树）
+	PageQuery
+}
+
+type PostRemoveReq {
+	PostIds string `path:"postIds"` // 岗位ID串（逗号分隔，不能为空）
+}
+
+type PostOptionSelectReq {
+	PostIds string `form:"postIds,optional"` // 岗位ID串（逗号分隔）
+	DeptId  int64  `form:"deptId,optional,string"` // 部门id
+}
+
+type PostResp {
+	BaseResp
+	Data PostVo `json:"data,omitempty"`
+}
+
+type PostOptionSelectResp {
+	BaseResp
+	Data []PostVo `json:"data,omitempty"`
+}
+
+type PostVo {
+	PostId       int64  `json:"postId,string"` // 岗位ID
+	DeptId       int64  `json:"deptId,string"` // 部门id
+	PostCode     string `json:"postCode"`      // 岗位编码
+	PostCategory string `json:"postCategory"`  // 岗位类别编码
+	PostName     string `json:"postName"`      // 岗位名称
+	PostSort     int32  `json:"postSort"`      // 显示顺序
+	Status       string `json:"status"`        // 状态（0正常 1停用）
+	Remark       string `json:"remark"`        // 备注
+	CreateTime   string `json:"createTime"`    // 创建时间
+	DeptName     string `json:"deptName"`      // 部门名
+}
+
+// ========== 部门管理相关类型定义 ==========
+type DeptReq {
+	DeptId       int64  `json:"deptId,optional,string"`       // 部门id
+	ParentId     int64  `json:"parentId,optional,string"`     // 父部门ID
+	DeptName     string `json:"deptName"`                     // 部门名称（必填，最大30字符）
+	DeptCategory string `json:"deptCategory,optional"`        // 部门类别编码
+	OrderNum     int32  `json:"orderNum,optional"`            // 显示顺序
+	Leader       int64  `json:"leader,optional,string"`       // 负责人
+	Phone        string `json:"phone,optional"`               // 联系电话（最大11字符）
+	Email        string `json:"email,optional"`               // 邮箱（最大50字符）
+	Status       string `json:"status,optional,options=0|1"`   // 状态（0正常 1停用）
+}
+
+type DeptGetInfoReq {
+	DeptId int64 `path:"deptId,range=[1:]"` // 部门ID（必须大于0）
+}
+
+type DeptListReq {
+	DeptId       int64  `form:"deptId,optional,string"`       // 部门id
+	ParentId     int64  `form:"parentId,optional,string"`     // 父部门id
+	DeptName     string `form:"deptName,optional"`             // 部门名称（模糊查询）
+	DeptCategory string `form:"deptCategory,optional"`         // 部门类别编码（模糊查询）
+	Status       string `form:"status,optional"`               // 状态（0正常 1停用）
+	BelongDeptId int64  `form:"belongDeptId,optional,string"` // 归属部门id（部门树）
+}
+
+type DeptListExcludeReq {
+	DeptId int64 `path:"deptId,range=[1:]"` // 部门ID（必须大于0）
+}
+
+type DeptRemoveReq {
+	DeptId int64 `path:"deptId,range=[1:]"` // 部门ID（必须大于0）
+}
+
+type DeptOptionSelectReq {
+	DeptIds string `form:"deptIds,optional"` // 部门ID串（逗号分隔）
+}
+
+type DeptResp {
+	BaseResp
+	Data DeptVo `json:"data,omitempty"`
+}
+
+type DeptListResp {
+	BaseResp
+	Data []DeptVo `json:"data,omitempty"`
+}
+
+type DeptVo {
+	DeptId       int64     `json:"deptId,string"`       // 部门id
+	ParentId     int64     `json:"parentId,string"`     // 父部门id
+	ParentName   string    `json:"parentName"`          // 父部门名称
+	Ancestors    string    `json:"ancestors"`           // 祖级列表
+	DeptName     string    `json:"deptName"`            // 部门名称
+	DeptCategory string    `json:"deptCategory"`        // 部门类别编码
+	OrderNum     int32     `json:"orderNum"`            // 显示顺序
+	Leader       int64     `json:"leader,string"`       // 负责人ID
+	LeaderName   string    `json:"leaderName"`          // 负责人
+	Phone        string    `json:"phone"`               // 联系电话
+	Email        string    `json:"email"`               // 邮箱
+	Status       string    `json:"status"`              // 部门状态（0正常 1停用）
+	CreateTime   string    `json:"createTime"`          // 创建时间
+	Children     []DeptVo  `json:"children,omitempty"`  // 子部门
 }

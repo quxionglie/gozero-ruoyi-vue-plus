@@ -3,11 +3,13 @@ GET {{baseUrl}}/system/menu/getRouters
 Authorization: {{jwtToken}}
 clientid: {{clientid}}
 Content-Type: application/json;charset=UTF-8
+
 ###
 GET {{baseUrl}}/system/dict/data/type/sys_yes_no
 Authorization: {{jwtToken}}
 clientid: {{clientid}}
 Content-Type: application/json;charset=UTF-8
+
 ###
 GET {{baseUrl}}/system/config/list?pageNum=1&pageSize=10
 Authorization: {{jwtToken}}

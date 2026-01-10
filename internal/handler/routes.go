@@ -47,6 +47,48 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 新增客户端管理
+				Method:  http.MethodPost,
+				Path:    "/client",
+				Handler: sys.ClientAddHandler(serverCtx),
+			},
+			{
+				// 修改客户端管理
+				Method:  http.MethodPut,
+				Path:    "/client",
+				Handler: sys.ClientEditHandler(serverCtx),
+			},
+			{
+				// 查询客户端管理详细
+				Method:  http.MethodGet,
+				Path:    "/client/:id",
+				Handler: sys.ClientGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除客户端管理
+				Method:  http.MethodDelete,
+				Path:    "/client/:ids",
+				Handler: sys.ClientRemoveHandler(serverCtx),
+			},
+			{
+				// 状态修改
+				Method:  http.MethodPut,
+				Path:    "/client/changeStatus",
+				Handler: sys.ClientChangeStatusHandler(serverCtx),
+			},
+			{
+				// 导出客户端管理列表
+				Method:  http.MethodPost,
+				Path:    "/client/export",
+				Handler: sys.ClientExportHandler(serverCtx),
+			},
+			{
+				// 查询客户端管理列表
+				Method:  http.MethodGet,
+				Path:    "/client/list",
+				Handler: sys.ClientListHandler(serverCtx),
+			},
+			{
 				// 新增参数配置
 				Method:  http.MethodPost,
 				Path:    "/config",
@@ -99,6 +141,48 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodPut,
 				Path:    "/config/updateByKey",
 				Handler: sys.ConfigUpdateByKeyHandler(serverCtx),
+			},
+			{
+				// 新增部门
+				Method:  http.MethodPost,
+				Path:    "/dept",
+				Handler: sys.DeptAddHandler(serverCtx),
+			},
+			{
+				// 修改部门
+				Method:  http.MethodPut,
+				Path:    "/dept",
+				Handler: sys.DeptEditHandler(serverCtx),
+			},
+			{
+				// 查询部门详细
+				Method:  http.MethodGet,
+				Path:    "/dept/:deptId",
+				Handler: sys.DeptGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除部门
+				Method:  http.MethodDelete,
+				Path:    "/dept/:deptId",
+				Handler: sys.DeptRemoveHandler(serverCtx),
+			},
+			{
+				// 查询部门列表
+				Method:  http.MethodGet,
+				Path:    "/dept/list",
+				Handler: sys.DeptListHandler(serverCtx),
+			},
+			{
+				// 查询部门列表（排除节点）
+				Method:  http.MethodGet,
+				Path:    "/dept/list/exclude/:deptId",
+				Handler: sys.DeptListExcludeHandler(serverCtx),
+			},
+			{
+				// 获取部门选择框列表
+				Method:  http.MethodGet,
+				Path:    "/dept/optionselect",
+				Handler: sys.DeptOptionSelectHandler(serverCtx),
 			},
 			{
 				// 新增字典数据
@@ -225,6 +309,48 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/notice/list",
 				Handler: sys.NoticeListHandler(serverCtx),
+			},
+			{
+				// 新增岗位
+				Method:  http.MethodPost,
+				Path:    "/post",
+				Handler: sys.PostAddHandler(serverCtx),
+			},
+			{
+				// 修改岗位
+				Method:  http.MethodPut,
+				Path:    "/post",
+				Handler: sys.PostEditHandler(serverCtx),
+			},
+			{
+				// 查询岗位详细
+				Method:  http.MethodGet,
+				Path:    "/post/:postId",
+				Handler: sys.PostGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除岗位
+				Method:  http.MethodDelete,
+				Path:    "/post/:postIds",
+				Handler: sys.PostRemoveHandler(serverCtx),
+			},
+			{
+				// 导出岗位列表
+				Method:  http.MethodPost,
+				Path:    "/post/export",
+				Handler: sys.PostExportHandler(serverCtx),
+			},
+			{
+				// 查询岗位列表
+				Method:  http.MethodGet,
+				Path:    "/post/list",
+				Handler: sys.PostListHandler(serverCtx),
+			},
+			{
+				// 获取岗位选择框列表
+				Method:  http.MethodGet,
+				Path:    "/post/optionselect",
+				Handler: sys.PostOptionSelectHandler(serverCtx),
 			},
 			{
 				// 获取用户信息

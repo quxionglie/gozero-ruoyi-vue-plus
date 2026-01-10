@@ -19,6 +19,53 @@ type CaptchaVo struct {
 	Img            string `json:"img,omitempty"`  // 验证码图片（base64）
 }
 
+type ClientGetInfoReq struct {
+	Id int64 `path:"id,range=[1:]"` // id（必须大于0）
+}
+
+type ClientListReq struct {
+	ClientId     string `form:"clientId,optional"`     // 客户端id
+	ClientKey    string `form:"clientKey,optional"`    // 客户端key
+	ClientSecret string `form:"clientSecret,optional"` // 客户端秘钥
+	Status       string `form:"status,optional"`       // 状态（0正常 1停用）
+	PageQuery
+}
+
+type ClientRemoveReq struct {
+	Ids string `path:"ids"` // id串（逗号分隔，不能为空）
+}
+
+type ClientReq struct {
+	Id            int64    `json:"id,optional,string"`          // id
+	ClientId      string   `json:"clientId,optional"`           // 客户端id（自动生成）
+	ClientKey     string   `json:"clientKey"`                   // 客户端key（必填）
+	ClientSecret  string   `json:"clientSecret"`                // 客户端秘钥（必填）
+	GrantTypeList []string `json:"grantTypeList"`               // 授权类型列表（必填）
+	GrantType     string   `json:"grantType,optional"`          // 授权类型（逗号分隔）
+	DeviceType    string   `json:"deviceType,optional"`         // 设备类型
+	ActiveTimeout int64    `json:"activeTimeout,optional"`      // token活跃超时时间
+	Timeout       int64    `json:"timeout,optional"`            // token固定超时时间
+	Status        string   `json:"status,optional,options=0|1"` // 状态（0正常 1停用）
+}
+
+type ClientResp struct {
+	BaseResp
+	Data ClientVo `json:"data,omitempty"`
+}
+
+type ClientVo struct {
+	Id            int64    `json:"id,string"`            // id
+	ClientId      string   `json:"clientId"`             // 客户端id
+	ClientKey     string   `json:"clientKey"`            // 客户端key
+	ClientSecret  string   `json:"clientSecret"`         // 客户端秘钥
+	GrantTypeList []string `json:"grantTypeList"`        // 授权类型列表
+	GrantType     string   `json:"grantType"`            // 授权类型（逗号分隔）
+	DeviceType    string   `json:"deviceType"`           // 设备类型
+	ActiveTimeout int64    `json:"activeTimeout,string"` // token活跃超时时间
+	Timeout       int64    `json:"timeout,string"`       // token固定超时时间
+	Status        string   `json:"status"`               // 状态（0正常 1停用）
+}
+
 type ConfigGetByKeyReq struct {
 	ConfigKey string `path:"configKey"` // 参数键名（不能为空）
 }
@@ -65,6 +112,70 @@ type ConfigVo struct {
 	ConfigType  string `json:"configType"`      // 系统内置（Y是 N否）
 	Remark      string `json:"remark"`          // 备注
 	CreateTime  string `json:"createTime"`      // 创建时间
+}
+
+type DeptGetInfoReq struct {
+	DeptId int64 `path:"deptId,range=[1:]"` // 部门ID（必须大于0）
+}
+
+type DeptListExcludeReq struct {
+	DeptId int64 `path:"deptId,range=[1:]"` // 部门ID（必须大于0）
+}
+
+type DeptListReq struct {
+	DeptId       int64  `form:"deptId,optional,string"`       // 部门id
+	ParentId     int64  `form:"parentId,optional,string"`     // 父部门id
+	DeptName     string `form:"deptName,optional"`            // 部门名称（模糊查询）
+	DeptCategory string `form:"deptCategory,optional"`        // 部门类别编码（模糊查询）
+	Status       string `form:"status,optional"`              // 状态（0正常 1停用）
+	BelongDeptId int64  `form:"belongDeptId,optional,string"` // 归属部门id（部门树）
+}
+
+type DeptListResp struct {
+	BaseResp
+	Data []DeptVo `json:"data,omitempty"`
+}
+
+type DeptOptionSelectReq struct {
+	DeptIds string `form:"deptIds,optional"` // 部门ID串（逗号分隔）
+}
+
+type DeptRemoveReq struct {
+	DeptId int64 `path:"deptId,range=[1:]"` // 部门ID（必须大于0）
+}
+
+type DeptReq struct {
+	DeptId       int64  `json:"deptId,optional,string"`      // 部门id
+	ParentId     int64  `json:"parentId,optional,string"`    // 父部门ID
+	DeptName     string `json:"deptName"`                    // 部门名称（必填，最大30字符）
+	DeptCategory string `json:"deptCategory,optional"`       // 部门类别编码
+	OrderNum     int32  `json:"orderNum,optional"`           // 显示顺序
+	Leader       int64  `json:"leader,optional,string"`      // 负责人
+	Phone        string `json:"phone,optional"`              // 联系电话（最大11字符）
+	Email        string `json:"email,optional"`              // 邮箱（最大50字符）
+	Status       string `json:"status,optional,options=0|1"` // 状态（0正常 1停用）
+}
+
+type DeptResp struct {
+	BaseResp
+	Data DeptVo `json:"data,omitempty"`
+}
+
+type DeptVo struct {
+	DeptId       int64    `json:"deptId,string"`      // 部门id
+	ParentId     int64    `json:"parentId,string"`    // 父部门id
+	ParentName   string   `json:"parentName"`         // 父部门名称
+	Ancestors    string   `json:"ancestors"`          // 祖级列表
+	DeptName     string   `json:"deptName"`           // 部门名称
+	DeptCategory string   `json:"deptCategory"`       // 部门类别编码
+	OrderNum     int32    `json:"orderNum"`           // 显示顺序
+	Leader       int64    `json:"leader,string"`      // 负责人ID
+	LeaderName   string   `json:"leaderName"`         // 负责人
+	Phone        string   `json:"phone"`              // 联系电话
+	Email        string   `json:"email"`              // 邮箱
+	Status       string   `json:"status"`             // 部门状态（0正常 1停用）
+	CreateTime   string   `json:"createTime"`         // 创建时间
+	Children     []DeptVo `json:"children,omitempty"` // 子部门
 }
 
 type DictDataByTypeReq struct {
@@ -243,6 +354,64 @@ type PageQuery struct {
 	PageSize      int32  `form:"pageSize,optional"`      // 分页大小
 	OrderByColumn string `form:"orderByColumn,optional"` // 排序列
 	IsAsc         string `form:"isAsc,optional"`         // 排序方向（desc 或 asc）
+}
+
+type PostGetInfoReq struct {
+	PostId int64 `path:"postId,range=[1:]"` // 岗位ID（必须大于0）
+}
+
+type PostListReq struct {
+	PostCode     string `form:"postCode,optional"`            // 岗位编码（模糊查询）
+	PostCategory string `form:"postCategory,optional"`        // 岗位类别编码（模糊查询）
+	PostName     string `form:"postName,optional"`            // 岗位名称（模糊查询）
+	Status       string `form:"status,optional"`              // 状态（0正常 1停用）
+	DeptId       int64  `form:"deptId,optional,string"`       // 部门id（单部门）
+	BelongDeptId int64  `form:"belongDeptId,optional,string"` // 归属部门id（部门树）
+	PageQuery
+}
+
+type PostOptionSelectReq struct {
+	PostIds string `form:"postIds,optional"`       // 岗位ID串（逗号分隔）
+	DeptId  int64  `form:"deptId,optional,string"` // 部门id
+}
+
+type PostOptionSelectResp struct {
+	BaseResp
+	Data []PostVo `json:"data,omitempty"`
+}
+
+type PostRemoveReq struct {
+	PostIds string `path:"postIds"` // 岗位ID串（逗号分隔，不能为空）
+}
+
+type PostReq struct {
+	PostId       int64  `json:"postId,optional,string"`       // 岗位ID
+	DeptId       int64  `json:"deptId,optional,string"`       // 部门id（单部门）
+	BelongDeptId int64  `json:"belongDeptId,optional,string"` // 归属部门id（部门树）
+	PostCode     string `json:"postCode"`                     // 岗位编码（必填，最大64字符）
+	PostCategory string `json:"postCategory,optional"`        // 岗位类别编码
+	PostName     string `json:"postName"`                     // 岗位名称（必填，最大50字符）
+	PostSort     int32  `json:"postSort,optional"`            // 显示顺序
+	Status       string `json:"status,optional,options=0|1"`  // 状态（0正常 1停用）
+	Remark       string `json:"remark,optional"`              // 备注
+}
+
+type PostResp struct {
+	BaseResp
+	Data PostVo `json:"data,omitempty"`
+}
+
+type PostVo struct {
+	PostId       int64  `json:"postId,string"` // 岗位ID
+	DeptId       int64  `json:"deptId,string"` // 部门id
+	PostCode     string `json:"postCode"`      // 岗位编码
+	PostCategory string `json:"postCategory"`  // 岗位类别编码
+	PostName     string `json:"postName"`      // 岗位名称
+	PostSort     int32  `json:"postSort"`      // 显示顺序
+	Status       string `json:"status"`        // 状态（0正常 1停用）
+	Remark       string `json:"remark"`        // 备注
+	CreateTime   string `json:"createTime"`    // 创建时间
+	DeptName     string `json:"deptName"`      // 部门名
 }
 
 type RouterResp struct {
