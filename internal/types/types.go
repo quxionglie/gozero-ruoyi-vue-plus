@@ -4,7 +4,7 @@
 package types
 
 type BaseResp struct {
-	Code int32  `json:"code,string"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 }
 
@@ -96,7 +96,7 @@ type DictDataResp struct {
 
 type DictDataVo struct {
 	DictCode   int64  `json:"dictCode,string"` // 字典编码
-	DictSort   int32  `json:"dictSort,string"` // 字典排序
+	DictSort   int32  `json:"dictSort"`        // 字典排序
 	DictLabel  string `json:"dictLabel"`       // 字典标签
 	DictValue  string `json:"dictValue"`       // 字典键值
 	DictType   string `json:"dictType"`        // 字典类型
@@ -196,14 +196,14 @@ type RouterVo struct {
 }
 
 type SysRoleVo struct {
-	RoleId     int64  `json:"roleId,string"`   // 角色ID
-	RoleName   string `json:"roleName"`        // 角色名称
-	RoleKey    string `json:"roleKey"`         // 角色权限字符串
-	RoleSort   int32  `json:"roleSort,string"` // 显示顺序
-	DataScope  string `json:"dataScope"`       // 数据范围
-	Status     string `json:"status"`          // 角色状态（0正常 1停用）
-	Remark     string `json:"remark"`          // 备注
-	CreateTime string `json:"createTime"`      // 创建时间
+	RoleId     int64  `json:"roleId,string"` // 角色ID
+	RoleName   string `json:"roleName"`      // 角色名称
+	RoleKey    string `json:"roleKey"`       // 角色权限字符串
+	RoleSort   int32  `json:"roleSort"`      // 显示顺序
+	DataScope  string `json:"dataScope"`     // 数据范围
+	Status     string `json:"status"`        // 角色状态（0正常 1停用）
+	Remark     string `json:"remark"`        // 备注
+	CreateTime string `json:"createTime"`    // 创建时间
 }
 
 type SysUserVo struct {

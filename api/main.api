@@ -8,7 +8,7 @@ info (
 
 // 通用响应结构（公共类型，供所有模块使用）
 type BaseResp {
-	Code int32  `json:"code,string"`
+	Code int32  `json:"code"`
 	Msg  string `json:"msg"`
 }
 
