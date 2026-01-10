@@ -133,11 +133,21 @@ func (m *customSysConfigModel) FindPage(ctx context.Context, query *ConfigQuery,
 		return nil, 0, err
 	}
 
-	// 构建排序
+	// 构建排序（防止 SQL 注入）
+	// 允许排序的列名白名单
+	allowedOrderColumns := map[string]bool{
+		"config_id":   true,
+		"config_name": true,
+		"config_key":  true,
+		"config_type": true,
+		"create_time": true,
+		"update_time": true,
+	}
 	orderBy := "config_id"
-	if pageQuery.OrderByColumn != "" {
+	if pageQuery.OrderByColumn != "" && allowedOrderColumns[pageQuery.OrderByColumn] {
 		orderBy = pageQuery.OrderByColumn
 	}
+	// 只允许 asc 或 desc
 	orderDir := "asc"
 	if pageQuery.IsAsc == "desc" {
 		orderDir = "desc"

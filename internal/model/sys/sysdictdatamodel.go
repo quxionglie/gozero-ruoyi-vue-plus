@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -138,11 +139,41 @@ func (m *customSysDictDataModel) FindPage(ctx context.Context, query *DictDataQu
 		return nil, 0, err
 	}
 
-	// 构建排序
+	// 构建排序（防止 SQL 注入）
+	// 允许排序的列名白名单（支持多列排序，用逗号分隔）
+	allowedOrderColumns := map[string]bool{
+		"dict_code":   true,
+		"dict_sort":   true,
+		"dict_label":  true,
+		"dict_value":  true,
+		"dict_type":   true,
+		"create_time": true,
+		"update_time": true,
+		// 支持多列排序
+		"dict_type, dict_sort": true,
+	}
 	orderBy := "dict_type, dict_sort"
 	if pageQuery.OrderByColumn != "" {
-		orderBy = pageQuery.OrderByColumn
+		// 检查是否为单列或多列排序（多列用逗号分隔）
+		if allowedOrderColumns[pageQuery.OrderByColumn] {
+			orderBy = pageQuery.OrderByColumn
+		} else {
+			// 如果是多列排序，检查每一列是否在白名单中
+			columns := strings.Split(pageQuery.OrderByColumn, ",")
+			allValid := true
+			for _, col := range columns {
+				col = strings.TrimSpace(col)
+				if !allowedOrderColumns[col] {
+					allValid = false
+					break
+				}
+			}
+			if allValid && len(columns) > 0 {
+				orderBy = pageQuery.OrderByColumn
+			}
+		}
 	}
+	// 只允许 asc 或 desc
 	orderDir := "asc"
 	if pageQuery.IsAsc == "desc" {
 		orderDir = "desc"

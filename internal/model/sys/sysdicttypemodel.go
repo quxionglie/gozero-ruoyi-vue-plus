@@ -118,11 +118,20 @@ func (m *customSysDictTypeModel) FindPage(ctx context.Context, query *DictTypeQu
 		return nil, 0, err
 	}
 
-	// 构建排序
+	// 构建排序（防止 SQL 注入）
+	// 允许排序的列名白名单
+	allowedOrderColumns := map[string]bool{
+		"dict_id":     true,
+		"dict_name":   true,
+		"dict_type":   true,
+		"create_time": true,
+		"update_time": true,
+	}
 	orderBy := "dict_id"
-	if pageQuery.OrderByColumn != "" {
+	if pageQuery.OrderByColumn != "" && allowedOrderColumns[pageQuery.OrderByColumn] {
 		orderBy = pageQuery.OrderByColumn
 	}
+	// 只允许 asc 或 desc
 	orderDir := "asc"
 	if pageQuery.IsAsc == "desc" {
 		orderDir = "desc"
