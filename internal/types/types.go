@@ -27,6 +27,13 @@ type ConfigGetInfoReq struct {
 	ConfigId int64 `path:"configId,range=[1:]"` // 参数主键（必须大于0）
 }
 
+type ConfigListReq struct {
+	ConfigName string `form:"configName,optional"` // 参数名称（模糊查询）
+	ConfigKey  string `form:"configKey,optional"`  // 参数键名（模糊查询）
+	ConfigType string `form:"configType,optional"` // 系统内置（Y是 N否）
+	PageQuery
+}
+
 type ConfigRemoveReq struct {
 	ConfigIds string `path:"configIds"` // 参数ID串（逗号分隔，不能为空）
 }
@@ -66,6 +73,13 @@ type DictDataByTypeReq struct {
 
 type DictDataGetInfoReq struct {
 	DictCode int64 `path:"dictCode,range=[1:]"` // 字典编码（必须大于0）
+}
+
+type DictDataListReq struct {
+	DictLabel string `form:"dictLabel,optional"` // 字典标签（模糊查询）
+	DictType  string `form:"dictType,optional"`  // 字典类型
+	Status    string `form:"status,optional"`    // 状态（0正常 1停用）
+	PageQuery
 }
 
 type DictDataListResp struct {
@@ -109,6 +123,13 @@ type DictDataVo struct {
 
 type DictTypeGetInfoReq struct {
 	DictId int64 `path:"dictId,range=[1:]"` // 字典主键（必须大于0）
+}
+
+type DictTypeListReq struct {
+	DictName string `form:"dictName,optional"` // 字典名称（模糊查询）
+	DictType string `form:"dictType,optional"` // 字典类型（模糊查询）
+	Status   string `form:"status,optional"`   // 状态（0正常 1停用）
+	PageQuery
 }
 
 type DictTypeListResp struct {
@@ -176,6 +197,13 @@ type MetaVo struct {
 	NoCache bool   `json:"noCache,omitempty"` // 设置为true，则不会被 <keep-alive>缓存
 	Link    string `json:"link,omitempty"`    // 内链地址（http(s)://开头）
 	Remark  string `json:"remark,omitempty"`  // 备注
+}
+
+type PageQuery struct {
+	PageNum       int32  `form:"pageNum,optional"`       // 当前页数
+	PageSize      int32  `form:"pageSize,optional"`      // 分页大小
+	OrderByColumn string `form:"orderByColumn,optional"` // 排序列
+	IsAsc         string `form:"isAsc,optional"`         // 排序方向（desc 或 asc）
 }
 
 type RouterResp struct {

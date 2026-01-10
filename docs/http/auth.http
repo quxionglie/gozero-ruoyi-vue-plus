@@ -15,8 +15,7 @@ Content-Type: application/json;charset=UTF-8
 
 ### /system/user/getInfo
 GET {{baseUrl}}/system/user/getInfo
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJ0ZW5hbnRJZCI6IjAwMDAwMCIsImV4cCI6MTc2ODU2MzQ1MiwibmJmIjoxNzY3OTU4NjUyLCJpYXQiOjE3Njc5NTg2NTJ9.-tuVowps-8-YVQLI1cZ1k9u1w4EIEQs41lGYnpzKvgc
-clientid: e5cd7e4891bf95d1d19206ce24a7b32e
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
 Content-Type: application/json;charset=UTF-8
-
 ###

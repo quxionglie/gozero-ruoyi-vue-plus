@@ -27,9 +27,19 @@ func NewDictTypeListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dict
 	}
 }
 
-func (l *DictTypeListLogic) DictTypeList() (resp *types.TableDataInfoResp, err error) {
-	// 查询字典类型列表
-	rows, err := l.svcCtx.SysDictTypeModel.FindAll(l.ctx)
+func (l *DictTypeListLogic) DictTypeList(req *types.DictTypeListReq) (resp *types.TableDataInfoResp, err error) {
+	// 设置默认分页参数
+	pageNum := req.PageNum
+	pageSize := req.PageSize
+	if pageNum <= 0 {
+		pageNum = 1
+	}
+	if pageSize <= 0 {
+		pageSize = 10
+	}
+
+	// 使用 SQL 分页查询
+	rows, total, err := l.svcCtx.SysDictTypeModel.FindPage(l.ctx, req.DictName, req.DictType, req.Status, pageNum, pageSize, req.OrderByColumn, req.IsAsc)
 	if err != nil {
 		l.Errorf("查询字典类型列表失败: %v", err)
 		return &types.TableDataInfoResp{
@@ -62,7 +72,7 @@ func (l *DictTypeListLogic) DictTypeList() (resp *types.TableDataInfoResp, err e
 	}
 
 	return &types.TableDataInfoResp{
-		Total: int64(len(voList)),
+		Total: total,
 		Rows:  voList,
 		BaseResp: types.BaseResp{
 			Code: 200,

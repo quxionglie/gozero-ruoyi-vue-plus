@@ -9,13 +9,20 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 	"gozero-ruoyi-vue-plus/internal/logic/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
+	"gozero-ruoyi-vue-plus/internal/types"
 )
 
 // 查询字典数据列表
 func DictDataListHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		var req types.DictDataListReq
+		if err := httpx.Parse(r, &req); err != nil {
+			httpx.ErrorCtx(r.Context(), w, err)
+			return
+		}
+
 		l := sys.NewDictDataListLogic(r.Context(), svcCtx)
-		resp, err := l.DictDataList()
+		resp, err := l.DictDataList(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

@@ -92,7 +92,7 @@ service admin-api {
 	// ========== 字典类型接口 ==========
 	@doc "查询字典类型列表"
 	@handler DictTypeList
-	get /dict/type/list returns (TableDataInfoResp)
+	get /dict/type/list (DictTypeListReq) returns (TableDataInfoResp)
 
 	@doc "导出字典类型列表"
 	@handler DictTypeExport
@@ -125,7 +125,7 @@ service admin-api {
 	// ========== 字典数据接口 ==========
 	@doc "查询字典数据列表"
 	@handler DictDataList
-	get /dict/data/list returns (TableDataInfoResp)
+	get /dict/data/list (DictDataListReq) returns (TableDataInfoResp)
 
 	@doc "导出字典数据列表"
 	@handler DictDataExport
@@ -154,7 +154,7 @@ service admin-api {
 	// ========== 参数配置接口 ==========
 	@doc "查询参数配置列表"
 	@handler ConfigList
-	get /config/list returns (TableDataInfoResp)
+	get /config/list (ConfigListReq) returns (TableDataInfoResp)
 
 	@doc "导出参数配置列表"
 	@handler ConfigExport
@@ -201,6 +201,13 @@ type DictTypeGetInfoReq {
 	DictId int64 `path:"dictId,range=[1:]"` // 字典主键（必须大于0）
 }
 
+type DictTypeListReq {
+	DictName string `form:"dictName,optional"` // 字典名称（模糊查询）
+	DictType string `form:"dictType,optional"` // 字典类型（模糊查询）
+	Status   string `form:"status,optional"`   // 状态（0正常 1停用）
+	PageQuery
+}
+
 type DictTypeRemoveReq {
 	DictIds string `path:"dictIds"` // 字典ID串（逗号分隔，不能为空）
 }
@@ -244,6 +251,13 @@ type DictDataByTypeReq {
 	DictType string `path:"dictType"` // 字典类型（不能为空）
 }
 
+type DictDataListReq {
+	DictLabel string `form:"dictLabel,optional"` // 字典标签（模糊查询）
+	DictType  string `form:"dictType,optional"`  // 字典类型
+	Status    string `form:"status,optional"`    // 状态（0正常 1停用）
+	PageQuery
+}
+
 type DictDataRemoveReq {
 	DictCodes string `path:"dictCodes"` // 字典编码串（逗号分隔，不能为空）
 }
@@ -272,6 +286,13 @@ type DictDataListResp {
 }
 
 // ========== 通用类型定义 ==========
+type PageQuery {
+	PageNum        int32  `form:"pageNum,optional"`        // 当前页数
+	PageSize       int32  `form:"pageSize,optional"`       // 分页大小
+	OrderByColumn  string `form:"orderByColumn,optional"`  // 排序列
+	IsAsc          string `form:"isAsc,optional"`          // 排序方向（desc 或 asc）
+}
+
 type TableDataInfoResp {
 	Total int64       `json:"total,string"` // 总记录数
 	Rows  interface{} `json:"rows"`  // 列表数据
@@ -294,6 +315,13 @@ type ConfigGetInfoReq {
 
 type ConfigGetByKeyReq {
 	ConfigKey string `path:"configKey"` // 参数键名（不能为空）
+}
+
+type ConfigListReq {
+	ConfigName string `form:"configName,optional"` // 参数名称（模糊查询）
+	ConfigKey  string `form:"configKey,optional"`  // 参数键名（模糊查询）
+	ConfigType string `form:"configType,optional"` // 系统内置（Y是 N否）
+	PageQuery
 }
 
 type ConfigRemoveReq {

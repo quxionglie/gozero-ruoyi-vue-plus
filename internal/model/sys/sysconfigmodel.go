@@ -19,6 +19,7 @@ type (
 		FindAll(ctx context.Context) ([]*SysConfig, error)
 		FindByConfigKey(ctx context.Context, configKey string) (*SysConfig, error)
 		CheckConfigKeyUnique(ctx context.Context, configKey string, excludeConfigId int64) (bool, error)
+		FindPage(ctx context.Context, configName, configKey, configType string, pageNum, pageSize int32, orderByColumn, isAsc string) ([]*SysConfig, int64, error)
 	}
 
 	customSysConfigModel struct {
@@ -81,4 +82,56 @@ func (m *customSysConfigModel) CheckConfigKeyUnique(ctx context.Context, configK
 		return false, err
 	}
 	return count == 0, nil
+}
+
+// FindPage 分页查询参数配置（支持条件查询和分页）
+func (m *customSysConfigModel) FindPage(ctx context.Context, configName, configKey, configType string, pageNum, pageSize int32, orderByColumn, isAsc string) ([]*SysConfig, int64, error) {
+	// 构建 WHERE 条件
+	whereClause := "1=1"
+	var args []interface{}
+
+	if configName != "" {
+		whereClause += " and config_name like ?"
+		args = append(args, "%"+configName+"%")
+	}
+	if configKey != "" {
+		whereClause += " and config_key like ?"
+		args = append(args, "%"+configKey+"%")
+	}
+	if configType != "" {
+		whereClause += " and config_type = ?"
+		args = append(args, configType)
+	}
+
+	// 查询总数
+	countQuery := fmt.Sprintf("select count(*) from %s where %s", m.table, whereClause)
+	var total int64
+	err := m.conn.QueryRowPartialCtx(ctx, &total, countQuery, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 构建排序
+	orderBy := "config_id"
+	if orderByColumn != "" {
+		orderBy = orderByColumn
+	}
+	orderDir := "asc"
+	if isAsc == "desc" {
+		orderDir = "desc"
+	}
+
+	// 构建分页查询
+	query := fmt.Sprintf("select %s from %s where %s order by %s %s", sysConfigRows, m.table, whereClause, orderBy, orderDir)
+	if pageSize > 0 {
+		offset := (pageNum - 1) * pageSize
+		query += fmt.Sprintf(" limit %d offset %d", pageSize, offset)
+	}
+
+	var resp []*SysConfig
+	err = m.conn.QueryRowsPartialCtx(ctx, &resp, query, args...)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, 0, err
+	}
+	return resp, total, nil
 }

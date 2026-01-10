@@ -195,3 +195,12 @@ put /system/config 修改参数配置 configId 获取 不到值。报错：type 
 
 2026-01-10T12:08:00+08:00
 自动把我发出的请求文字记录到cursor_chat.txt，你自己的操作日志不要添加
+
+2026-01-10T12:15:00+08:00
+接口/system/dict/data/list也有请求参数、支持分页。参考SysDictDataController.java代码。检查其它list接口是不是也漏了
+
+2026-01-10T12:30:00+08:00
+过滤应该用sql过滤，不要查询全部后再通过代码过滤。如config_list_logic.go就不应该使用l.svcCtx.SysConfigModel.FindAll(l.ctx) 查全部后再通过for过滤。model类要支持分布查询
+
+2026-01-10T12:40:00+08:00
+注意/system/dict/data/list的请求参数是form参数，不是json

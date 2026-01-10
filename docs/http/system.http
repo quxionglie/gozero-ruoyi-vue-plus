@@ -1,29 +1,22 @@
 ###
 GET {{baseUrl}}/system/menu/getRouters
-Accept: application/json, text/plain, */*
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJ0ZW5hbnRJZCI6IjAwMDAwMCIsImV4cCI6MTc2ODYxNDA4NSwibmJmIjoxNzY4MDA5Mjg1LCJpYXQiOjE3NjgwMDkyODV9.uhQh2Q94CZPUaUlGrZyewt3QTxkEUkoF7Jvi9bJvVgU
-clientid: e5cd7e4891bf95d1d19206ce24a7b32e
-
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
+Content-Type: application/json;charset=UTF-8
 ###
 GET {{baseUrl}}/system/dict/data/type/sys_yes_no
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJ0ZW5hbnRJZCI6IjAwMDAwMCIsImV4cCI6MTc2ODYxNDA4NSwibmJmIjoxNzY4MDA5Mjg1LCJpYXQiOjE3NjgwMDkyODV9.uhQh2Q94CZPUaUlGrZyewt3QTxkEUkoF7Jvi9bJvVgU
-clientid: e5cd7e4891bf95d1d19206ce24a7b32e
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
+Content-Type: application/json;charset=UTF-8
+###
+GET {{baseUrl}}/system/config/list?pageNum=1&pageSize=10
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
+Content-Type: application/json;charset=UTF-8
 
 ###
-
-# curl 'http://192.168.3.216:58888/system/config/list?pageNum=1&pageSize=10'
-#  -H 'Accept: application/json, text/plain, */*'
-#  -H 'Accept-Language: zh-CN,zh;q=0.9,en-US;q=0.8,en;q=0.7,ja;q=0.6,zh-TW;q=0.5,fr;q=0.4'
-#  -H 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJ0ZW5hbnRJZCI6IjAwMDAwMCIsImV4cCI6MTc2ODYxNDA4NSwibmJmIjoxNzY4MDA5Mjg1LCJpYXQiOjE3NjgwMDkyODV9.uhQh2Q94CZPUaUlGrZyewt3QTxkEUkoF7Jvi9bJvVgU'
-#  -H 'Connection: keep-alive'
-#  -H 'Content-Language: zh_CN'
-#  -H 'Origin: http://localhost'
-#  -H 'Referer: http://localhost/'
-#  -H 'User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36'
-#  -H 'clientid: e5cd7e4891bf95d1d19206ce24a7b32e'
-#  --insecure
-GET {{baseUrl}}/system/config/list?pageNum=1&pageSize=10
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJ0ZW5hbnRJZCI6IjAwMDAwMCIsImV4cCI6MTc2ODYxNDA4NSwibmJmIjoxNzY4MDA5Mjg1LCJpYXQiOjE3NjgwMDkyODV9.uhQh2Q94CZPUaUlGrZyewt3QTxkEUkoF7Jvi9bJvVgU
-clientid: e5cd7e4891bf95d1d19206ce24a7b32e
-
+GET {{baseUrl}}/system/dict/data/list?pageNum=1&pageSize=10&dictType=sys_yes_no
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
+Content-Type: application/json;charset=UTF-8
 ###
