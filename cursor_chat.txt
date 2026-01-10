@@ -313,3 +313,6 @@ model类统一使用snake case风格,需重命名如sysclientmodel.go改为sys_c
 
 2026-01-10T19:23:14+08:00
 model类*_model.go中sql是否可以用*model_gen.go中*FieldNames代替，你直接写死select的字段很蠢
+
+2026-01-10T20:14:36+08:00
+接口列表.md 迁移到api 目录，并更新url为go-zero模式，如{menuId}改为:menuId
