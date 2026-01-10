@@ -78,421 +78,420 @@ type MetaVo {
 }
 
 @server (
-	prefix: /system
 	group:  sys
 	jwt: Auth
 )
 service admin-api {
 	@doc "获取用户信息"
 	@handler GetUserInfo
-	get /user/getInfo returns (UserInfoResp)
+	get /system/user/getInfo returns (UserInfoResp)
 
 	@doc "获取路由信息"
 	@handler GetRouters
-	get /menu/getRouters returns (RouterResp)
+	get /system/menu/getRouters returns (RouterResp)
 
 	// ========== 字典类型接口 ==========
 	@doc "查询字典类型列表"
 	@handler DictTypeList
-	get /dict/type/list (DictTypeListReq) returns (TableDataInfoResp)
+	get /system/dict/type/list (DictTypeListReq) returns (TableDataInfoResp)
 
 	@doc "导出字典类型列表"
 	@handler DictTypeExport
-	post /dict/type/export returns (BaseResp)
+	post /system/dict/type/export returns (BaseResp)
 
 	@doc "查询字典类型详细"
 	@handler DictTypeGetInfo
-	get /dict/type/:dictId (DictTypeGetInfoReq) returns (DictTypeResp)
+	get /system/dict/type/:dictId (DictTypeGetInfoReq) returns (DictTypeResp)
 
 	@doc "新增字典类型"
 	@handler DictTypeAdd
-	post /dict/type (DictTypeReq) returns (BaseResp)
+	post /system/dict/type (DictTypeReq) returns (BaseResp)
 
 	@doc "修改字典类型"
 	@handler DictTypeEdit
-	put /dict/type (DictTypeReq) returns (BaseResp)
+	put /system/dict/type (DictTypeReq) returns (BaseResp)
 
 	@doc "删除字典类型"
 	@handler DictTypeRemove
-	delete /dict/type/:dictIds (DictTypeRemoveReq) returns (BaseResp)
+	delete /system/dict/type/:dictIds (DictTypeRemoveReq) returns (BaseResp)
 
 	@doc "刷新字典缓存"
 	@handler DictTypeRefreshCache
-	delete /dict/type/refreshCache returns (BaseResp)
+	delete /system/dict/type/refreshCache returns (BaseResp)
 
 	@doc "获取字典选择框列表"
 	@handler DictTypeOptionSelect
-	get /dict/type/optionselect returns (DictTypeListResp)
+	get /system/dict/type/optionselect returns (DictTypeListResp)
 
 	// ========== 字典数据接口 ==========
 	@doc "查询字典数据列表"
 	@handler DictDataList
-	get /dict/data/list (DictDataListReq) returns (TableDataInfoResp)
+	get /system/dict/data/list (DictDataListReq) returns (TableDataInfoResp)
 
 	@doc "导出字典数据列表"
 	@handler DictDataExport
-	post /dict/data/export returns (BaseResp)
+	post /system/dict/data/export returns (BaseResp)
 
 	@doc "查询字典数据详细"
 	@handler DictDataGetInfo
-	get /dict/data/:dictCode (DictDataGetInfoReq) returns (DictDataResp)
+	get /system/dict/data/:dictCode (DictDataGetInfoReq) returns (DictDataResp)
 
 	@doc "根据字典类型查询字典数据"
 	@handler DictDataByType
-	get /dict/data/type/:dictType (DictDataByTypeReq) returns (DictDataListResp)
+	get /system/dict/data/type/:dictType (DictDataByTypeReq) returns (DictDataListResp)
 
 	@doc "新增字典数据"
 	@handler DictDataAdd
-	post /dict/data (DictDataReq) returns (BaseResp)
+	post /system/dict/data (DictDataReq) returns (BaseResp)
 
 	@doc "修改字典数据"
 	@handler DictDataEdit
-	put /dict/data (DictDataReq) returns (BaseResp)
+	put /system/dict/data (DictDataReq) returns (BaseResp)
 
 	@doc "删除字典数据"
 	@handler DictDataRemove
-	delete /dict/data/:dictCodes (DictDataRemoveReq) returns (BaseResp)
+	delete /system/dict/data/:dictCodes (DictDataRemoveReq) returns (BaseResp)
 
 	// ========== 参数配置接口 ==========
 	@doc "查询参数配置列表"
 	@handler ConfigList
-	get /config/list (ConfigListReq) returns (TableDataInfoResp)
+	get /system/config/list (ConfigListReq) returns (TableDataInfoResp)
 
 	@doc "导出参数配置列表"
 	@handler ConfigExport
-	post /config/export returns (BaseResp)
+	post /system/config/export returns (BaseResp)
 
 	@doc "查询参数配置详细"
 	@handler ConfigGetInfo
-	get /config/:configId (ConfigGetInfoReq) returns (ConfigResp)
+	get /system/config/:configId (ConfigGetInfoReq) returns (ConfigResp)
 
 	@doc "根据参数键名查询参数值"
 	@handler ConfigGetByKey
-	get /config/configKey/:configKey (ConfigGetByKeyReq) returns (ConfigValueResp)
+	get /system/config/configKey/:configKey (ConfigGetByKeyReq) returns (ConfigValueResp)
 
 	@doc "新增参数配置"
 	@handler ConfigAdd
-	post /config (ConfigReq) returns (BaseResp)
+	post /system/config (ConfigReq) returns (BaseResp)
 
 	@doc "修改参数配置"
 	@handler ConfigEdit
-	put /config (ConfigReq) returns (BaseResp)
+	put /system/config (ConfigReq) returns (BaseResp)
 
 	@doc "根据参数键名修改参数配置"
 	@handler ConfigUpdateByKey
-	put /config/updateByKey (ConfigReq) returns (BaseResp)
+	put /system/config/updateByKey (ConfigReq) returns (BaseResp)
 
 	@doc "删除参数配置"
 	@handler ConfigRemove
-	delete /config/:configIds (ConfigRemoveReq) returns (BaseResp)
+	delete /system/config/:configIds (ConfigRemoveReq) returns (BaseResp)
 
 	@doc "刷新参数缓存"
 	@handler ConfigRefreshCache
-	delete /config/refreshCache returns (BaseResp)
+	delete /system/config/refreshCache returns (BaseResp)
 
 	// ========== 通知公告接口 ==========
 	@doc "查询通知公告列表"
 	@handler NoticeList
-	get /notice/list (NoticeListReq) returns (TableDataInfoResp)
+	get /system/notice/list (NoticeListReq) returns (TableDataInfoResp)
 
 	@doc "查询通知公告详细"
 	@handler NoticeGetInfo
-	get /notice/:noticeId (NoticeGetInfoReq) returns (NoticeResp)
+	get /system/notice/:noticeId (NoticeGetInfoReq) returns (NoticeResp)
 
 	@doc "新增通知公告"
 	@handler NoticeAdd
-	post /notice (NoticeReq) returns (BaseResp)
+	post /system/notice (NoticeReq) returns (BaseResp)
 
 	@doc "修改通知公告"
 	@handler NoticeEdit
-	put /notice (NoticeReq) returns (BaseResp)
+	put /system/notice (NoticeReq) returns (BaseResp)
 
 	@doc "删除通知公告"
 	@handler NoticeRemove
-	delete /notice/:noticeIds (NoticeRemoveReq) returns (BaseResp)
+	delete /system/notice/:noticeIds (NoticeRemoveReq) returns (BaseResp)
 
 	// ========== 客户端管理接口 ==========
 	@doc "查询客户端管理列表"
 	@handler ClientList
-	get /client/list (ClientListReq) returns (TableDataInfoResp)
+	get /system/client/list (ClientListReq) returns (TableDataInfoResp)
 
 	@doc "导出客户端管理列表"
 	@handler ClientExport
-	post /client/export returns (BaseResp)
+	post /system/client/export returns (BaseResp)
 
 	@doc "查询客户端管理详细"
 	@handler ClientGetInfo
-	get /client/:id (ClientGetInfoReq) returns (ClientResp)
+	get /system/client/:id (ClientGetInfoReq) returns (ClientResp)
 
 	@doc "新增客户端管理"
 	@handler ClientAdd
-	post /client (ClientReq) returns (BaseResp)
+	post /system/client (ClientReq) returns (BaseResp)
 
 	@doc "修改客户端管理"
 	@handler ClientEdit
-	put /client (ClientReq) returns (BaseResp)
+	put /system/client (ClientReq) returns (BaseResp)
 
 	@doc "状态修改"
 	@handler ClientChangeStatus
-	put /client/changeStatus (ClientReq) returns (BaseResp)
+	put /system/client/changeStatus (ClientReq) returns (BaseResp)
 
 	@doc "删除客户端管理"
 	@handler ClientRemove
-	delete /client/:ids (ClientRemoveReq) returns (BaseResp)
+	delete /system/client/:ids (ClientRemoveReq) returns (BaseResp)
 
 	// ========== 岗位管理接口 ==========
 	@doc "查询岗位列表"
 	@handler PostList
-	get /post/list (PostListReq) returns (TableDataInfoResp)
+	get /system/post/list (PostListReq) returns (TableDataInfoResp)
 
 	@doc "导出岗位列表"
 	@handler PostExport
-	post /post/export returns (BaseResp)
+	post /system/post/export returns (BaseResp)
 
 	@doc "查询岗位详细"
 	@handler PostGetInfo
-	get /post/:postId (PostGetInfoReq) returns (PostResp)
+	get /system/post/:postId (PostGetInfoReq) returns (PostResp)
 
 	@doc "新增岗位"
 	@handler PostAdd
-	post /post (PostReq) returns (BaseResp)
+	post /system/post (PostReq) returns (BaseResp)
 
 	@doc "修改岗位"
 	@handler PostEdit
-	put /post (PostReq) returns (BaseResp)
+	put /system/post (PostReq) returns (BaseResp)
 
 	@doc "删除岗位"
 	@handler PostRemove
-	delete /post/:postIds (PostRemoveReq) returns (BaseResp)
+	delete /system/post/:postIds (PostRemoveReq) returns (BaseResp)
 
 	@doc "获取岗位选择框列表"
 	@handler PostOptionSelect
-	get /post/optionselect (PostOptionSelectReq) returns (PostOptionSelectResp)
+	get /system/post/optionselect (PostOptionSelectReq) returns (PostOptionSelectResp)
 
 	// ========== 部门管理接口 ==========
 	@doc "查询部门列表"
 	@handler DeptList
-	get /dept/list (DeptListReq) returns (DeptListResp)
+	get /system/dept/list (DeptListReq) returns (DeptListResp)
 
 	@doc "查询部门列表（排除节点）"
 	@handler DeptListExclude
-	get /dept/list/exclude/:deptId (DeptListExcludeReq) returns (DeptListResp)
+	get /system/dept/list/exclude/:deptId (DeptListExcludeReq) returns (DeptListResp)
 
 	@doc "查询部门详细"
 	@handler DeptGetInfo
-	get /dept/:deptId (DeptGetInfoReq) returns (DeptResp)
+	get /system/dept/:deptId (DeptGetInfoReq) returns (DeptResp)
 
 	@doc "新增部门"
 	@handler DeptAdd
-	post /dept (DeptReq) returns (BaseResp)
+	post /system/dept (DeptReq) returns (BaseResp)
 
 	@doc "修改部门"
 	@handler DeptEdit
-	put /dept (DeptReq) returns (BaseResp)
+	put /system/dept (DeptReq) returns (BaseResp)
 
 	@doc "删除部门"
 	@handler DeptRemove
-	delete /dept/:deptId (DeptRemoveReq) returns (BaseResp)
+	delete /system/dept/:deptId (DeptRemoveReq) returns (BaseResp)
 
 	@doc "获取部门选择框列表"
 	@handler DeptOptionSelect
-	get /dept/optionselect (DeptOptionSelectReq) returns (DeptListResp)
+	get /system/dept/optionselect (DeptOptionSelectReq) returns (DeptListResp)
 
 	// ========== 菜单管理接口 ==========
 	@doc "查询菜单列表"
 	@handler MenuList
-	get /menu/list (MenuListReq) returns (MenuListResp)
+	get /system/menu/list (MenuListReq) returns (MenuListResp)
 
 	@doc "查询菜单详细"
 	@handler MenuGetInfo
-	get /menu/:menuId (MenuGetInfoReq) returns (MenuResp)
+	get /system/menu/:menuId (MenuGetInfoReq) returns (MenuResp)
 
 	@doc "获取菜单下拉树列表"
 	@handler MenuTreeselect
-	get /menu/treeselect (MenuTreeselectReq) returns (MenuTreeselectResp)
+	get /system/menu/treeselect (MenuTreeselectReq) returns (MenuTreeselectResp)
 
 	@doc "新增菜单"
 	@handler MenuAdd
-	post /menu (MenuReq) returns (BaseResp)
+	post /system/menu (MenuReq) returns (BaseResp)
 
 	@doc "修改菜单"
 	@handler MenuEdit
-	put /menu (MenuReq) returns (BaseResp)
+	put /system/menu (MenuReq) returns (BaseResp)
 
 	@doc "删除菜单"
 	@handler MenuRemove
-	delete /menu/:menuId (MenuRemoveReq) returns (BaseResp)
+	delete /system/menu/:menuId (MenuRemoveReq) returns (BaseResp)
 
 	@doc "批量级联删除菜单"
 	@handler MenuCascadeRemove
-	delete /menu/cascade/:menuIds (MenuCascadeRemoveReq) returns (BaseResp)
+	delete /system/menu/cascade/:menuIds (MenuCascadeRemoveReq) returns (BaseResp)
 
 	@doc "获取角色菜单树"
 	@handler MenuRoleMenuTreeselect
-	get /menu/roleMenuTreeselect/:roleId (MenuRoleMenuTreeselectReq) returns (MenuTreeselectResp)
+	get /system/menu/roleMenuTreeselect/:roleId (MenuRoleMenuTreeselectReq) returns (MenuTreeselectResp)
 
 	// ========== ROLE角色管理接口 ==========
 	@doc "获取角色信息列表"
 	@handler RoleList
-	get /role/list (RoleListReq) returns (RoleListResp)
+	get /system/role/list (RoleListReq) returns (RoleListResp)
 
 	@doc "导出角色信息列表"
 	@handler RoleExport
-	post /role/export (RoleListReq) returns (BaseResp)
+	post /system/role/export (RoleListReq) returns (BaseResp)
 
 	@doc "根据角色编号获取详细信息"
 	@handler RoleGetInfo
-	get /role/:roleId (RoleGetInfoReq) returns (RoleResp)
+	get /system/role/:roleId (RoleGetInfoReq) returns (RoleResp)
 
 	@doc "新增角色"
 	@handler RoleAdd
-	post /role (RoleReq) returns (BaseResp)
+	post /system/role (RoleReq) returns (BaseResp)
 
 	@doc "修改保存角色"
 	@handler RoleEdit
-	put /role (RoleReq) returns (BaseResp)
+	put /system/role (RoleReq) returns (BaseResp)
 
 	@doc "修改保存数据权限"
 	@handler RoleDataScope
-	put /role/dataScope (RoleReq) returns (BaseResp)
+	put /system/role/dataScope (RoleReq) returns (BaseResp)
 
 	@doc "状态修改"
 	@handler RoleChangeStatus
-	put /role/changeStatus (RoleChangeStatusReq) returns (BaseResp)
+	put /system/role/changeStatus (RoleChangeStatusReq) returns (BaseResp)
 
 	@doc "删除角色"
 	@handler RoleRemove
-	delete /role/:roleIds (RoleRemoveReq) returns (BaseResp)
+	delete /system/role/:roleIds (RoleRemoveReq) returns (BaseResp)
 
 	@doc "获取角色选择框列表"
 	@handler RoleOptionSelect
-	get /role/optionselect (RoleOptionSelectReq) returns (RoleOptionSelectResp)
+	get /system/role/optionselect (RoleOptionSelectReq) returns (RoleOptionSelectResp)
 
 	@doc "查询已分配用户角色列表"
 	@handler RoleAuthUserAllocatedList
-	get /role/authUser/allocatedList (RoleAuthUserAllocatedListReq) returns (UserListResp)
+	get /system/role/authUser/allocatedList (RoleAuthUserAllocatedListReq) returns (UserListResp)
 
 	@doc "查询未分配用户角色列表"
 	@handler RoleAuthUserUnallocatedList
-	get /role/authUser/unallocatedList (RoleAuthUserUnallocatedListReq) returns (UserListResp)
+	get /system/role/authUser/unallocatedList (RoleAuthUserUnallocatedListReq) returns (UserListResp)
 
 	@doc "取消授权用户"
 	@handler RoleAuthUserCancel
-	put /role/authUser/cancel (RoleAuthUserCancelReq) returns (BaseResp)
+	put /system/role/authUser/cancel (RoleAuthUserCancelReq) returns (BaseResp)
 
 	@doc "批量取消授权用户"
 	@handler RoleAuthUserCancelAll
-	put /role/authUser/cancelAll (RoleAuthUserCancelAllReq) returns (BaseResp)
+	put /system/role/authUser/cancelAll (RoleAuthUserCancelAllReq) returns (BaseResp)
 
 	@doc "批量选择用户授权"
 	@handler RoleAuthUserSelectAll
-	put /role/authUser/selectAll (RoleAuthUserSelectAllReq) returns (BaseResp)
+	put /system/role/authUser/selectAll (RoleAuthUserSelectAllReq) returns (BaseResp)
 
 	@doc "获取对应角色部门树列表"
 	@handler RoleDeptTree
-	get /role/deptTree/:roleId (RoleDeptTreeReq) returns (DeptTreeSelectResp)
+	get /system/role/deptTree/:roleId (RoleDeptTreeReq) returns (DeptTreeSelectResp)
 
 	// ========== USER用户管理接口 ==========
 	@doc "查询用户列表"
 	@handler UserList
-	get /user/list (UserListReq) returns (UserListResp)
+	get /system/user/list (UserListReq) returns (UserListResp)
 
 	@doc "导出用户列表"
 	@handler UserExport
-	post /user/export (UserListReq) returns (BaseResp)
+	post /system/user/export (UserListReq) returns (BaseResp)
 
 	@doc "导入用户数据"
 	@handler UserImportData
-	post /user/importData returns (BaseResp)
+	post /system/user/importData returns (BaseResp)
 
 	@doc "获取导入模板"
 	@handler UserImportTemplate
-	post /user/importTemplate returns (BaseResp)
+	post /system/user/importTemplate returns (BaseResp)
 
 	@doc "根据用户编号获取详细信息"
 	@handler UserGetInfo
-	get /user/ (UserGetInfoReq) returns (UserDetailResp)
+	get /system/user/ (UserGetInfoReq) returns (UserDetailResp)
 
 	@doc "根据用户编号获取详细信息"
 	@handler UserGetInfoById
-	get /user/:userId (UserGetInfoReq) returns (UserDetailResp)
+	get /system/user/:userId (UserGetInfoReq) returns (UserDetailResp)
 
 	@doc "新增用户"
 	@handler UserAdd
-	post /user (UserReq) returns (BaseResp)
+	post /system/user (UserReq) returns (BaseResp)
 
 	@doc "修改用户"
 	@handler UserEdit
-	put /user (UserReq) returns (BaseResp)
+	put /system/user (UserReq) returns (BaseResp)
 
 	@doc "删除用户"
 	@handler UserRemove
-	delete /user/:userIds (UserRemoveReq) returns (BaseResp)
+	delete /system/user/:userIds (UserRemoveReq) returns (BaseResp)
 
 	@doc "根据用户ID串批量获取用户基础信息"
 	@handler UserOptionSelect
-	get /user/optionselect (UserOptionSelectReq) returns (UserOptionSelectResp)
+	get /system/user/optionselect (UserOptionSelectReq) returns (UserOptionSelectResp)
 
 	@doc "重置密码"
 	@handler UserResetPwd
-	put /user/resetPwd (UserResetPwdReq) returns (BaseResp)
+	put /system/user/resetPwd (UserResetPwdReq) returns (BaseResp)
 
 	@doc "状态修改"
 	@handler UserChangeStatus
-	put /user/changeStatus (UserChangeStatusReq) returns (BaseResp)
+	put /system/user/changeStatus (UserChangeStatusReq) returns (BaseResp)
 
 	@doc "根据用户编号获取授权角色"
 	@handler UserAuthRoleGet
-	get /user/authRole/:userId (UserAuthRoleGetReq) returns (UserDetailResp)
+	get /system/user/authRole/:userId (UserAuthRoleGetReq) returns (UserDetailResp)
 
 	@doc "用户授权角色"
 	@handler UserAuthRole
-	put /user/authRole (UserAuthRoleReq) returns (BaseResp)
+	put /system/user/authRole (UserAuthRoleReq) returns (BaseResp)
 
 	@doc "获取部门树列表"
 	@handler UserDeptTree
-	get /user/deptTree returns (DeptListResp)
+	get /system/user/deptTree returns (DeptListResp)
 
 	@doc "获取部门下的所有用户信息"
 	@handler UserListByDept
-	get /user/list/dept/:deptId (UserListByDeptReq) returns (UserListByDeptResp)
+	get /system/user/list/dept/:deptId (UserListByDeptReq) returns (UserListByDeptResp)
 
 	@doc "个人信息"
 	@handler UserProfile
-	get /user/profile returns (UserProfileResp)
+	get /system/user/profile returns (UserProfileResp)
 
 	@doc "修改用户信息"
 	@handler UserProfileUpdate
-	put /user/profile (UserProfileReq) returns (BaseResp)
+	put /system/user/profile (UserProfileReq) returns (BaseResp)
 
 	@doc "重置密码"
 	@handler UserProfileUpdatePwd
-	put /user/profile/updatePwd (UserPasswordReq) returns (BaseResp)
+	put /system/user/profile/updatePwd (UserPasswordReq) returns (BaseResp)
 
 	@doc "头像上传"
 	@handler UserProfileAvatar
-	post /user/profile/avatar returns (BaseResp)
+	post /system/user/profile/avatar returns (BaseResp)
 
 	// ========== OSS对象存储接口 ==========
 	@doc "查询OSS对象存储列表"
 	@handler OssList
-	get /resource/oss/list (OssListReq) returns (OssListResp)
+	get /system/resource/oss/list (OssListReq) returns (OssListResp)
 
 	@doc "查询OSS对象基于id串"
 	@handler OssListByIds
-	get /resource/oss/listByIds/:ossIds (OssListByIdsReq) returns (OssListResp)
+	get /system/resource/oss/listByIds/:ossIds (OssListByIdsReq) returns (OssListResp)
 
 	@doc "上传OSS对象存储"
 	@handler OssUpload
-	post /resource/oss/upload (OssUploadReq) returns (OssUploadResp)
+	post /system/resource/oss/upload (OssUploadReq) returns (OssUploadResp)
 
 	@doc "下载OSS对象"
 	@handler OssDownload
-	get /resource/oss/download/:ossId (OssDownloadReq) returns (OssDownloadResp)
+	get /system/resource/oss/download/:ossId (OssDownloadReq) returns (OssDownloadResp)
 
 	@doc "删除OSS对象存储"
 	@handler OssRemove
-	delete /resource/oss/:ossIds (OssRemoveReq) returns (BaseResp)
+	delete /system/resource/oss/:ossIds (OssRemoveReq) returns (BaseResp)
 }
 
 // ========== 字典类型相关类型定义 ==========

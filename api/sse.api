@@ -7,16 +7,15 @@ info (
 )
 
 @server (
-	prefix: /resource/sse
 	group:  sse
 )
 service admin-api {
 	@doc "建立 SSE 连接"
 	@handler SseConnect
-	get / returns (BaseResp)
+	get /resource/sse returns (BaseResp)
 
 	@doc "关闭 SSE 连接"
 	@handler SseClose
-	get /close returns (BaseResp)
+	get /resource/sse/close returns (BaseResp)
 }
 

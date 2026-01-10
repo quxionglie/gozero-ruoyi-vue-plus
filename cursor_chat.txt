@@ -316,3 +316,6 @@ model类*_model.go中sql是否可以用*model_gen.go中*FieldNames代替，你�
 
 2026-01-10T20:14:36+08:00
 接口列表.md 迁移到api 目录，并更新url为go-zero模式，如{menuId}改为:menuId
+
+2026-01-10T20:28:23+08:00
+*.api的中service不用prefix了，prefix的值合并到各个url中

@@ -22,3 +22,10 @@ Authorization: {{jwtToken}}
 clientid: {{clientid}}
 Content-Type: application/json;charset=UTF-8
 ###
+
+###
+GET {{baseUrl}}/system/user/deptTree?pageNum=1&pageSize=10&dictType=sys_yes_no
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
+Content-Type: application/json;charset=UTF-8
+###

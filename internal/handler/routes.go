@@ -21,29 +21,28 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 生成验证码，返回4位数字验证码图片和唯一标识
 				Method:  http.MethodGet,
-				Path:    "/code",
+				Path:    "/auth/code",
 				Handler: auth.GetCodeHandler(serverCtx),
 			},
 			{
 				// 登录方法，支持密码登录等授权类型
 				Method:  http.MethodPost,
-				Path:    "/login",
+				Path:    "/auth/login",
 				Handler: auth.LoginHandler(serverCtx),
 			},
 			{
 				// 退出登录
 				Method:  http.MethodPost,
-				Path:    "/logout",
+				Path:    "/auth/logout",
 				Handler: auth.LogoutHandler(serverCtx),
 			},
 			{
 				// 登录页面租户下拉框，获取可用租户列表
 				Method:  http.MethodGet,
-				Path:    "/tenant/list",
+				Path:    "/auth/tenant/list",
 				Handler: auth.TenantListHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/auth"),
 	)
 
 	server.AddRoutes(
@@ -51,90 +50,89 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 获取缓存监控列表
 				Method:  http.MethodGet,
-				Path:    "/cache",
+				Path:    "/monitor/cache",
 				Handler: monitor.CacheGetInfoHandler(serverCtx),
 			},
 			{
 				// 批量删除登录日志
 				Method:  http.MethodDelete,
-				Path:    "/logininfor/:infoIds",
+				Path:    "/monitor/logininfor/:infoIds",
 				Handler: monitor.LogininforRemoveHandler(serverCtx),
 			},
 			{
 				// 清理系统访问记录
 				Method:  http.MethodDelete,
-				Path:    "/logininfor/clean",
+				Path:    "/monitor/logininfor/clean",
 				Handler: monitor.LogininforCleanHandler(serverCtx),
 			},
 			{
 				// 导出系统访问记录列表
 				Method:  http.MethodPost,
-				Path:    "/logininfor/export",
+				Path:    "/monitor/logininfor/export",
 				Handler: monitor.LogininforExportHandler(serverCtx),
 			},
 			{
 				// 获取系统访问记录列表
 				Method:  http.MethodGet,
-				Path:    "/logininfor/list",
+				Path:    "/monitor/logininfor/list",
 				Handler: monitor.LogininforListHandler(serverCtx),
 			},
 			{
 				// 解锁用户
 				Method:  http.MethodGet,
-				Path:    "/logininfor/unlock/:userName",
+				Path:    "/monitor/logininfor/unlock/:userName",
 				Handler: monitor.LogininforUnlockHandler(serverCtx),
 			},
 			{
 				// 获取当前用户登录在线设备
 				Method:  http.MethodGet,
-				Path:    "/online",
+				Path:    "/monitor/online",
 				Handler: monitor.OnlineGetInfoHandler(serverCtx),
 			},
 			{
 				// 强退用户
 				Method:  http.MethodDelete,
-				Path:    "/online/:tokenId",
+				Path:    "/monitor/online/:tokenId",
 				Handler: monitor.OnlineRemoveHandler(serverCtx),
 			},
 			{
 				// 获取在线用户监控列表
 				Method:  http.MethodGet,
-				Path:    "/online/list",
+				Path:    "/monitor/online/list",
 				Handler: monitor.OnlineListHandler(serverCtx),
 			},
 			{
 				// 强退当前在线设备
 				Method:  http.MethodDelete,
-				Path:    "/online/myself/:tokenId",
+				Path:    "/monitor/online/myself/:tokenId",
 				Handler: monitor.OnlineRemoveMyselfHandler(serverCtx),
 			},
 			{
 				// 批量删除操作日志记录
 				Method:  http.MethodDelete,
-				Path:    "/operlog/:operIds",
+				Path:    "/monitor/operlog/:operIds",
 				Handler: monitor.OperLogRemoveHandler(serverCtx),
 			},
 			{
 				// 清理操作日志记录
 				Method:  http.MethodDelete,
-				Path:    "/operlog/clean",
+				Path:    "/monitor/operlog/clean",
 				Handler: monitor.OperLogCleanHandler(serverCtx),
 			},
 			{
 				// 导出操作日志记录列表
 				Method:  http.MethodPost,
-				Path:    "/operlog/export",
+				Path:    "/monitor/operlog/export",
 				Handler: monitor.OperLogExportHandler(serverCtx),
 			},
 			{
 				// 获取操作日志记录列表
 				Method:  http.MethodGet,
-				Path:    "/operlog/list",
+				Path:    "/monitor/operlog/list",
 				Handler: monitor.OperLogListHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/monitor"),
 	)
 
 	server.AddRoutes(
@@ -142,17 +140,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 建立 SSE 连接
 				Method:  http.MethodGet,
-				Path:    "/",
+				Path:    "/resource/sse",
 				Handler: sse.SseConnectHandler(serverCtx),
 			},
 			{
 				// 关闭 SSE 连接
 				Method:  http.MethodGet,
-				Path:    "/close",
+				Path:    "/resource/sse/close",
 				Handler: sse.SseCloseHandler(serverCtx),
 			},
 		},
-		rest.WithPrefix("/resource/sse"),
 	)
 
 	server.AddRoutes(
@@ -160,605 +157,604 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				// 新增客户端管理
 				Method:  http.MethodPost,
-				Path:    "/client",
+				Path:    "/system/client",
 				Handler: sys.ClientAddHandler(serverCtx),
 			},
 			{
 				// 修改客户端管理
 				Method:  http.MethodPut,
-				Path:    "/client",
+				Path:    "/system/client",
 				Handler: sys.ClientEditHandler(serverCtx),
 			},
 			{
 				// 查询客户端管理详细
 				Method:  http.MethodGet,
-				Path:    "/client/:id",
+				Path:    "/system/client/:id",
 				Handler: sys.ClientGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除客户端管理
 				Method:  http.MethodDelete,
-				Path:    "/client/:ids",
+				Path:    "/system/client/:ids",
 				Handler: sys.ClientRemoveHandler(serverCtx),
 			},
 			{
 				// 状态修改
 				Method:  http.MethodPut,
-				Path:    "/client/changeStatus",
+				Path:    "/system/client/changeStatus",
 				Handler: sys.ClientChangeStatusHandler(serverCtx),
 			},
 			{
 				// 导出客户端管理列表
 				Method:  http.MethodPost,
-				Path:    "/client/export",
+				Path:    "/system/client/export",
 				Handler: sys.ClientExportHandler(serverCtx),
 			},
 			{
 				// 查询客户端管理列表
 				Method:  http.MethodGet,
-				Path:    "/client/list",
+				Path:    "/system/client/list",
 				Handler: sys.ClientListHandler(serverCtx),
 			},
 			{
 				// 新增参数配置
 				Method:  http.MethodPost,
-				Path:    "/config",
+				Path:    "/system/config",
 				Handler: sys.ConfigAddHandler(serverCtx),
 			},
 			{
 				// 修改参数配置
 				Method:  http.MethodPut,
-				Path:    "/config",
+				Path:    "/system/config",
 				Handler: sys.ConfigEditHandler(serverCtx),
 			},
 			{
 				// 查询参数配置详细
 				Method:  http.MethodGet,
-				Path:    "/config/:configId",
+				Path:    "/system/config/:configId",
 				Handler: sys.ConfigGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除参数配置
 				Method:  http.MethodDelete,
-				Path:    "/config/:configIds",
+				Path:    "/system/config/:configIds",
 				Handler: sys.ConfigRemoveHandler(serverCtx),
 			},
 			{
 				// 根据参数键名查询参数值
 				Method:  http.MethodGet,
-				Path:    "/config/configKey/:configKey",
+				Path:    "/system/config/configKey/:configKey",
 				Handler: sys.ConfigGetByKeyHandler(serverCtx),
 			},
 			{
 				// 导出参数配置列表
 				Method:  http.MethodPost,
-				Path:    "/config/export",
+				Path:    "/system/config/export",
 				Handler: sys.ConfigExportHandler(serverCtx),
 			},
 			{
 				// 查询参数配置列表
 				Method:  http.MethodGet,
-				Path:    "/config/list",
+				Path:    "/system/config/list",
 				Handler: sys.ConfigListHandler(serverCtx),
 			},
 			{
 				// 刷新参数缓存
 				Method:  http.MethodDelete,
-				Path:    "/config/refreshCache",
+				Path:    "/system/config/refreshCache",
 				Handler: sys.ConfigRefreshCacheHandler(serverCtx),
 			},
 			{
 				// 根据参数键名修改参数配置
 				Method:  http.MethodPut,
-				Path:    "/config/updateByKey",
+				Path:    "/system/config/updateByKey",
 				Handler: sys.ConfigUpdateByKeyHandler(serverCtx),
 			},
 			{
 				// 新增部门
 				Method:  http.MethodPost,
-				Path:    "/dept",
+				Path:    "/system/dept",
 				Handler: sys.DeptAddHandler(serverCtx),
 			},
 			{
 				// 修改部门
 				Method:  http.MethodPut,
-				Path:    "/dept",
+				Path:    "/system/dept",
 				Handler: sys.DeptEditHandler(serverCtx),
 			},
 			{
 				// 查询部门详细
 				Method:  http.MethodGet,
-				Path:    "/dept/:deptId",
+				Path:    "/system/dept/:deptId",
 				Handler: sys.DeptGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除部门
 				Method:  http.MethodDelete,
-				Path:    "/dept/:deptId",
+				Path:    "/system/dept/:deptId",
 				Handler: sys.DeptRemoveHandler(serverCtx),
 			},
 			{
 				// 查询部门列表
 				Method:  http.MethodGet,
-				Path:    "/dept/list",
+				Path:    "/system/dept/list",
 				Handler: sys.DeptListHandler(serverCtx),
 			},
 			{
 				// 查询部门列表（排除节点）
 				Method:  http.MethodGet,
-				Path:    "/dept/list/exclude/:deptId",
+				Path:    "/system/dept/list/exclude/:deptId",
 				Handler: sys.DeptListExcludeHandler(serverCtx),
 			},
 			{
 				// 获取部门选择框列表
 				Method:  http.MethodGet,
-				Path:    "/dept/optionselect",
+				Path:    "/system/dept/optionselect",
 				Handler: sys.DeptOptionSelectHandler(serverCtx),
 			},
 			{
 				// 新增字典数据
 				Method:  http.MethodPost,
-				Path:    "/dict/data",
+				Path:    "/system/dict/data",
 				Handler: sys.DictDataAddHandler(serverCtx),
 			},
 			{
 				// 修改字典数据
 				Method:  http.MethodPut,
-				Path:    "/dict/data",
+				Path:    "/system/dict/data",
 				Handler: sys.DictDataEditHandler(serverCtx),
 			},
 			{
 				// 查询字典数据详细
 				Method:  http.MethodGet,
-				Path:    "/dict/data/:dictCode",
+				Path:    "/system/dict/data/:dictCode",
 				Handler: sys.DictDataGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除字典数据
 				Method:  http.MethodDelete,
-				Path:    "/dict/data/:dictCodes",
+				Path:    "/system/dict/data/:dictCodes",
 				Handler: sys.DictDataRemoveHandler(serverCtx),
 			},
 			{
 				// 导出字典数据列表
 				Method:  http.MethodPost,
-				Path:    "/dict/data/export",
+				Path:    "/system/dict/data/export",
 				Handler: sys.DictDataExportHandler(serverCtx),
 			},
 			{
 				// 查询字典数据列表
 				Method:  http.MethodGet,
-				Path:    "/dict/data/list",
+				Path:    "/system/dict/data/list",
 				Handler: sys.DictDataListHandler(serverCtx),
 			},
 			{
 				// 根据字典类型查询字典数据
 				Method:  http.MethodGet,
-				Path:    "/dict/data/type/:dictType",
+				Path:    "/system/dict/data/type/:dictType",
 				Handler: sys.DictDataByTypeHandler(serverCtx),
 			},
 			{
 				// 新增字典类型
 				Method:  http.MethodPost,
-				Path:    "/dict/type",
+				Path:    "/system/dict/type",
 				Handler: sys.DictTypeAddHandler(serverCtx),
 			},
 			{
 				// 修改字典类型
 				Method:  http.MethodPut,
-				Path:    "/dict/type",
+				Path:    "/system/dict/type",
 				Handler: sys.DictTypeEditHandler(serverCtx),
 			},
 			{
 				// 查询字典类型详细
 				Method:  http.MethodGet,
-				Path:    "/dict/type/:dictId",
+				Path:    "/system/dict/type/:dictId",
 				Handler: sys.DictTypeGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除字典类型
 				Method:  http.MethodDelete,
-				Path:    "/dict/type/:dictIds",
+				Path:    "/system/dict/type/:dictIds",
 				Handler: sys.DictTypeRemoveHandler(serverCtx),
 			},
 			{
 				// 导出字典类型列表
 				Method:  http.MethodPost,
-				Path:    "/dict/type/export",
+				Path:    "/system/dict/type/export",
 				Handler: sys.DictTypeExportHandler(serverCtx),
 			},
 			{
 				// 查询字典类型列表
 				Method:  http.MethodGet,
-				Path:    "/dict/type/list",
+				Path:    "/system/dict/type/list",
 				Handler: sys.DictTypeListHandler(serverCtx),
 			},
 			{
 				// 获取字典选择框列表
 				Method:  http.MethodGet,
-				Path:    "/dict/type/optionselect",
+				Path:    "/system/dict/type/optionselect",
 				Handler: sys.DictTypeOptionSelectHandler(serverCtx),
 			},
 			{
 				// 刷新字典缓存
 				Method:  http.MethodDelete,
-				Path:    "/dict/type/refreshCache",
+				Path:    "/system/dict/type/refreshCache",
 				Handler: sys.DictTypeRefreshCacheHandler(serverCtx),
 			},
 			{
 				// 新增菜单
 				Method:  http.MethodPost,
-				Path:    "/menu",
+				Path:    "/system/menu",
 				Handler: sys.MenuAddHandler(serverCtx),
 			},
 			{
 				// 修改菜单
 				Method:  http.MethodPut,
-				Path:    "/menu",
+				Path:    "/system/menu",
 				Handler: sys.MenuEditHandler(serverCtx),
 			},
 			{
 				// 查询菜单详细
 				Method:  http.MethodGet,
-				Path:    "/menu/:menuId",
+				Path:    "/system/menu/:menuId",
 				Handler: sys.MenuGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除菜单
 				Method:  http.MethodDelete,
-				Path:    "/menu/:menuId",
+				Path:    "/system/menu/:menuId",
 				Handler: sys.MenuRemoveHandler(serverCtx),
 			},
 			{
 				// 批量级联删除菜单
 				Method:  http.MethodDelete,
-				Path:    "/menu/cascade/:menuIds",
+				Path:    "/system/menu/cascade/:menuIds",
 				Handler: sys.MenuCascadeRemoveHandler(serverCtx),
 			},
 			{
 				// 获取路由信息
 				Method:  http.MethodGet,
-				Path:    "/menu/getRouters",
+				Path:    "/system/menu/getRouters",
 				Handler: sys.GetRoutersHandler(serverCtx),
 			},
 			{
 				// 查询菜单列表
 				Method:  http.MethodGet,
-				Path:    "/menu/list",
+				Path:    "/system/menu/list",
 				Handler: sys.MenuListHandler(serverCtx),
 			},
 			{
 				// 获取角色菜单树
 				Method:  http.MethodGet,
-				Path:    "/menu/roleMenuTreeselect/:roleId",
+				Path:    "/system/menu/roleMenuTreeselect/:roleId",
 				Handler: sys.MenuRoleMenuTreeselectHandler(serverCtx),
 			},
 			{
 				// 获取菜单下拉树列表
 				Method:  http.MethodGet,
-				Path:    "/menu/treeselect",
+				Path:    "/system/menu/treeselect",
 				Handler: sys.MenuTreeselectHandler(serverCtx),
 			},
 			{
 				// 新增通知公告
 				Method:  http.MethodPost,
-				Path:    "/notice",
+				Path:    "/system/notice",
 				Handler: sys.NoticeAddHandler(serverCtx),
 			},
 			{
 				// 修改通知公告
 				Method:  http.MethodPut,
-				Path:    "/notice",
+				Path:    "/system/notice",
 				Handler: sys.NoticeEditHandler(serverCtx),
 			},
 			{
 				// 查询通知公告详细
 				Method:  http.MethodGet,
-				Path:    "/notice/:noticeId",
+				Path:    "/system/notice/:noticeId",
 				Handler: sys.NoticeGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除通知公告
 				Method:  http.MethodDelete,
-				Path:    "/notice/:noticeIds",
+				Path:    "/system/notice/:noticeIds",
 				Handler: sys.NoticeRemoveHandler(serverCtx),
 			},
 			{
 				// 查询通知公告列表
 				Method:  http.MethodGet,
-				Path:    "/notice/list",
+				Path:    "/system/notice/list",
 				Handler: sys.NoticeListHandler(serverCtx),
 			},
 			{
 				// 新增岗位
 				Method:  http.MethodPost,
-				Path:    "/post",
+				Path:    "/system/post",
 				Handler: sys.PostAddHandler(serverCtx),
 			},
 			{
 				// 修改岗位
 				Method:  http.MethodPut,
-				Path:    "/post",
+				Path:    "/system/post",
 				Handler: sys.PostEditHandler(serverCtx),
 			},
 			{
 				// 查询岗位详细
 				Method:  http.MethodGet,
-				Path:    "/post/:postId",
+				Path:    "/system/post/:postId",
 				Handler: sys.PostGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除岗位
 				Method:  http.MethodDelete,
-				Path:    "/post/:postIds",
+				Path:    "/system/post/:postIds",
 				Handler: sys.PostRemoveHandler(serverCtx),
 			},
 			{
 				// 导出岗位列表
 				Method:  http.MethodPost,
-				Path:    "/post/export",
+				Path:    "/system/post/export",
 				Handler: sys.PostExportHandler(serverCtx),
 			},
 			{
 				// 查询岗位列表
 				Method:  http.MethodGet,
-				Path:    "/post/list",
+				Path:    "/system/post/list",
 				Handler: sys.PostListHandler(serverCtx),
 			},
 			{
 				// 获取岗位选择框列表
 				Method:  http.MethodGet,
-				Path:    "/post/optionselect",
+				Path:    "/system/post/optionselect",
 				Handler: sys.PostOptionSelectHandler(serverCtx),
 			},
 			{
 				// 删除OSS对象存储
 				Method:  http.MethodDelete,
-				Path:    "/resource/oss/:ossIds",
+				Path:    "/system/resource/oss/:ossIds",
 				Handler: sys.OssRemoveHandler(serverCtx),
 			},
 			{
 				// 下载OSS对象
 				Method:  http.MethodGet,
-				Path:    "/resource/oss/download/:ossId",
+				Path:    "/system/resource/oss/download/:ossId",
 				Handler: sys.OssDownloadHandler(serverCtx),
 			},
 			{
 				// 查询OSS对象存储列表
 				Method:  http.MethodGet,
-				Path:    "/resource/oss/list",
+				Path:    "/system/resource/oss/list",
 				Handler: sys.OssListHandler(serverCtx),
 			},
 			{
 				// 查询OSS对象基于id串
 				Method:  http.MethodGet,
-				Path:    "/resource/oss/listByIds/:ossIds",
+				Path:    "/system/resource/oss/listByIds/:ossIds",
 				Handler: sys.OssListByIdsHandler(serverCtx),
 			},
 			{
 				// 上传OSS对象存储
 				Method:  http.MethodPost,
-				Path:    "/resource/oss/upload",
+				Path:    "/system/resource/oss/upload",
 				Handler: sys.OssUploadHandler(serverCtx),
 			},
 			{
 				// 新增角色
 				Method:  http.MethodPost,
-				Path:    "/role",
+				Path:    "/system/role",
 				Handler: sys.RoleAddHandler(serverCtx),
 			},
 			{
 				// 修改保存角色
 				Method:  http.MethodPut,
-				Path:    "/role",
+				Path:    "/system/role",
 				Handler: sys.RoleEditHandler(serverCtx),
 			},
 			{
 				// 根据角色编号获取详细信息
 				Method:  http.MethodGet,
-				Path:    "/role/:roleId",
+				Path:    "/system/role/:roleId",
 				Handler: sys.RoleGetInfoHandler(serverCtx),
 			},
 			{
 				// 删除角色
 				Method:  http.MethodDelete,
-				Path:    "/role/:roleIds",
+				Path:    "/system/role/:roleIds",
 				Handler: sys.RoleRemoveHandler(serverCtx),
 			},
 			{
 				// 查询已分配用户角色列表
 				Method:  http.MethodGet,
-				Path:    "/role/authUser/allocatedList",
+				Path:    "/system/role/authUser/allocatedList",
 				Handler: sys.RoleAuthUserAllocatedListHandler(serverCtx),
 			},
 			{
 				// 取消授权用户
 				Method:  http.MethodPut,
-				Path:    "/role/authUser/cancel",
+				Path:    "/system/role/authUser/cancel",
 				Handler: sys.RoleAuthUserCancelHandler(serverCtx),
 			},
 			{
 				// 批量取消授权用户
 				Method:  http.MethodPut,
-				Path:    "/role/authUser/cancelAll",
+				Path:    "/system/role/authUser/cancelAll",
 				Handler: sys.RoleAuthUserCancelAllHandler(serverCtx),
 			},
 			{
 				// 批量选择用户授权
 				Method:  http.MethodPut,
-				Path:    "/role/authUser/selectAll",
+				Path:    "/system/role/authUser/selectAll",
 				Handler: sys.RoleAuthUserSelectAllHandler(serverCtx),
 			},
 			{
 				// 查询未分配用户角色列表
 				Method:  http.MethodGet,
-				Path:    "/role/authUser/unallocatedList",
+				Path:    "/system/role/authUser/unallocatedList",
 				Handler: sys.RoleAuthUserUnallocatedListHandler(serverCtx),
 			},
 			{
 				// 状态修改
 				Method:  http.MethodPut,
-				Path:    "/role/changeStatus",
+				Path:    "/system/role/changeStatus",
 				Handler: sys.RoleChangeStatusHandler(serverCtx),
 			},
 			{
 				// 修改保存数据权限
 				Method:  http.MethodPut,
-				Path:    "/role/dataScope",
+				Path:    "/system/role/dataScope",
 				Handler: sys.RoleDataScopeHandler(serverCtx),
 			},
 			{
 				// 获取对应角色部门树列表
 				Method:  http.MethodGet,
-				Path:    "/role/deptTree/:roleId",
+				Path:    "/system/role/deptTree/:roleId",
 				Handler: sys.RoleDeptTreeHandler(serverCtx),
 			},
 			{
 				// 导出角色信息列表
 				Method:  http.MethodPost,
-				Path:    "/role/export",
+				Path:    "/system/role/export",
 				Handler: sys.RoleExportHandler(serverCtx),
 			},
 			{
 				// 获取角色信息列表
 				Method:  http.MethodGet,
-				Path:    "/role/list",
+				Path:    "/system/role/list",
 				Handler: sys.RoleListHandler(serverCtx),
 			},
 			{
 				// 获取角色选择框列表
 				Method:  http.MethodGet,
-				Path:    "/role/optionselect",
+				Path:    "/system/role/optionselect",
 				Handler: sys.RoleOptionSelectHandler(serverCtx),
 			},
 			{
 				// 新增用户
 				Method:  http.MethodPost,
-				Path:    "/user",
+				Path:    "/system/user",
 				Handler: sys.UserAddHandler(serverCtx),
 			},
 			{
 				// 修改用户
 				Method:  http.MethodPut,
-				Path:    "/user",
+				Path:    "/system/user",
 				Handler: sys.UserEditHandler(serverCtx),
 			},
 			{
 				// 根据用户编号获取详细信息
 				Method:  http.MethodGet,
-				Path:    "/user/",
+				Path:    "/system/user/",
 				Handler: sys.UserGetInfoHandler(serverCtx),
 			},
 			{
 				// 根据用户编号获取详细信息
 				Method:  http.MethodGet,
-				Path:    "/user/:userId",
+				Path:    "/system/user/:userId",
 				Handler: sys.UserGetInfoByIdHandler(serverCtx),
 			},
 			{
 				// 删除用户
 				Method:  http.MethodDelete,
-				Path:    "/user/:userIds",
+				Path:    "/system/user/:userIds",
 				Handler: sys.UserRemoveHandler(serverCtx),
 			},
 			{
 				// 用户授权角色
 				Method:  http.MethodPut,
-				Path:    "/user/authRole",
+				Path:    "/system/user/authRole",
 				Handler: sys.UserAuthRoleHandler(serverCtx),
 			},
 			{
 				// 根据用户编号获取授权角色
 				Method:  http.MethodGet,
-				Path:    "/user/authRole/:userId",
+				Path:    "/system/user/authRole/:userId",
 				Handler: sys.UserAuthRoleGetHandler(serverCtx),
 			},
 			{
 				// 状态修改
 				Method:  http.MethodPut,
-				Path:    "/user/changeStatus",
+				Path:    "/system/user/changeStatus",
 				Handler: sys.UserChangeStatusHandler(serverCtx),
 			},
 			{
 				// 获取部门树列表
 				Method:  http.MethodGet,
-				Path:    "/user/deptTree",
+				Path:    "/system/user/deptTree",
 				Handler: sys.UserDeptTreeHandler(serverCtx),
 			},
 			{
 				// 导出用户列表
 				Method:  http.MethodPost,
-				Path:    "/user/export",
+				Path:    "/system/user/export",
 				Handler: sys.UserExportHandler(serverCtx),
 			},
 			{
 				// 获取用户信息
 				Method:  http.MethodGet,
-				Path:    "/user/getInfo",
+				Path:    "/system/user/getInfo",
 				Handler: sys.GetUserInfoHandler(serverCtx),
 			},
 			{
 				// 导入用户数据
 				Method:  http.MethodPost,
-				Path:    "/user/importData",
+				Path:    "/system/user/importData",
 				Handler: sys.UserImportDataHandler(serverCtx),
 			},
 			{
 				// 获取导入模板
 				Method:  http.MethodPost,
-				Path:    "/user/importTemplate",
+				Path:    "/system/user/importTemplate",
 				Handler: sys.UserImportTemplateHandler(serverCtx),
 			},
 			{
 				// 查询用户列表
 				Method:  http.MethodGet,
-				Path:    "/user/list",
+				Path:    "/system/user/list",
 				Handler: sys.UserListHandler(serverCtx),
 			},
 			{
 				// 获取部门下的所有用户信息
 				Method:  http.MethodGet,
-				Path:    "/user/list/dept/:deptId",
+				Path:    "/system/user/list/dept/:deptId",
 				Handler: sys.UserListByDeptHandler(serverCtx),
 			},
 			{
 				// 根据用户ID串批量获取用户基础信息
 				Method:  http.MethodGet,
-				Path:    "/user/optionselect",
+				Path:    "/system/user/optionselect",
 				Handler: sys.UserOptionSelectHandler(serverCtx),
 			},
 			{
 				// 个人信息
 				Method:  http.MethodGet,
-				Path:    "/user/profile",
+				Path:    "/system/user/profile",
 				Handler: sys.UserProfileHandler(serverCtx),
 			},
 			{
 				// 修改用户信息
 				Method:  http.MethodPut,
-				Path:    "/user/profile",
+				Path:    "/system/user/profile",
 				Handler: sys.UserProfileUpdateHandler(serverCtx),
 			},
 			{
 				// 头像上传
 				Method:  http.MethodPost,
-				Path:    "/user/profile/avatar",
+				Path:    "/system/user/profile/avatar",
 				Handler: sys.UserProfileAvatarHandler(serverCtx),
 			},
 			{
 				// 重置密码
 				Method:  http.MethodPut,
-				Path:    "/user/profile/updatePwd",
+				Path:    "/system/user/profile/updatePwd",
 				Handler: sys.UserProfileUpdatePwdHandler(serverCtx),
 			},
 			{
 				// 重置密码
 				Method:  http.MethodPut,
-				Path:    "/user/resetPwd",
+				Path:    "/system/user/resetPwd",
 				Handler: sys.UserResetPwdHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
-		rest.WithPrefix("/system"),
 	)
 }

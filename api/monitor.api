@@ -148,7 +148,6 @@ type LogininforExportReq {
 }
 
 @server (
-	prefix: /monitor
 	group:  monitor
 	jwt:    Auth
 )
@@ -157,60 +156,60 @@ service admin-api {
 	// ========== 缓存监控 ==========
 	@doc "获取缓存监控列表"
 	@handler CacheGetInfo
-	get /cache returns (CacheListResp)
+	get /monitor/cache returns (CacheListResp)
 
 	// ========== 在线用户监控 ==========
 	@doc "获取当前用户登录在线设备"
 	@handler OnlineGetInfo
-	get /online returns (OnlineListResp)
+	get /monitor/online returns (OnlineListResp)
 
 	@doc "获取在线用户监控列表"
 	@handler OnlineList
-	get /online/list (OnlineListReq) returns (OnlineListResp)
+	get /monitor/online/list (OnlineListReq) returns (OnlineListResp)
 
 	@doc "强退用户"
 	@handler OnlineRemove
-	delete /online/:tokenId (OnlineRemoveReq) returns (BaseResp)
+	delete /monitor/online/:tokenId (OnlineRemoveReq) returns (BaseResp)
 
 	@doc "强退当前在线设备"
 	@handler OnlineRemoveMyself
-	delete /online/myself/:tokenId (OnlineRemoveReq) returns (BaseResp)
+	delete /monitor/online/myself/:tokenId (OnlineRemoveReq) returns (BaseResp)
 
 	// ========== 操作日志 ==========
 	@doc "获取操作日志记录列表"
 	@handler OperLogList
-	get /operlog/list (OperLogListReq) returns (OperLogListResp)
+	get /monitor/operlog/list (OperLogListReq) returns (OperLogListResp)
 
 	@doc "导出操作日志记录列表"
 	@handler OperLogExport
-	post /operlog/export (OperLogExportReq) returns (BaseResp)
+	post /monitor/operlog/export (OperLogExportReq) returns (BaseResp)
 
 	@doc "批量删除操作日志记录"
 	@handler OperLogRemove
-	delete /operlog/:operIds (OperLogRemoveReq) returns (BaseResp)
+	delete /monitor/operlog/:operIds (OperLogRemoveReq) returns (BaseResp)
 
 	@doc "清理操作日志记录"
 	@handler OperLogClean
-	delete /operlog/clean returns (BaseResp)
+	delete /monitor/operlog/clean returns (BaseResp)
 
 	// ========== 登录日志 ==========
 	@doc "获取系统访问记录列表"
 	@handler LogininforList
-	get /logininfor/list (LogininforListReq) returns (LogininforListResp)
+	get /monitor/logininfor/list (LogininforListReq) returns (LogininforListResp)
 
 	@doc "导出系统访问记录列表"
 	@handler LogininforExport
-	post /logininfor/export (LogininforExportReq) returns (BaseResp)
+	post /monitor/logininfor/export (LogininforExportReq) returns (BaseResp)
 
 	@doc "批量删除登录日志"
 	@handler LogininforRemove
-	delete /logininfor/:infoIds (LogininforRemoveReq) returns (BaseResp)
+	delete /monitor/logininfor/:infoIds (LogininforRemoveReq) returns (BaseResp)
 
 	@doc "清理系统访问记录"
 	@handler LogininforClean
-	delete /logininfor/clean returns (BaseResp)
+	delete /monitor/logininfor/clean returns (BaseResp)
 
 	@doc "解锁用户"
 	@handler LogininforUnlock
-	get /logininfor/unlock/:userName (LogininforUnlockReq) returns (BaseResp)
+	get /monitor/logininfor/unlock/:userName (LogininforUnlockReq) returns (BaseResp)
 }

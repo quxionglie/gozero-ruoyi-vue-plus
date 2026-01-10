@@ -63,24 +63,23 @@ type TenantListVo {
 }
 
 @server (
-	prefix: /auth
 	group:  auth
 )
 service admin-api {
 	@doc "生成验证码，返回4位数字验证码图片和唯一标识"
 	@handler GetCode
-	get /code returns (CaptchaResp)
+	get /auth/code returns (CaptchaResp)
 
 	@doc "登录方法，支持密码登录等授权类型"
 	@handler Login
-	post /login (LoginReq) returns (LoginResp)
+	post /auth/login (LoginReq) returns (LoginResp)
 
 	@doc "登录页面租户下拉框，获取可用租户列表"
 	@handler TenantList
-	get /tenant/list returns (TenantListResp)
+	get /auth/tenant/list returns (TenantListResp)
 
 	@doc "退出登录"
 	@handler Logout
-	post /logout returns (BaseResp)
+	post /auth/logout returns (BaseResp)
 }
 

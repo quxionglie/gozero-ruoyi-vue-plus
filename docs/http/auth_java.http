@@ -1,0 +1,10 @@
+###
+POST {{baseUrl}}/auth/login
+clientid: e5cd7e4891bf95d1d19206ce24a7b32e
+encrypt-key: Sd7uQ0e5AFWl8X94zA36hdAwEEm9z7ml/naLYMtL9lDXecx5jeXw4DVhsztQVd693jCu7guhJDEzX2TvQw0rKxhLheVeOtvXFt/EqP8uop+28EWl1BKKiGyJ8gQoJTWiq6PIlgqNGvefey0joC90d5SZW7CvMJGTNY1K7NzqxVc=
+isEncrypt: true
+Content-Type: application/json;charset=UTF-8
+
+"DggPjv0Kza84V6GMHGcFaWdQ0yAz4H7HSw/+rV9sHzVsp3smAG7mWIrVhbd9Cvgn+qv+dVFb90THwuHUxz9n7vGsfFrRO9rYcAJ2mtaaTPqVr9e1Pi+Elts4byZiwjyoipydCpDOJGrjY8j3F0jLvNRzUqaaPHYwfJcpVyfJF+3Da3Yi984m8NRl0+Di1sRaqBZ88FQRwc77q0Ubm/HXXg=="
+
+###
