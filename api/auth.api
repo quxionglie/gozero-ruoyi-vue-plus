@@ -38,8 +38,8 @@ type LoginResp {
 type LoginVo {
 	AccessToken     string `json:"access_token"` // 授权令牌
 	RefreshToken    string `json:"refresh_token"` // 刷新令牌
-	ExpireIn        int64  `json:"expire_in"` // 授权令牌有效期（秒）
-	RefreshExpireIn int64  `json:"refresh_expire_in"` // 刷新令牌有效期（秒）
+	ExpireIn        int64  `json:"expire_in,string"` // 授权令牌有效期（秒）
+	RefreshExpireIn int64  `json:"refresh_expire_in,string"` // 刷新令牌有效期（秒）
 	Scope           string `json:"scope,omitempty"` // 令牌权限
 	Openid          string `json:"openid,omitempty"` // 用户 openid
 	ClientId        string `json:"client_id,omitempty"` // 应用id

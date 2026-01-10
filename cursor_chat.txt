@@ -180,3 +180,6 @@ logic*.go不要直接写sql语句，把访问db的统一抽取到相关model类�
 
 2026-01-10T11:30:00+08:00
 生成雪花算法util类，表新增数据时主键使用此算法生成ID。创建了internal/util/snowflake.go工具类，实现雪花算法生成唯一ID。在admin.go中初始化雪花算法（默认workerID=0, datacenterID=0）。修改了configaddlogic.go、dicttypeaddlogic.go、dictdataaddlogic.go，新增数据时使用util.GenerateID()生成主键ID（ConfigId、DictId、DictCode）
+
+2026-01-10T11:35:00+08:00
+响应json int64数据，统一以字符串输出。在API定义文件中为所有响应类型（Vo、Resp）的int64和int32字段添加了`,string`标签，使得JSON序列化时以字符串形式输出。修改了BaseResp.Code、ConfigVo.ConfigId、DictTypeVo.DictId、DictDataVo.DictCode/DictSort、SysRoleVo.RoleId/RoleSort、SysUserVo.UserId/DeptId/Avatar、TableDataInfoResp.Total、LoginVo.ExpireIn/RefreshExpireIn等字段

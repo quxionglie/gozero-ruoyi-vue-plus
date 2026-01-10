@@ -4,7 +4,7 @@
 package types
 
 type BaseResp struct {
-	Code int32  `json:"code"`
+	Code int32  `json:"code,string"`
 	Msg  string `json:"msg"`
 }
 
@@ -51,13 +51,13 @@ type ConfigValueResp struct {
 }
 
 type ConfigVo struct {
-	ConfigId    int64  `json:"configId"`    // 参数主键
-	ConfigName  string `json:"configName"`  // 参数名称
-	ConfigKey   string `json:"configKey"`   // 参数键名
-	ConfigValue string `json:"configValue"` // 参数键值
-	ConfigType  string `json:"configType"`  // 系统内置（Y是 N否）
-	Remark      string `json:"remark"`      // 备注
-	CreateTime  string `json:"createTime"`  // 创建时间
+	ConfigId    int64  `json:"configId,string"` // 参数主键
+	ConfigName  string `json:"configName"`      // 参数名称
+	ConfigKey   string `json:"configKey"`       // 参数键名
+	ConfigValue string `json:"configValue"`     // 参数键值
+	ConfigType  string `json:"configType"`      // 系统内置（Y是 N否）
+	Remark      string `json:"remark"`          // 备注
+	CreateTime  string `json:"createTime"`      // 创建时间
 }
 
 type DictDataByTypeReq struct {
@@ -95,16 +95,16 @@ type DictDataResp struct {
 }
 
 type DictDataVo struct {
-	DictCode   int64  `json:"dictCode"`   // 字典编码
-	DictSort   int32  `json:"dictSort"`   // 字典排序
-	DictLabel  string `json:"dictLabel"`  // 字典标签
-	DictValue  string `json:"dictValue"`  // 字典键值
-	DictType   string `json:"dictType"`   // 字典类型
-	CssClass   string `json:"cssClass"`   // 样式属性
-	ListClass  string `json:"listClass"`  // 表格回显样式
-	IsDefault  string `json:"isDefault"`  // 是否默认（Y是 N否）
-	Remark     string `json:"remark"`     // 备注
-	CreateTime string `json:"createTime"` // 创建时间
+	DictCode   int64  `json:"dictCode,string"` // 字典编码
+	DictSort   int32  `json:"dictSort,string"` // 字典排序
+	DictLabel  string `json:"dictLabel"`       // 字典标签
+	DictValue  string `json:"dictValue"`       // 字典键值
+	DictType   string `json:"dictType"`        // 字典类型
+	CssClass   string `json:"cssClass"`        // 样式属性
+	ListClass  string `json:"listClass"`       // 表格回显样式
+	IsDefault  string `json:"isDefault"`       // 是否默认（Y是 N否）
+	Remark     string `json:"remark"`          // 备注
+	CreateTime string `json:"createTime"`      // 创建时间
 }
 
 type DictTypeGetInfoReq struct {
@@ -133,11 +133,11 @@ type DictTypeResp struct {
 }
 
 type DictTypeVo struct {
-	DictId     int64  `json:"dictId"`     // 字典主键
-	DictName   string `json:"dictName"`   // 字典名称
-	DictType   string `json:"dictType"`   // 字典类型
-	Remark     string `json:"remark"`     // 备注
-	CreateTime string `json:"createTime"` // 创建时间
+	DictId     int64  `json:"dictId,string"` // 字典主键
+	DictName   string `json:"dictName"`      // 字典名称
+	DictType   string `json:"dictType"`      // 字典类型
+	Remark     string `json:"remark"`        // 备注
+	CreateTime string `json:"createTime"`    // 创建时间
 }
 
 type LoginReq struct {
@@ -161,13 +161,13 @@ type LoginTenantVo struct {
 }
 
 type LoginVo struct {
-	AccessToken     string `json:"access_token"`        // 授权令牌
-	RefreshToken    string `json:"refresh_token"`       // 刷新令牌
-	ExpireIn        int64  `json:"expire_in"`           // 授权令牌有效期（秒）
-	RefreshExpireIn int64  `json:"refresh_expire_in"`   // 刷新令牌有效期（秒）
-	Scope           string `json:"scope,omitempty"`     // 令牌权限
-	Openid          string `json:"openid,omitempty"`    // 用户 openid
-	ClientId        string `json:"client_id,omitempty"` // 应用id
+	AccessToken     string `json:"access_token"`             // 授权令牌
+	RefreshToken    string `json:"refresh_token"`            // 刷新令牌
+	ExpireIn        int64  `json:"expire_in,string"`         // 授权令牌有效期（秒）
+	RefreshExpireIn int64  `json:"refresh_expire_in,string"` // 刷新令牌有效期（秒）
+	Scope           string `json:"scope,omitempty"`          // 令牌权限
+	Openid          string `json:"openid,omitempty"`         // 用户 openid
+	ClientId        string `json:"client_id,omitempty"`      // 应用id
 }
 
 type MetaVo struct {
@@ -196,39 +196,39 @@ type RouterVo struct {
 }
 
 type SysRoleVo struct {
-	RoleId     int64  `json:"roleId"`     // 角色ID
-	RoleName   string `json:"roleName"`   // 角色名称
-	RoleKey    string `json:"roleKey"`    // 角色权限字符串
-	RoleSort   int32  `json:"roleSort"`   // 显示顺序
-	DataScope  string `json:"dataScope"`  // 数据范围
-	Status     string `json:"status"`     // 角色状态（0正常 1停用）
-	Remark     string `json:"remark"`     // 备注
-	CreateTime string `json:"createTime"` // 创建时间
+	RoleId     int64  `json:"roleId,string"`   // 角色ID
+	RoleName   string `json:"roleName"`        // 角色名称
+	RoleKey    string `json:"roleKey"`         // 角色权限字符串
+	RoleSort   int32  `json:"roleSort,string"` // 显示顺序
+	DataScope  string `json:"dataScope"`       // 数据范围
+	Status     string `json:"status"`          // 角色状态（0正常 1停用）
+	Remark     string `json:"remark"`          // 备注
+	CreateTime string `json:"createTime"`      // 创建时间
 }
 
 type SysUserVo struct {
-	UserId      int64       `json:"userId"`      // 用户ID
-	TenantId    string      `json:"tenantId"`    // 租户ID
-	DeptId      int64       `json:"deptId"`      // 部门ID
-	UserName    string      `json:"userName"`    // 用户账号
-	NickName    string      `json:"nickName"`    // 用户昵称
-	UserType    string      `json:"userType"`    // 用户类型（sys_user系统用户）
-	Email       string      `json:"email"`       // 用户邮箱
-	Phonenumber string      `json:"phonenumber"` // 手机号码
-	Sex         string      `json:"sex"`         // 用户性别（0男 1女 2未知）
-	Avatar      int64       `json:"avatar"`      // 头像地址
-	Status      string      `json:"status"`      // 帐号状态（0正常 1停用）
-	LoginIp     string      `json:"loginIp"`     // 最后登录IP
-	LoginDate   string      `json:"loginDate"`   // 最后登录时间
-	Remark      string      `json:"remark"`      // 备注
-	CreateTime  string      `json:"createTime"`  // 创建时间
-	DeptName    string      `json:"deptName"`    // 部门名
-	Roles       []SysRoleVo `json:"roles"`       // 角色对象
+	UserId      int64       `json:"userId,string"` // 用户ID
+	TenantId    string      `json:"tenantId"`      // 租户ID
+	DeptId      int64       `json:"deptId,string"` // 部门ID
+	UserName    string      `json:"userName"`      // 用户账号
+	NickName    string      `json:"nickName"`      // 用户昵称
+	UserType    string      `json:"userType"`      // 用户类型（sys_user系统用户）
+	Email       string      `json:"email"`         // 用户邮箱
+	Phonenumber string      `json:"phonenumber"`   // 手机号码
+	Sex         string      `json:"sex"`           // 用户性别（0男 1女 2未知）
+	Avatar      int64       `json:"avatar,string"` // 头像地址
+	Status      string      `json:"status"`        // 帐号状态（0正常 1停用）
+	LoginIp     string      `json:"loginIp"`       // 最后登录IP
+	LoginDate   string      `json:"loginDate"`     // 最后登录时间
+	Remark      string      `json:"remark"`        // 备注
+	CreateTime  string      `json:"createTime"`    // 创建时间
+	DeptName    string      `json:"deptName"`      // 部门名
+	Roles       []SysRoleVo `json:"roles"`         // 角色对象
 }
 
 type TableDataInfoResp struct {
-	Total int64       `json:"total"` // 总记录数
-	Rows  interface{} `json:"rows"`  // 列表数据
+	Total int64       `json:"total,string"` // 总记录数
+	Rows  interface{} `json:"rows"`         // 列表数据
 	BaseResp
 }
 
