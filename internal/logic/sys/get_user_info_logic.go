@@ -190,6 +190,9 @@ func (l *GetUserInfoLogic) getUserRoles(userId int64) ([]types.SysRoleVo, error)
 
 	result := make([]types.SysRoleVo, 0, len(rows))
 	for _, row := range rows {
+		// 判断是否为超级管理员（role_id = 1 或 role_key = 'superadmin'）
+		isSuperAdmin := row.RoleId == 1 || strings.ToLower(row.RoleKey) == "superadmin"
+
 		roleVo := types.SysRoleVo{
 			RoleId:     row.RoleId,
 			RoleName:   row.RoleName,
@@ -199,6 +202,8 @@ func (l *GetUserInfoLogic) getUserRoles(userId int64) ([]types.SysRoleVo, error)
 			Status:     row.Status,
 			Remark:     "",
 			CreateTime: "",
+			SuperAdmin: isSuperAdmin,
+			Flag:       true, // 用户已拥有的角色，flag 为 true
 		}
 		if row.Remark.Valid {
 			roleVo.Remark = row.Remark.String

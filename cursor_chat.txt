@@ -213,3 +213,9 @@ model类应该传入PageQuery和XxxQuery（对应db表查询参数）参数，�
 
 2026-01-10T13:35:00+08:00
 sql 中order by %s %s 容易造成sql注入。解决此问题
+
+2026-01-10T13:53:00+08:00
+/system/user/getInfo接口返回的user.roles数组SysRoleVo对象缺少superAdmin、flag字段
+
+2026-01-10T14:05:00+08:00
+/system/menu/getRouters接口返回的component字段会有"Layout"，但go里没有，需检查原有逻辑修改go代码。参考SysMenuController.java类

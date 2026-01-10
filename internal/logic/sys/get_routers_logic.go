@@ -310,16 +310,22 @@ func (l *GetRoutersLogic) getRouterPath(menu *MenuNode) string {
 
 // getComponentInfo 获取组件信息
 func (l *GetRoutersLogic) getComponentInfo(menu *MenuNode) string {
+	// 默认返回 Layout（与 Java 代码 SystemConstants.LAYOUT 保持一致）
+	component := "Layout"
+
+	// 如果 component 不为空且不是菜单框架，使用 component
 	if menu.Component.Valid && menu.Component.String != "" && !l.isMenuFrame(menu) {
-		return menu.Component.String
+		component = menu.Component.String
+	} else if (!menu.Component.Valid || menu.Component.String == "") && menu.ParentId != 0 && l.isInnerLink(menu) {
+		// 如果 component 为空且是内链（并且 parentId != 0），返回 InnerLink
+		component = "InnerLink"
+	} else if (!menu.Component.Valid || menu.Component.String == "") && l.isParentView(menu) {
+		// 如果 component 为空且是父视图，返回 ParentView
+		component = "ParentView"
 	}
-	if l.isInnerLink(menu) {
-		return "InnerLink"
-	}
-	if (!menu.Component.Valid || menu.Component.String == "") && l.isParentView(menu) {
-		return "ParentView"
-	}
-	return ""
+	// 其他情况返回默认的 "Layout"
+
+	return component
 }
 
 // getComponent 获取组件

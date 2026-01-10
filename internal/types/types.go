@@ -232,6 +232,8 @@ type SysRoleVo struct {
 	Status     string `json:"status"`        // 角色状态（0正常 1停用）
 	Remark     string `json:"remark"`        // 备注
 	CreateTime string `json:"createTime"`    // 创建时间
+	SuperAdmin bool   `json:"superAdmin"`    // 超级管理员标识
+	Flag       bool   `json:"flag"`          // 用户是否存在此角色标识
 }
 
 type SysUserVo struct {
