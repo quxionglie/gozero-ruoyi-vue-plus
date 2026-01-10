@@ -23,34 +23,6 @@
               "weight": 1,
               "disabled": false
             },
-            {
-              "id": 104,
-              "parentId": 101,
-              "label": "市场部门",
-              "weight": 2,
-              "disabled": false
-            },
-            {
-              "id": 105,
-              "parentId": 101,
-              "label": "测试部门",
-              "weight": 3,
-              "disabled": false
-            },
-            {
-              "id": 106,
-              "parentId": 101,
-              "label": "财务部门",
-              "weight": 4,
-              "disabled": false
-            },
-            {
-              "id": 107,
-              "parentId": 101,
-              "label": "运维部门",
-              "weight": 5,
-              "disabled": false
-            }
           ]
         },
         {
@@ -60,20 +32,6 @@
           "weight": 2,
           "disabled": false,
           "children": [
-            {
-              "id": 108,
-              "parentId": 102,
-              "label": "市场部门",
-              "weight": 1,
-              "disabled": false
-            },
-            {
-              "id": 109,
-              "parentId": 102,
-              "label": "财务部门",
-              "weight": 2,
-              "disabled": false
-            }
           ]
         }
       ]

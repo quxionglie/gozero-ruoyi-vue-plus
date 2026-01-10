@@ -56,8 +56,9 @@ func (l *UserDeptTreeLogic) UserDeptTree() (resp *types.DeptListResp, err error)
 		}, err
 	}
 
-	// 4. 转换为响应格式
-	rows := make([]types.DeptVo, 0, len(deptList))
+	// 4. 转换为响应格式并构建树形结构
+	deptVoMap := make(map[int64]types.DeptVo)
+	// 先构建所有部门的 VO 映射
 	for _, dept := range deptList {
 		deptVo := types.DeptVo{
 			DeptId:     dept.DeptId,
@@ -67,6 +68,7 @@ func (l *UserDeptTreeLogic) UserDeptTree() (resp *types.DeptListResp, err error)
 			Status:     dept.Status,
 			ParentName: "",
 			Ancestors:  dept.Ancestors,
+			Children:   []types.DeptVo{},
 		}
 		if dept.Leader.Valid {
 			deptVo.Leader = dept.Leader.Int64
@@ -80,14 +82,58 @@ func (l *UserDeptTreeLogic) UserDeptTree() (resp *types.DeptListResp, err error)
 		if dept.DeptCategory.Valid {
 			deptVo.DeptCategory = dept.DeptCategory.String
 		}
-		rows = append(rows, deptVo)
+		deptVoMap[dept.DeptId] = deptVo
 	}
+
+	// 构建父子关系，填充 ParentName
+	for _, dept := range deptList {
+		if dept.ParentId > 0 {
+			if parentDept, exists := deptVoMap[dept.ParentId]; exists {
+				deptVo := deptVoMap[dept.DeptId]
+				deptVo.ParentName = parentDept.DeptName
+				deptVoMap[dept.DeptId] = deptVo
+			}
+		}
+	}
+
+	// 5. 找到所有根节点（parentId 不在任何节点的 deptId 中，或者 parentId <= 0）
+	deptIdSet := make(map[int64]bool)
+	for _, dept := range deptList {
+		deptIdSet[dept.DeptId] = true
+	}
+
+	// 构建树形结构
+	var buildTree func(parentId int64) []types.DeptVo
+	buildTree = func(parentId int64) []types.DeptVo {
+		var children []types.DeptVo
+		for _, dept := range deptList {
+			if dept.ParentId == parentId {
+				deptVo := deptVoMap[dept.DeptId]
+				deptVo.Children = buildTree(dept.DeptId)
+				children = append(children, deptVo)
+			}
+		}
+		return children
+	}
+
+	// 找到所有根节点（parentId 不存在于任何 deptId 中，或者 parentId <= 0）
+	var rootNodes []types.DeptVo
+	for _, dept := range deptList {
+		// 根节点：parentId <= 0 或者 parentId 不在任何 deptId 中
+		if dept.ParentId <= 0 || !deptIdSet[dept.ParentId] {
+			deptVo := deptVoMap[dept.DeptId]
+			deptVo.Children = buildTree(dept.DeptId)
+			rootNodes = append(rootNodes, deptVo)
+		}
+	}
+
+	tree := rootNodes
 
 	return &types.DeptListResp{
 		BaseResp: types.BaseResp{
 			Code: 200,
 			Msg:  "操作成功",
 		},
-		Data: rows,
+		Data: tree,
 	}, nil
 }

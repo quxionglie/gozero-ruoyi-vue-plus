@@ -319,3 +319,12 @@ model类*_model.go中sql是否可以用*model_gen.go中*FieldNames代替，你�
 
 2026-01-10T20:28:23+08:00
 *.api的中service不用prefix了，prefix的值合并到各个url中
+
+2026-01-10T20:40:08+08:00
+/system/user/deptTree接口返回data的没有以树型结构返回，缺少children字段。参考SysUserController.java
+
+2026-01-10T20:51:11+08:00
+user_dept_tree_logic.go 中根节点并不一定是0，tree := buildTree(0) 会有bug
+
+2026-01-10T20:55:23+08:00
+你没有把上一个请求记录到cursor_chat.txt。自动把我发出的请求文字记录到cursor_chat.txt，你自己的操作日志不要添加。格式：第一行：时间，第二行：请求内容。每次联天请求间空一行
