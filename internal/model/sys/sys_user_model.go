@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -80,7 +81,7 @@ func (m *customSysUserModel) withSession(session sqlx.Session) SysUserModel {
 
 // FindOneByUserName 根据用户名和租户ID查询用户
 func (m *customSysUserModel) FindOneByUserName(ctx context.Context, userName, tenantId string) (*SysUser, error) {
-	query := "select `user_id`,`tenant_id`,`dept_id`,`user_name`,`nick_name`,`user_type`,`email`,`phonenumber`,`sex`,`avatar`,`password`,`status`,`del_flag`,`login_ip`,`login_date`,`create_dept`,`create_by`,`create_time`,`update_by`,`update_time`,`remark` from `sys_user` where `user_name` = ? and `tenant_id` = ? and `del_flag` = '0' limit 1"
+	query := fmt.Sprintf("select %s from %s where `user_name` = ? and `tenant_id` = ? and `del_flag` = '0' limit 1", sysUserRows, m.table)
 	var resp SysUser
 	err := m.conn.QueryRowCtx(ctx, &resp, query, userName, tenantId)
 	switch err {
@@ -240,7 +241,15 @@ func (m *customSysUserModel) FindUnallocatedPage(ctx context.Context, query *Use
 	limit := pageQuery.PageSize
 
 	// 查询数据
-	userRows := "u.user_id,u.tenant_id,u.dept_id,u.user_name,u.nick_name,u.user_type,u.email,u.phonenumber,u.sex,u.avatar,u.password,u.status,u.del_flag,u.login_ip,u.login_date,u.create_dept,u.create_by,u.create_time,u.update_by,u.update_time,u.remark"
+	// 将 sysUserRows 转换为别名形式（u.xxx）
+	fields := strings.Split(sysUserRows, ",")
+	aliasFields := make([]string, len(fields))
+	for i, field := range fields {
+		field = strings.TrimSpace(field)
+		field = strings.Trim(field, "`")
+		aliasFields[i] = "u." + field
+	}
+	userRows := strings.Join(aliasFields, ",")
 	querySQL := fmt.Sprintf(`
 		SELECT DISTINCT %s
 		FROM sys_user u

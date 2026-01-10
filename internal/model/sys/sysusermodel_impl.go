@@ -117,7 +117,15 @@ func (m *customSysUserModel) FindPage(ctx context.Context, query *UserQuery, pag
 	limit := pageQuery.PageSize
 
 	// 查询数据
-	userRows := "u.user_id,u.tenant_id,u.dept_id,u.user_name,u.nick_name,u.user_type,u.email,u.phonenumber,u.sex,u.avatar,u.password,u.status,u.del_flag,u.login_ip,u.login_date,u.create_dept,u.create_by,u.create_time,u.update_by,u.update_time,u.remark"
+	// 将 sysUserRows 转换为别名形式（u.xxx）
+	fields := strings.Split(sysUserRows, ",")
+	aliasFields := make([]string, len(fields))
+	for i, field := range fields {
+		field = strings.TrimSpace(field)
+		field = strings.Trim(field, "`")
+		aliasFields[i] = "u." + field
+	}
+	userRows := strings.Join(aliasFields, ",")
 	querySQL := fmt.Sprintf(`
 		SELECT DISTINCT %s
 		FROM sys_user u
@@ -181,8 +189,7 @@ func (m *customSysUserModel) FindByIds(ctx context.Context, userIds []int64, dep
 
 // FindByPhonenumber 根据手机号查询用户
 func (m *customSysUserModel) FindByPhonenumber(ctx context.Context, phonenumber string) (*SysUser, error) {
-	userRows := "user_id,tenant_id,dept_id,user_name,nick_name,user_type,email,phonenumber,sex,avatar,password,status,del_flag,login_ip,login_date,create_dept,create_by,create_time,update_by,update_time,remark"
-	query := fmt.Sprintf("select %s from %s where `phonenumber` = ? and `del_flag` = '0' limit 1", userRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `phonenumber` = ? and `del_flag` = '0' limit 1", sysUserRows, m.table)
 	var resp SysUser
 	err := m.conn.QueryRowCtx(ctx, &resp, query, phonenumber)
 	switch err {
@@ -197,8 +204,7 @@ func (m *customSysUserModel) FindByPhonenumber(ctx context.Context, phonenumber 
 
 // FindByEmail 根据邮箱查询用户
 func (m *customSysUserModel) FindByEmail(ctx context.Context, email string) (*SysUser, error) {
-	userRows := "user_id,tenant_id,dept_id,user_name,nick_name,user_type,email,phonenumber,sex,avatar,password,status,del_flag,login_ip,login_date,create_dept,create_by,create_time,update_by,update_time,remark"
-	query := fmt.Sprintf("select %s from %s where `email` = ? and `del_flag` = '0' limit 1", userRows, m.table)
+	query := fmt.Sprintf("select %s from %s where `email` = ? and `del_flag` = '0' limit 1", sysUserRows, m.table)
 	var resp SysUser
 	err := m.conn.QueryRowCtx(ctx, &resp, query, email)
 	switch err {
@@ -334,13 +340,12 @@ func (m *customSysUserModel) UpdateUserAvatar(ctx context.Context, userId int64,
 
 // SelectUserListByDept 根据部门查询用户列表
 func (m *customSysUserModel) SelectUserListByDept(ctx context.Context, deptId int64) ([]*SysUser, error) {
-	userRows := "user_id,tenant_id,dept_id,user_name,nick_name,user_type,email,phonenumber,sex,avatar,password,status,del_flag,login_ip,login_date,create_dept,create_by,create_time,update_by,update_time,remark"
 	query := fmt.Sprintf(`
 		SELECT %s
 		FROM %s
 		WHERE dept_id = ? AND del_flag = '0' AND status = '0'
 		ORDER BY user_id ASC
-	`, userRows, m.table)
+	`, sysUserRows, m.table)
 
 	var userList []*SysUser
 	err := m.conn.QueryRowsPartialCtx(ctx, &userList, query, deptId)

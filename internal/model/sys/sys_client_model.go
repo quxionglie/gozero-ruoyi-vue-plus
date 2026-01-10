@@ -48,7 +48,7 @@ func (m *customSysClientModel) withSession(session sqlx.Session) SysClientModel 
 
 // FindOneByClientId 根据客户端ID查询
 func (m *customSysClientModel) FindOneByClientId(ctx context.Context, clientId string) (*SysClient, error) {
-	query := "select `id`,`client_id`,`client_key`,`client_secret`,`grant_type`,`device_type`,`active_timeout`,`timeout`,`status`,`del_flag`,`create_dept`,`create_by`,`create_time`,`update_by`,`update_time` from `sys_client` where `client_id` = ? and `del_flag` = '0' limit 1"
+	query := fmt.Sprintf("select %s from %s where `client_id` = ? and `del_flag` = '0' limit 1", sysClientRows, m.table)
 	var resp SysClient
 	err := m.conn.QueryRowCtx(ctx, &resp, query, clientId)
 	switch err {

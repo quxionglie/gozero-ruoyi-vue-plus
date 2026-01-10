@@ -2,6 +2,7 @@ package sys
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -36,7 +37,7 @@ func (m *customSysTenantModel) withSession(session sqlx.Session) SysTenantModel 
 
 // FindOneByTenantId 根据租户ID查询
 func (m *customSysTenantModel) FindOneByTenantId(ctx context.Context, tenantId string) (*SysTenant, error) {
-	query := "select `id`,`tenant_id`,`contact_user_name`,`contact_phone`,`company_name`,`license_number`,`address`,`intro`,`domain`,`remark`,`package_id`,`expire_time`,`account_count`,`status`,`del_flag`,`create_dept`,`create_by`,`create_time`,`update_by`,`update_time` from `sys_tenant` where `tenant_id` = ? and `del_flag` = '0' limit 1"
+	query := fmt.Sprintf("select %s from %s where `tenant_id` = ? and `del_flag` = '0' limit 1", sysTenantRows, m.table)
 	var resp SysTenant
 	err := m.conn.QueryRowCtx(ctx, &resp, query, tenantId)
 	switch err {
@@ -51,7 +52,7 @@ func (m *customSysTenantModel) FindOneByTenantId(ctx context.Context, tenantId s
 
 // FindAllAvailable 查询所有可用的租户（status=0, del_flag=0）
 func (m *customSysTenantModel) FindAllAvailable(ctx context.Context) ([]*SysTenant, error) {
-	query := "select `id`,`tenant_id`,`contact_user_name`,`contact_phone`,`company_name`,`license_number`,`address`,`intro`,`domain`,`remark`,`package_id`,`expire_time`,`account_count`,`status`,`del_flag`,`create_dept`,`create_by`,`create_time`,`update_by`,`update_time` from `sys_tenant` where `status` = '0' and `del_flag` = '0'"
+	query := fmt.Sprintf("select %s from %s where `status` = '0' and `del_flag` = '0'", sysTenantRows, m.table)
 	var resp []*SysTenant
 	err := m.conn.QueryRowsPartialCtx(ctx, &resp, query)
 	if err != nil {
