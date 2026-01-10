@@ -275,10 +275,58 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: sys.DictTypeRefreshCacheHandler(serverCtx),
 			},
 			{
+				// 新增菜单
+				Method:  http.MethodPost,
+				Path:    "/menu",
+				Handler: sys.MenuAddHandler(serverCtx),
+			},
+			{
+				// 修改菜单
+				Method:  http.MethodPut,
+				Path:    "/menu",
+				Handler: sys.MenuEditHandler(serverCtx),
+			},
+			{
+				// 查询菜单详细
+				Method:  http.MethodGet,
+				Path:    "/menu/:menuId",
+				Handler: sys.MenuGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除菜单
+				Method:  http.MethodDelete,
+				Path:    "/menu/:menuId",
+				Handler: sys.MenuRemoveHandler(serverCtx),
+			},
+			{
+				// 批量级联删除菜单
+				Method:  http.MethodDelete,
+				Path:    "/menu/cascade/:menuIds",
+				Handler: sys.MenuCascadeRemoveHandler(serverCtx),
+			},
+			{
 				// 获取路由信息
 				Method:  http.MethodGet,
 				Path:    "/menu/getRouters",
 				Handler: sys.GetRoutersHandler(serverCtx),
+			},
+			{
+				// 查询菜单列表
+				Method:  http.MethodGet,
+				Path:    "/menu/list",
+				Handler: sys.MenuListHandler(serverCtx),
+			},
+			{
+				// 获取角色菜单树
+				Method:  http.MethodGet,
+				Path:    "/menu/roleMenuTreeselect/:roleId",
+				Handler: sys.MenuRoleMenuTreeselectHandler(serverCtx),
+			},
+			{
+				// 获取菜单下拉树列表
+				Method:  http.MethodGet,
+				Path:    "/menu/treeselect",
+				Handler: sys.MenuTreeselectHandler(serverCtx),
 			},
 			{
 				// 新增通知公告
@@ -353,10 +401,250 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: sys.PostOptionSelectHandler(serverCtx),
 			},
 			{
+				// 删除OSS对象存储
+				Method:  http.MethodDelete,
+				Path:    "/resource/oss/:ossIds",
+				Handler: sys.OssRemoveHandler(serverCtx),
+			},
+			{
+				// 下载OSS对象
+				Method:  http.MethodGet,
+				Path:    "/resource/oss/download/:ossId",
+				Handler: sys.OssDownloadHandler(serverCtx),
+			},
+			{
+				// 查询OSS对象存储列表
+				Method:  http.MethodGet,
+				Path:    "/resource/oss/list",
+				Handler: sys.OssListHandler(serverCtx),
+			},
+			{
+				// 查询OSS对象基于id串
+				Method:  http.MethodGet,
+				Path:    "/resource/oss/listByIds/:ossIds",
+				Handler: sys.OssListByIdsHandler(serverCtx),
+			},
+			{
+				// 上传OSS对象存储
+				Method:  http.MethodPost,
+				Path:    "/resource/oss/upload",
+				Handler: sys.OssUploadHandler(serverCtx),
+			},
+			{
+				// 新增角色
+				Method:  http.MethodPost,
+				Path:    "/role",
+				Handler: sys.RoleAddHandler(serverCtx),
+			},
+			{
+				// 修改保存角色
+				Method:  http.MethodPut,
+				Path:    "/role",
+				Handler: sys.RoleEditHandler(serverCtx),
+			},
+			{
+				// 根据角色编号获取详细信息
+				Method:  http.MethodGet,
+				Path:    "/role/:roleId",
+				Handler: sys.RoleGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除角色
+				Method:  http.MethodDelete,
+				Path:    "/role/:roleIds",
+				Handler: sys.RoleRemoveHandler(serverCtx),
+			},
+			{
+				// 查询已分配用户角色列表
+				Method:  http.MethodGet,
+				Path:    "/role/authUser/allocatedList",
+				Handler: sys.RoleAuthUserAllocatedListHandler(serverCtx),
+			},
+			{
+				// 取消授权用户
+				Method:  http.MethodPut,
+				Path:    "/role/authUser/cancel",
+				Handler: sys.RoleAuthUserCancelHandler(serverCtx),
+			},
+			{
+				// 批量取消授权用户
+				Method:  http.MethodPut,
+				Path:    "/role/authUser/cancelAll",
+				Handler: sys.RoleAuthUserCancelAllHandler(serverCtx),
+			},
+			{
+				// 批量选择用户授权
+				Method:  http.MethodPut,
+				Path:    "/role/authUser/selectAll",
+				Handler: sys.RoleAuthUserSelectAllHandler(serverCtx),
+			},
+			{
+				// 查询未分配用户角色列表
+				Method:  http.MethodGet,
+				Path:    "/role/authUser/unallocatedList",
+				Handler: sys.RoleAuthUserUnallocatedListHandler(serverCtx),
+			},
+			{
+				// 状态修改
+				Method:  http.MethodPut,
+				Path:    "/role/changeStatus",
+				Handler: sys.RoleChangeStatusHandler(serverCtx),
+			},
+			{
+				// 修改保存数据权限
+				Method:  http.MethodPut,
+				Path:    "/role/dataScope",
+				Handler: sys.RoleDataScopeHandler(serverCtx),
+			},
+			{
+				// 获取对应角色部门树列表
+				Method:  http.MethodGet,
+				Path:    "/role/deptTree/:roleId",
+				Handler: sys.RoleDeptTreeHandler(serverCtx),
+			},
+			{
+				// 导出角色信息列表
+				Method:  http.MethodPost,
+				Path:    "/role/export",
+				Handler: sys.RoleExportHandler(serverCtx),
+			},
+			{
+				// 获取角色信息列表
+				Method:  http.MethodGet,
+				Path:    "/role/list",
+				Handler: sys.RoleListHandler(serverCtx),
+			},
+			{
+				// 获取角色选择框列表
+				Method:  http.MethodGet,
+				Path:    "/role/optionselect",
+				Handler: sys.RoleOptionSelectHandler(serverCtx),
+			},
+			{
+				// 新增用户
+				Method:  http.MethodPost,
+				Path:    "/user",
+				Handler: sys.UserAddHandler(serverCtx),
+			},
+			{
+				// 修改用户
+				Method:  http.MethodPut,
+				Path:    "/user",
+				Handler: sys.UserEditHandler(serverCtx),
+			},
+			{
+				// 根据用户编号获取详细信息
+				Method:  http.MethodGet,
+				Path:    "/user/",
+				Handler: sys.UserGetInfoHandler(serverCtx),
+			},
+			{
+				// 根据用户编号获取详细信息
+				Method:  http.MethodGet,
+				Path:    "/user/:userId",
+				Handler: sys.UserGetInfoByIdHandler(serverCtx),
+			},
+			{
+				// 删除用户
+				Method:  http.MethodDelete,
+				Path:    "/user/:userIds",
+				Handler: sys.UserRemoveHandler(serverCtx),
+			},
+			{
+				// 用户授权角色
+				Method:  http.MethodPut,
+				Path:    "/user/authRole",
+				Handler: sys.UserAuthRoleHandler(serverCtx),
+			},
+			{
+				// 根据用户编号获取授权角色
+				Method:  http.MethodGet,
+				Path:    "/user/authRole/:userId",
+				Handler: sys.UserAuthRoleGetHandler(serverCtx),
+			},
+			{
+				// 状态修改
+				Method:  http.MethodPut,
+				Path:    "/user/changeStatus",
+				Handler: sys.UserChangeStatusHandler(serverCtx),
+			},
+			{
+				// 获取部门树列表
+				Method:  http.MethodGet,
+				Path:    "/user/deptTree",
+				Handler: sys.UserDeptTreeHandler(serverCtx),
+			},
+			{
+				// 导出用户列表
+				Method:  http.MethodPost,
+				Path:    "/user/export",
+				Handler: sys.UserExportHandler(serverCtx),
+			},
+			{
 				// 获取用户信息
 				Method:  http.MethodGet,
 				Path:    "/user/getInfo",
 				Handler: sys.GetUserInfoHandler(serverCtx),
+			},
+			{
+				// 导入用户数据
+				Method:  http.MethodPost,
+				Path:    "/user/importData",
+				Handler: sys.UserImportDataHandler(serverCtx),
+			},
+			{
+				// 获取导入模板
+				Method:  http.MethodPost,
+				Path:    "/user/importTemplate",
+				Handler: sys.UserImportTemplateHandler(serverCtx),
+			},
+			{
+				// 查询用户列表
+				Method:  http.MethodGet,
+				Path:    "/user/list",
+				Handler: sys.UserListHandler(serverCtx),
+			},
+			{
+				// 获取部门下的所有用户信息
+				Method:  http.MethodGet,
+				Path:    "/user/list/dept/:deptId",
+				Handler: sys.UserListByDeptHandler(serverCtx),
+			},
+			{
+				// 根据用户ID串批量获取用户基础信息
+				Method:  http.MethodGet,
+				Path:    "/user/optionselect",
+				Handler: sys.UserOptionSelectHandler(serverCtx),
+			},
+			{
+				// 个人信息
+				Method:  http.MethodGet,
+				Path:    "/user/profile",
+				Handler: sys.UserProfileHandler(serverCtx),
+			},
+			{
+				// 修改用户信息
+				Method:  http.MethodPut,
+				Path:    "/user/profile",
+				Handler: sys.UserProfileUpdateHandler(serverCtx),
+			},
+			{
+				// 头像上传
+				Method:  http.MethodPost,
+				Path:    "/user/profile/avatar",
+				Handler: sys.UserProfileAvatarHandler(serverCtx),
+			},
+			{
+				// 重置密码
+				Method:  http.MethodPut,
+				Path:    "/user/profile/updatePwd",
+				Handler: sys.UserProfileUpdatePwdHandler(serverCtx),
+			},
+			{
+				// 重置密码
+				Method:  http.MethodPut,
+				Path:    "/user/resetPwd",
+				Handler: sys.UserResetPwdHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),

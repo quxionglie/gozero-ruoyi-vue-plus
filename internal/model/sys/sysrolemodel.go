@@ -3,6 +3,7 @@ package sys
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
@@ -22,6 +23,28 @@ type (
 		CheckIsSuperAdmin(ctx context.Context, userId int64) (bool, error)
 		// SelectRoleKeysByUserId 根据用户ID查询角色权限标识
 		SelectRoleKeysByUserId(ctx context.Context, userId int64) ([]string, error)
+		// FindPage 分页查询角色列表
+		FindPage(ctx context.Context, query *RoleQuery, pageQuery *PageQuery) ([]*SysRole, int64, error)
+		// FindByIds 根据角色ID列表查询角色列表
+		FindByIds(ctx context.Context, roleIds []int64) ([]*SysRole, error)
+		// FindAll 查询所有角色
+		FindAll(ctx context.Context, query *RoleQuery) ([]*SysRole, error)
+		// CheckRoleNameUnique 检查角色名称是否唯一
+		CheckRoleNameUnique(ctx context.Context, roleName string, excludeRoleId int64) (bool, error)
+		// CheckRoleKeyUnique 检查角色权限标识是否唯一
+		CheckRoleKeyUnique(ctx context.Context, roleKey string, excludeRoleId int64) (bool, error)
+		// CountUserRoleByRoleId 统计角色使用数量
+		CountUserRoleByRoleId(ctx context.Context, roleId int64) (int64, error)
+		// UpdateRoleStatus 更新角色状态
+		UpdateRoleStatus(ctx context.Context, roleId int64, status string) error
+	}
+
+	// RoleQuery 角色查询条件
+	RoleQuery struct {
+		RoleId   int64  // 角色ID
+		RoleName string // 角色名称（模糊查询）
+		RoleKey  string // 角色权限标识（模糊查询）
+		Status   string // 角色状态（0正常 1停用）
 	}
 
 	customSysRoleModel struct {
@@ -142,4 +165,224 @@ func (m *customSysRoleModel) SelectRoleKeysByUserId(ctx context.Context, userId 
 	}
 
 	return result, nil
+}
+
+// FindPage 分页查询角色列表
+func (m *customSysRoleModel) FindPage(ctx context.Context, query *RoleQuery, pageQuery *PageQuery) ([]*SysRole, int64, error) {
+	if query == nil {
+		query = &RoleQuery{}
+	}
+	if pageQuery == nil {
+		pageQuery = &PageQuery{
+			PageNum:  1,
+			PageSize: 10,
+		}
+	}
+
+	// 构建 WHERE 条件
+	whereClause := "del_flag = '0'"
+	var args []interface{}
+
+	if query.RoleId > 0 {
+		whereClause += " and role_id = ?"
+		args = append(args, query.RoleId)
+	}
+	if query.RoleName != "" {
+		whereClause += " and role_name LIKE ?"
+		args = append(args, "%"+query.RoleName+"%")
+	}
+	if query.RoleKey != "" {
+		whereClause += " and role_key LIKE ?"
+		args = append(args, "%"+query.RoleKey+"%")
+	}
+	if query.Status != "" {
+		whereClause += " and status = ?"
+		args = append(args, query.Status)
+	}
+
+	// 计算总数
+	countQuery := fmt.Sprintf("select count(*) from %s where %s", m.table, whereClause)
+	var total int64
+	err := m.conn.QueryRowPartialCtx(ctx, &total, countQuery, args...)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	// 构建 ORDER BY 子句
+	orderBy := "role_sort ASC, create_time ASC"
+	if pageQuery.OrderByColumn != "" {
+		// 列名白名单验证（防止SQL注入）
+		roleOrderColumns := map[string]bool{
+			"role_id": true, "role_sort": true, "create_time": true, "role_name": true,
+		}
+		orderColumn := strings.ToLower(pageQuery.OrderByColumn)
+		if roleOrderColumns[orderColumn] {
+			orderBy = pageQuery.OrderByColumn + " "
+			if pageQuery.IsAsc == "ascending" || pageQuery.IsAsc == "asc" {
+				orderBy += "ASC"
+			} else {
+				orderBy += "DESC"
+			}
+		}
+	}
+
+	// 计算分页参数
+	offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
+	limit := pageQuery.PageSize
+
+	// 查询数据（引用gen文件中的常量）
+	rows := "role_id,tenant_id,role_name,role_key,role_sort,data_scope,menu_check_strictly,dept_check_strictly,status,del_flag,create_dept,create_by,create_time,update_by,update_time,remark"
+	querySQL := fmt.Sprintf(`
+		SELECT %s
+		FROM %s
+		WHERE %s
+		ORDER BY %s
+		LIMIT ? OFFSET ?
+	`, rows, m.table, whereClause, orderBy)
+
+	args = append(args, limit, offset)
+
+	var roleList []*SysRole
+	err = m.conn.QueryRowsPartialCtx(ctx, &roleList, querySQL, args...)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, 0, err
+	}
+
+	return roleList, total, nil
+}
+
+// FindByIds 根据角色ID列表查询角色列表
+func (m *customSysRoleModel) FindByIds(ctx context.Context, roleIds []int64) ([]*SysRole, error) {
+	if len(roleIds) == 0 {
+		return []*SysRole{}, nil
+	}
+
+	// 构建 IN 查询
+	placeholders := ""
+	for i := 0; i < len(roleIds); i++ {
+		if i > 0 {
+			placeholders += ","
+		}
+		placeholders += "?"
+	}
+
+	// 引用gen文件中的常量
+	rows := "role_id,tenant_id,role_name,role_key,role_sort,data_scope,menu_check_strictly,dept_check_strictly,status,del_flag,create_dept,create_by,create_time,update_by,update_time,remark"
+	query := fmt.Sprintf(`
+		SELECT %s 
+		FROM %s 
+		WHERE role_id IN (%s) 
+		  AND status = '0' 
+		  AND del_flag = '0'
+		ORDER BY role_sort ASC
+	`, rows, m.table, placeholders)
+
+	var args []interface{}
+	for _, id := range roleIds {
+		args = append(args, id)
+	}
+
+	var roleList []*SysRole
+	err := m.conn.QueryRowsPartialCtx(ctx, &roleList, query, args...)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+	return roleList, nil
+}
+
+// FindAll 查询所有角色
+func (m *customSysRoleModel) FindAll(ctx context.Context, query *RoleQuery) ([]*SysRole, error) {
+	if query == nil {
+		query = &RoleQuery{}
+	}
+
+	// 构建 WHERE 条件
+	whereClause := "del_flag = '0'"
+	var args []interface{}
+
+	if query.RoleId > 0 {
+		whereClause += " and role_id = ?"
+		args = append(args, query.RoleId)
+	}
+	if query.RoleName != "" {
+		whereClause += " and role_name LIKE ?"
+		args = append(args, "%"+query.RoleName+"%")
+	}
+	if query.RoleKey != "" {
+		whereClause += " and role_key LIKE ?"
+		args = append(args, "%"+query.RoleKey+"%")
+	}
+	if query.Status != "" {
+		whereClause += " and status = ?"
+		args = append(args, query.Status)
+	}
+
+	// 引用gen文件中的常量
+	rows := "role_id,tenant_id,role_name,role_key,role_sort,data_scope,menu_check_strictly,dept_check_strictly,status,del_flag,create_dept,create_by,create_time,update_by,update_time,remark"
+	querySQL := fmt.Sprintf(`
+		SELECT %s
+		FROM %s
+		WHERE %s
+		ORDER BY role_sort ASC, create_time ASC
+	`, rows, m.table, whereClause)
+
+	var roleList []*SysRole
+	err := m.conn.QueryRowsPartialCtx(ctx, &roleList, querySQL, args...)
+	if err != nil && err != sql.ErrNoRows {
+		return nil, err
+	}
+
+	return roleList, nil
+}
+
+// CheckRoleNameUnique 检查角色名称是否唯一
+func (m *customSysRoleModel) CheckRoleNameUnique(ctx context.Context, roleName string, excludeRoleId int64) (bool, error) {
+	query := "SELECT COUNT(*) FROM sys_role WHERE role_name = ? AND del_flag = '0'"
+	args := []interface{}{roleName}
+	if excludeRoleId > 0 {
+		query += " AND role_id != ?"
+		args = append(args, excludeRoleId)
+	}
+
+	var count int64
+	err := m.conn.QueryRowPartialCtx(ctx, &count, query, args...)
+	if err != nil {
+		return false, err
+	}
+	return count == 0, nil
+}
+
+// CheckRoleKeyUnique 检查角色权限标识是否唯一
+func (m *customSysRoleModel) CheckRoleKeyUnique(ctx context.Context, roleKey string, excludeRoleId int64) (bool, error) {
+	query := "SELECT COUNT(*) FROM sys_role WHERE role_key = ? AND del_flag = '0'"
+	args := []interface{}{roleKey}
+	if excludeRoleId > 0 {
+		query += " AND role_id != ?"
+		args = append(args, excludeRoleId)
+	}
+
+	var count int64
+	err := m.conn.QueryRowPartialCtx(ctx, &count, query, args...)
+	if err != nil {
+		return false, err
+	}
+	return count == 0, nil
+}
+
+// CountUserRoleByRoleId 统计角色使用数量
+func (m *customSysRoleModel) CountUserRoleByRoleId(ctx context.Context, roleId int64) (int64, error) {
+	query := "SELECT COUNT(*) FROM sys_user_role WHERE role_id = ?"
+	var count int64
+	err := m.conn.QueryRowPartialCtx(ctx, &count, query, roleId)
+	if err != nil {
+		return 0, err
+	}
+	return count, nil
+}
+
+// UpdateRoleStatus 更新角色状态
+func (m *customSysRoleModel) UpdateRoleStatus(ctx context.Context, roleId int64, status string) error {
+	query := fmt.Sprintf("UPDATE %s SET status = ? WHERE role_id = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, status, roleId)
+	return err
 }

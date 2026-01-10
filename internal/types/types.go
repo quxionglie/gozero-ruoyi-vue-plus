@@ -161,6 +161,23 @@ type DeptResp struct {
 	Data DeptVo `json:"data,omitempty"`
 }
 
+type DeptTreeSelectResp struct {
+	BaseResp
+	Data DeptTreeSelectVo `json:"data,omitempty"`
+}
+
+type DeptTreeSelectVo struct {
+	CheckedKeys []int64      `json:"checkedKeys"` // 选中的部门ID列表
+	Depts       []DeptTreeVo `json:"depts"`       // 部门树列表
+}
+
+type DeptTreeVo struct {
+	Id       int64        `json:"id,string"`          // 部门ID
+	Label    string       `json:"label"`              // 部门名称
+	ParentId int64        `json:"parentId,string"`    // 父部门ID
+	Children []DeptTreeVo `json:"children,omitempty"` // 子部门
+}
+
 type DeptVo struct {
 	DeptId       int64    `json:"deptId,string"`      // 部门id
 	ParentId     int64    `json:"parentId,string"`    // 父部门id
@@ -302,6 +319,98 @@ type LoginVo struct {
 	ClientId        string `json:"client_id,omitempty"`      // 应用id
 }
 
+type MenuCascadeRemoveReq struct {
+	MenuIds string `path:"menuIds"` // 菜单ID串（逗号分隔）
+}
+
+type MenuGetInfoReq struct {
+	MenuId int64 `path:"menuId,range=[1:]"` // 菜单ID（必须大于0）
+}
+
+type MenuListReq struct {
+	MenuName string `form:"menuName,optional"`        // 菜单名称（模糊查询）
+	Visible  string `form:"visible,optional"`         // 显示状态（0显示 1隐藏）
+	Status   string `form:"status,optional"`          // 菜单状态（0正常 1停用）
+	MenuType string `form:"menuType,optional"`        // 菜单类型（M目录 C菜单 F按钮）
+	ParentId int64  `form:"parentId,optional,string"` // 父菜单ID
+}
+
+type MenuListResp struct {
+	BaseResp
+	Data []MenuVo `json:"data,omitempty"`
+}
+
+type MenuRemoveReq struct {
+	MenuId int64 `path:"menuId,range=[1:]"` // 菜单ID（必须大于0）
+}
+
+type MenuReq struct {
+	MenuId     int64  `json:"menuId,optional,string"`       // 菜单ID
+	ParentId   int64  `json:"parentId,optional,string"`     // 父菜单ID
+	MenuName   string `json:"menuName"`                     // 菜单名称（必填，最大50字符）
+	OrderNum   int32  `json:"orderNum,optional"`            // 显示顺序
+	Path       string `json:"path,optional"`                // 路由地址（最大200字符）
+	Component  string `json:"component,optional"`           // 组件路径（最大200字符）
+	QueryParam string `json:"queryParam,optional"`          // 路由参数
+	IsFrame    string `json:"isFrame,optional,options=0|1"` // 是否为外链（0是 1否）
+	IsCache    string `json:"isCache,optional,options=0|1"` // 是否缓存（0缓存 1不缓存）
+	MenuType   string `json:"menuType"`                     // 菜单类型（M目录 C菜单 F按钮）
+	Visible    string `json:"visible,optional,options=0|1"` // 显示状态（0显示 1隐藏）
+	Status     string `json:"status,optional,options=0|1"`  // 菜单状态（0正常 1停用）
+	Perms      string `json:"perms,optional"`               // 权限标识（最大100字符）
+	Icon       string `json:"icon,optional"`                // 菜单图标
+	Remark     string `json:"remark,optional"`              // 备注
+}
+
+type MenuResp struct {
+	BaseResp
+	Data MenuVo `json:"data,omitempty"`
+}
+
+type MenuRoleMenuTreeselectReq struct {
+	RoleId int64 `path:"roleId,range=[1:]"` // 角色ID（必须大于0）
+}
+
+type MenuTreeVo struct {
+	Id       int64        `json:"id,string"`          // 菜单ID
+	Label    string       `json:"label"`              // 菜单名称
+	ParentId int64        `json:"parentId,string"`    // 父菜单ID
+	Children []MenuTreeVo `json:"children,omitempty"` // 子菜单
+}
+
+type MenuTreeselectReq struct {
+	MenuName string `form:"menuName,optional"`        // 菜单名称（模糊查询）
+	Visible  string `form:"visible,optional"`         // 显示状态（0显示 1隐藏）
+	Status   string `form:"status,optional"`          // 菜单状态（0正常 1停用）
+	MenuType string `form:"menuType,optional"`        // 菜单类型（M目录 C菜单 F按钮）
+	ParentId int64  `form:"parentId,optional,string"` // 父菜单ID
+}
+
+type MenuTreeselectResp struct {
+	BaseResp
+	Data []MenuTreeVo `json:"data,omitempty"`
+}
+
+type MenuVo struct {
+	MenuId     int64    `json:"menuId,string"`      // 菜单ID
+	ParentId   int64    `json:"parentId,string"`    // 父菜单ID
+	MenuName   string   `json:"menuName"`           // 菜单名称
+	OrderNum   int32    `json:"orderNum"`           // 显示顺序
+	Path       string   `json:"path"`               // 路由地址
+	Component  string   `json:"component"`          // 组件路径
+	QueryParam string   `json:"queryParam"`         // 路由参数
+	IsFrame    string   `json:"isFrame"`            // 是否为外链（0是 1否）
+	IsCache    string   `json:"isCache"`            // 是否缓存（0缓存 1不缓存）
+	MenuType   string   `json:"menuType"`           // 菜单类型（M目录 C菜单 F按钮）
+	Visible    string   `json:"visible"`            // 显示状态（0显示 1隐藏）
+	Status     string   `json:"status"`             // 菜单状态（0正常 1停用）
+	Perms      string   `json:"perms"`              // 权限标识
+	Icon       string   `json:"icon"`               // 菜单图标
+	CreateTime string   `json:"createTime"`         // 创建时间
+	Remark     string   `json:"remark"`             // 备注
+	Children   []MenuVo `json:"children,omitempty"` // 子菜单
+}
+
 type MetaVo struct {
 	Title   string `json:"title,omitempty"`   // 设置该路由在侧边栏和面包屑中展示的名字
 	Icon    string `json:"icon,omitempty"`    // 设置该路由的图标，对应路径src/assets/icons/svg
@@ -347,6 +456,65 @@ type NoticeVo struct {
 	Status        string `json:"status"`          // 公告状态（0正常 1关闭）
 	Remark        string `json:"remark"`          // 备注
 	CreateTime    string `json:"createTime"`      // 创建时间
+}
+
+type OssDownloadReq struct {
+	OssId int64 `path:"ossId,range=[1:]"` // OSS对象ID（必须大于0）
+}
+
+type OssDownloadResp struct {
+	BaseResp
+}
+
+type OssListByIdsReq struct {
+	OssIds string `path:"ossIds"` // OSS对象ID串（逗号分隔）
+}
+
+type OssListReq struct {
+	FileName     string `form:"fileName,optional"`        // 文件名（模糊查询）
+	OriginalName string `form:"originalName,optional"`    // 原名（模糊查询）
+	FileSuffix   string `form:"fileSuffix,optional"`      // 文件后缀名
+	Url          string `form:"url,optional"`             // URL地址
+	CreateBy     int64  `form:"createBy,optional,string"` // 创建者
+	Service      string `form:"service,optional"`         // 服务商
+	PageQuery
+}
+
+type OssListResp struct {
+	BaseResp
+	Total int64   `json:"total,string"` // 总记录数
+	Rows  []OssVo `json:"rows"`         // 列表数据
+}
+
+type OssRemoveReq struct {
+	OssIds string `path:"ossIds"` // OSS对象ID串（逗号分隔）
+}
+
+type OssUploadReq struct {
+}
+
+type OssUploadResp struct {
+	BaseResp
+	Data OssUploadVo `json:"data,omitempty"`
+}
+
+type OssUploadVo struct {
+	Url      string `json:"url"`      // URL地址
+	FileName string `json:"fileName"` // 文件名
+	OssId    string `json:"ossId"`    // 对象存储主键
+}
+
+type OssVo struct {
+	OssId        int64  `json:"ossId,string"`    // 对象存储主键
+	FileName     string `json:"fileName"`        // 文件名
+	OriginalName string `json:"originalName"`    // 原名
+	FileSuffix   string `json:"fileSuffix"`      // 文件后缀名
+	Url          string `json:"url"`             // URL地址
+	Ext1         string `json:"ext1"`            // 扩展字段
+	CreateTime   string `json:"createTime"`      // 创建时间
+	CreateBy     int64  `json:"createBy,string"` // 上传人
+	CreateByName string `json:"createByName"`    // 上传人名称
+	Service      string `json:"service"`         // 服务商
 }
 
 type PageQuery struct {
@@ -412,6 +580,129 @@ type PostVo struct {
 	Remark       string `json:"remark"`        // 备注
 	CreateTime   string `json:"createTime"`    // 创建时间
 	DeptName     string `json:"deptName"`      // 部门名
+}
+
+type ProfileUserVo struct {
+	UserId      int64  `json:"userId,string"` // 用户ID
+	TenantId    string `json:"tenantId"`      // 租户ID
+	DeptId      int64  `json:"deptId,string"` // 部门ID
+	UserName    string `json:"userName"`      // 用户账号
+	NickName    string `json:"nickName"`      // 用户昵称
+	UserType    string `json:"userType"`      // 用户类型（sys_user系统用户）
+	Email       string `json:"email"`         // 用户邮箱
+	Phonenumber string `json:"phonenumber"`   // 手机号码
+	Sex         string `json:"sex"`           // 用户性别（0男 1女 2未知）
+	Avatar      int64  `json:"avatar,string"` // 头像地址
+	LoginIp     string `json:"loginIp"`       // 最后登录IP
+	LoginDate   string `json:"loginDate"`     // 最后登录时间
+	DeptName    string `json:"deptName"`      // 部门名
+}
+
+type RoleAuthUserAllocatedListReq struct {
+	RoleId      int64  `form:"roleId,range=[1:]"`    // 角色ID（必须大于0）
+	UserName    string `form:"userName,optional"`    // 用户名称（模糊查询）
+	Phonenumber string `form:"phonenumber,optional"` // 手机号码（模糊查询）
+	Status      string `form:"status,optional"`      // 帐号状态（0正常 1停用）
+	PageQuery
+}
+
+type RoleAuthUserCancelAllReq struct {
+	RoleId  int64   `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
+	UserIds []int64 `json:"userIds"`           // 用户ID列表
+}
+
+type RoleAuthUserCancelReq struct {
+	RoleId int64 `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
+	UserId int64 `json:"userId,range=[1:]"` // 用户ID（必须大于0）
+}
+
+type RoleAuthUserSelectAllReq struct {
+	RoleId  int64   `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
+	UserIds []int64 `json:"userIds"`           // 用户ID列表
+}
+
+type RoleAuthUserUnallocatedListReq struct {
+	RoleId      int64  `form:"roleId,range=[1:]"`    // 角色ID（必须大于0）
+	UserName    string `form:"userName,optional"`    // 用户名称（模糊查询）
+	Phonenumber string `form:"phonenumber,optional"` // 手机号码（模糊查询）
+	Status      string `form:"status,optional"`      // 帐号状态（0正常 1停用）
+	PageQuery
+}
+
+type RoleChangeStatusReq struct {
+	RoleId int64  `json:"roleId,range=[1:]"`  // 角色ID（必须大于0）
+	Status string `json:"status,options=0|1"` // 角色状态（0正常 1停用）
+}
+
+type RoleDeptTreeReq struct {
+	RoleId int64 `path:"roleId,range=[1:]"` // 角色ID（必须大于0）
+}
+
+type RoleGetInfoReq struct {
+	RoleId int64 `path:"roleId,range=[1:]"` // 角色ID（必须大于0）
+}
+
+type RoleListReq struct {
+	RoleId   int64  `form:"roleId,optional,string"` // 角色ID
+	RoleName string `form:"roleName,optional"`      // 角色名称（模糊查询）
+	RoleKey  string `form:"roleKey,optional"`       // 角色权限标识（模糊查询）
+	Status   string `form:"status,optional"`        // 角色状态（0正常 1停用）
+	PageQuery
+}
+
+type RoleListResp struct {
+	BaseResp
+	Total int64    `json:"total,string"` // 总记录数
+	Rows  []RoleVo `json:"rows"`         // 列表数据
+}
+
+type RoleOptionSelectReq struct {
+	RoleIds string `form:"roleIds,optional"` // 角色ID串（逗号分隔，可选）
+}
+
+type RoleOptionSelectResp struct {
+	BaseResp
+	Data []RoleVo `json:"data,omitempty"`
+}
+
+type RoleRemoveReq struct {
+	RoleIds string `path:"roleIds"` // 角色ID串（逗号分隔）
+}
+
+type RoleReq struct {
+	RoleId    int64   `json:"roleId,optional,string"`      // 角色ID
+	RoleName  string  `json:"roleName"`                    // 角色名称（必填，最大30字符）
+	RoleKey   string  `json:"roleKey"`                     // 角色权限标识（必填，最大100字符）
+	RoleSort  int32   `json:"roleSort,optional"`           // 显示顺序
+	DataScope string  `json:"dataScope,optional"`          // 数据范围（1全部数据权限 2自定义数据权限 3本部门数据权限 4本部门及以下数据权限 5仅本人数据权限）
+	MenuIds   []int64 `json:"menuIds,optional"`            // 菜单ID列表
+	DeptIds   []int64 `json:"deptIds,optional"`            // 部门ID列表（数据权限）
+	Status    string  `json:"status,optional,options=0|1"` // 角色状态（0正常 1停用）
+	Remark    string  `json:"remark,optional"`             // 备注（最大500字符）
+}
+
+type RoleResp struct {
+	BaseResp
+	Data RoleVo `json:"data,omitempty"`
+}
+
+type RoleVo struct {
+	RoleId            int64   `json:"roleId,string"`     // 角色ID
+	RoleName          string  `json:"roleName"`          // 角色名称
+	RoleKey           string  `json:"roleKey"`           // 角色权限标识
+	RoleSort          int32   `json:"roleSort"`          // 显示顺序
+	DataScope         string  `json:"dataScope"`         // 数据范围（1全部数据权限 2自定义数据权限 3本部门数据权限 4本部门及以下数据权限 5仅本人数据权限）
+	MenuCheckStrictly bool    `json:"menuCheckStrictly"` // 菜单树选择项是否关联显示
+	DeptCheckStrictly bool    `json:"deptCheckStrictly"` // 部门树选择项是否关联显示
+	Status            string  `json:"status"`            // 角色状态（0正常 1停用）
+	DelFlag           string  `json:"delFlag"`           // 删除标志（0代表存在 2代表删除）
+	CreateBy          int64   `json:"createBy,string"`   // 创建者
+	CreateTime        string  `json:"createTime"`        // 创建时间
+	UpdateBy          int64   `json:"updateBy,string"`   // 更新者
+	UpdateTime        string  `json:"updateTime"`        // 更新时间
+	Remark            string  `json:"remark"`            // 备注
+	MenuIds           []int64 `json:"menuIds,omitempty"` // 菜单ID列表
+	DeptIds           []int64 `json:"deptIds,omitempty"` // 部门ID列表（数据权限）
 }
 
 type RouterResp struct {
@@ -481,6 +772,37 @@ type TenantListVo struct {
 	Domain      string `json:"domain"`      // 域名
 }
 
+type UserAuthRoleGetReq struct {
+	UserId int64 `path:"userId,range=[1:]"` // 用户ID（必须大于0）
+}
+
+type UserAuthRoleReq struct {
+	UserId  int64   `form:"userId,range=[1:]"` // 用户Id（必须大于0）
+	RoleIds []int64 `form:"roleIds"`           // 角色ID串
+}
+
+type UserChangeStatusReq struct {
+	UserId int64  `json:"userId,range=[1:]"`  // 用户ID（必须大于0）
+	Status string `json:"status,options=0|1"` // 帐号状态（0正常 1停用）
+}
+
+type UserDetailResp struct {
+	BaseResp
+	Data UserInfoDataVo `json:"data,omitempty"`
+}
+
+type UserGetInfoReq struct {
+	UserId int64 `path:"userId,optional"` // 用户ID（可选，如果不传则返回当前用户信息）
+}
+
+type UserInfoDataVo struct {
+	User    SysUserVo `json:"user"`    // 用户信息
+	RoleIds []int64   `json:"roleIds"` // 角色ID列表
+	Roles   []RoleVo  `json:"roles"`   // 角色列表
+	PostIds []int64   `json:"postIds"` // 岗位ID列表
+	Posts   []PostVo  `json:"posts"`   // 岗位列表
+}
+
 type UserInfoResp struct {
 	BaseResp
 	Data UserInfoVo `json:"data,omitempty"`
@@ -490,4 +812,85 @@ type UserInfoVo struct {
 	User        SysUserVo `json:"user"`        // 用户基本信息
 	Permissions []string  `json:"permissions"` // 菜单权限
 	Roles       []string  `json:"roles"`       // 角色权限
+}
+
+type UserListByDeptReq struct {
+	DeptId int64 `path:"deptId,range=[1:]"` // 部门ID（必须大于0）
+}
+
+type UserListByDeptResp struct {
+	BaseResp
+	Data []SysUserVo `json:"data,omitempty"`
+}
+
+type UserListReq struct {
+	UserId         int64  `form:"userId,optional,string"`  // 用户ID
+	UserIds        string `form:"userIds,optional"`        // 用户ID串（逗号分隔）
+	UserName       string `form:"userName,optional"`       // 用户账号（模糊查询）
+	NickName       string `form:"nickName,optional"`       // 用户昵称（模糊查询）
+	Status         string `form:"status,optional"`         // 帐号状态（0正常 1停用）
+	Phonenumber    string `form:"phonenumber,optional"`    // 手机号码（模糊查询）
+	DeptId         int64  `form:"deptId,optional,string"`  // 部门ID
+	BeginTime      string `form:"beginTime,optional"`      // 开始时间
+	EndTime        string `form:"endTime,optional"`        // 结束时间
+	ExcludeUserIds string `form:"excludeUserIds,optional"` // 排除不查询的用户ID串（逗号分隔）
+	PageQuery
+}
+
+type UserListResp struct {
+	BaseResp
+	Total int64       `json:"total,string"` // 总记录数
+	Rows  []SysUserVo `json:"rows"`         // 列表数据
+}
+
+type UserOptionSelectReq struct {
+	UserIds string `form:"userIds,optional"`       // 用户ID串（逗号分隔，可选）
+	DeptId  int64  `form:"deptId,optional,string"` // 部门id
+}
+
+type UserOptionSelectResp struct {
+	BaseResp
+	Data []SysUserVo `json:"data,omitempty"`
+}
+
+type UserPasswordReq struct {
+	OldPassword string `json:"oldPassword"` // 旧密码（必填）
+	NewPassword string `json:"newPassword"` // 新密码（必填）
+}
+
+type UserProfileReq struct {
+	NickName    string `json:"nickName,optional"`          // 用户昵称（最大30字符）
+	Email       string `json:"email,optional"`             // 用户邮箱（最大50字符）
+	Phonenumber string `json:"phonenumber,optional"`       // 手机号码
+	Sex         string `json:"sex,optional,options=0|1|2"` // 用户性别（0男 1女 2未知）
+}
+
+type UserProfileResp struct {
+	BaseResp
+	Data ProfileUserVo `json:"data,omitempty"`
+}
+
+type UserRemoveReq struct {
+	UserIds string `path:"userIds"` // 用户ID串（逗号分隔）
+}
+
+type UserReq struct {
+	UserId      int64   `json:"userId,optional,string"`      // 用户ID
+	DeptId      int64   `json:"deptId,optional,string"`      // 部门ID
+	UserName    string  `json:"userName"`                    // 用户账号（必填，最大30字符）
+	NickName    string  `json:"nickName"`                    // 用户昵称（必填，最大30字符）
+	UserType    string  `json:"userType,optional"`           // 用户类型（sys_user系统用户）
+	Email       string  `json:"email,optional"`              // 用户邮箱（最大50字符）
+	Phonenumber string  `json:"phonenumber,optional"`        // 手机号码
+	Sex         string  `json:"sex,optional,options=0|1|2"`  // 用户性别（0男 1女 2未知）
+	Password    string  `json:"password,optional"`           // 密码
+	Status      string  `json:"status,optional,options=0|1"` // 帐号状态（0正常 1停用）
+	Remark      string  `json:"remark,optional"`             // 备注
+	RoleIds     []int64 `json:"roleIds,optional"`            // 角色组
+	PostIds     []int64 `json:"postIds,optional"`            // 岗位组
+}
+
+type UserResetPwdReq struct {
+	UserId   int64  `json:"userId,range=[1:]"` // 用户ID（必须大于0）
+	Password string `json:"password"`          // 新密码（必填）
 }
