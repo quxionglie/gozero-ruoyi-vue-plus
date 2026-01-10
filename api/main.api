@@ -15,3 +15,4 @@ type BaseResp {
 // 导入子模块
 import "auth.api"
 import "system.api"
+import "monitor.api"

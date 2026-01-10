@@ -264,3 +264,14 @@ servicecontext.go改名为service_context.go,以后统一用统一使用snake ca
 
 2026-01-10T17:16:26+08:00
 检查编译错误
+
+2026-01-10T17:23:47+08:00
+根据sys.json列出接口列表
+
+2026-01-10T17:29:50+08:00
+查询"未实现接口列表.md"，实现MONITOR 模块 (14个)接口，业务逻辑请参考对应java类。要求：api定义在monitor.api文件
+对应java类:
+CacheController
+SysLogininforController
+SysOperlogController
+SysUserOnlineController

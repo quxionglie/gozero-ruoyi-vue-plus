@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	auth "gozero-ruoyi-vue-plus/internal/handler/auth"
+	monitor "gozero-ruoyi-vue-plus/internal/handler/monitor"
 	sys "gozero-ruoyi-vue-plus/internal/handler/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 
@@ -42,6 +43,97 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 		},
 		rest.WithPrefix("/auth"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 获取缓存监控列表
+				Method:  http.MethodGet,
+				Path:    "/cache",
+				Handler: monitor.CacheGetInfoHandler(serverCtx),
+			},
+			{
+				// 批量删除登录日志
+				Method:  http.MethodDelete,
+				Path:    "/logininfor/:infoIds",
+				Handler: monitor.LogininforRemoveHandler(serverCtx),
+			},
+			{
+				// 清理系统访问记录
+				Method:  http.MethodDelete,
+				Path:    "/logininfor/clean",
+				Handler: monitor.LogininforCleanHandler(serverCtx),
+			},
+			{
+				// 导出系统访问记录列表
+				Method:  http.MethodPost,
+				Path:    "/logininfor/export",
+				Handler: monitor.LogininforExportHandler(serverCtx),
+			},
+			{
+				// 获取系统访问记录列表
+				Method:  http.MethodGet,
+				Path:    "/logininfor/list",
+				Handler: monitor.LogininforListHandler(serverCtx),
+			},
+			{
+				// 解锁用户
+				Method:  http.MethodGet,
+				Path:    "/logininfor/unlock/:userName",
+				Handler: monitor.LogininforUnlockHandler(serverCtx),
+			},
+			{
+				// 获取当前用户登录在线设备
+				Method:  http.MethodGet,
+				Path:    "/online",
+				Handler: monitor.OnlineGetInfoHandler(serverCtx),
+			},
+			{
+				// 强退用户
+				Method:  http.MethodDelete,
+				Path:    "/online/:tokenId",
+				Handler: monitor.OnlineRemoveHandler(serverCtx),
+			},
+			{
+				// 获取在线用户监控列表
+				Method:  http.MethodGet,
+				Path:    "/online/list",
+				Handler: monitor.OnlineListHandler(serverCtx),
+			},
+			{
+				// 强退当前在线设备
+				Method:  http.MethodDelete,
+				Path:    "/online/myself/:tokenId",
+				Handler: monitor.OnlineRemoveMyselfHandler(serverCtx),
+			},
+			{
+				// 批量删除操作日志记录
+				Method:  http.MethodDelete,
+				Path:    "/operlog/:operIds",
+				Handler: monitor.OperLogRemoveHandler(serverCtx),
+			},
+			{
+				// 清理操作日志记录
+				Method:  http.MethodDelete,
+				Path:    "/operlog/clean",
+				Handler: monitor.OperLogCleanHandler(serverCtx),
+			},
+			{
+				// 导出操作日志记录列表
+				Method:  http.MethodPost,
+				Path:    "/operlog/export",
+				Handler: monitor.OperLogExportHandler(serverCtx),
+			},
+			{
+				// 获取操作日志记录列表
+				Method:  http.MethodGet,
+				Path:    "/operlog/list",
+				Handler: monitor.OperLogListHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+		rest.WithPrefix("/monitor"),
 	)
 
 	server.AddRoutes(

@@ -8,6 +8,17 @@ type BaseResp struct {
 	Msg  string `json:"msg"`
 }
 
+type CacheListInfoVo struct {
+	Info         map[string]string   `json:"info"`          // 信息（Redis INFO命令返回的信息）
+	DbSize       int64               `json:"dbSize,string"` // 数据库大小
+	CommandStats []map[string]string `json:"commandStats"`  // 命令统计
+}
+
+type CacheListResp struct {
+	BaseResp
+	Data CacheListInfoVo `json:"data,omitempty"`
+}
+
 type CaptchaResp struct {
 	BaseResp
 	Data CaptchaVo `json:"data,omitempty"`
@@ -319,6 +330,52 @@ type LoginVo struct {
 	ClientId        string `json:"client_id,omitempty"`      // 应用id
 }
 
+type LogininforExportReq struct {
+	Ipaddr    string `form:"ipaddr,optional"`    // 登录IP地址
+	Status    string `form:"status,optional"`    // 登录状态（0成功 1失败）
+	UserName  string `form:"userName,optional"`  // 用户账号
+	BeginTime string `form:"beginTime,optional"` // 开始时间
+	EndTime   string `form:"endTime,optional"`   // 结束时间
+}
+
+type LogininforListReq struct {
+	Ipaddr    string `form:"ipaddr,optional"`    // 登录IP地址
+	Status    string `form:"status,optional"`    // 登录状态（0成功 1失败）
+	UserName  string `form:"userName,optional"`  // 用户账号
+	BeginTime string `form:"beginTime,optional"` // 开始时间
+	EndTime   string `form:"endTime,optional"`   // 结束时间
+	PageQuery
+}
+
+type LogininforListResp struct {
+	BaseResp
+	Total int64          `json:"total,string"` // 总记录数
+	Rows  []LogininforVo `json:"rows"`         // 列表数据
+}
+
+type LogininforRemoveReq struct {
+	InfoIds string `path:"infoIds"` // 日志ids（逗号分隔）
+}
+
+type LogininforUnlockReq struct {
+	UserName string `path:"userName"` // 用户名
+}
+
+type LogininforVo struct {
+	InfoId        int64  `json:"infoId,string"` // 访问ID
+	TenantId      string `json:"tenantId"`      // 租户编号
+	UserName      string `json:"userName"`      // 用户账号
+	ClientKey     string `json:"clientKey"`     // 客户端
+	DeviceType    string `json:"deviceType"`    // 设备类型
+	Ipaddr        string `json:"ipaddr"`        // 登录IP地址
+	LoginLocation string `json:"loginLocation"` // 登录地点
+	Browser       string `json:"browser"`       // 浏览器类型
+	Os            string `json:"os"`            // 操作系统
+	Status        string `json:"status"`        // 登录状态（0成功 1失败）
+	Msg           string `json:"msg"`           // 提示消息
+	LoginTime     string `json:"loginTime"`     // 访问时间
+}
+
 type MenuCascadeRemoveReq struct {
 	MenuIds string `path:"menuIds"` // 菜单ID串（逗号分隔）
 }
@@ -456,6 +513,73 @@ type NoticeVo struct {
 	Status        string `json:"status"`          // 公告状态（0正常 1关闭）
 	Remark        string `json:"remark"`          // 备注
 	CreateTime    string `json:"createTime"`      // 创建时间
+}
+
+type OnlineListReq struct {
+	Ipaddr   string `form:"ipaddr,optional"`   // IP地址
+	UserName string `form:"userName,optional"` // 用户名
+}
+
+type OnlineListResp struct {
+	BaseResp
+	Total int64             `json:"total,string"` // 总记录数
+	Rows  []SysUserOnlineVo `json:"rows"`         // 列表数据
+}
+
+type OnlineRemoveReq struct {
+	TokenId string `path:"tokenId"` // token值
+}
+
+type OperLogExportReq struct {
+	OperIp       string `form:"operIp,optional"`       // 主机地址
+	Title        string `form:"title,optional"`        // 模块标题
+	BusinessType int32  `form:"businessType,optional"` // 业务类型（0其它 1新增 2修改 3删除）
+	Status       int32  `form:"status,optional"`       // 操作状态（0正常 1异常）
+	OperName     string `form:"operName,optional"`     // 操作人员
+	BeginTime    string `form:"beginTime,optional"`    // 开始时间
+	EndTime      string `form:"endTime,optional"`      // 结束时间
+}
+
+type OperLogListReq struct {
+	OperIp       string `form:"operIp,optional"`       // 主机地址
+	Title        string `form:"title,optional"`        // 模块标题
+	BusinessType int32  `form:"businessType,optional"` // 业务类型（0其它 1新增 2修改 3删除）
+	Status       int32  `form:"status,optional"`       // 操作状态（0正常 1异常）
+	OperName     string `form:"operName,optional"`     // 操作人员
+	BeginTime    string `form:"beginTime,optional"`    // 开始时间
+	EndTime      string `form:"endTime,optional"`      // 结束时间
+	PageQuery
+}
+
+type OperLogListResp struct {
+	BaseResp
+	Total int64       `json:"total,string"` // 总记录数
+	Rows  []OperLogVo `json:"rows"`         // 列表数据
+}
+
+type OperLogRemoveReq struct {
+	OperIds string `path:"operIds"` // 日志ids（逗号分隔）
+}
+
+type OperLogVo struct {
+	OperId        int64  `json:"operId,string"`   // 日志主键
+	TenantId      string `json:"tenantId"`        // 租户编号
+	Title         string `json:"title"`           // 模块标题
+	BusinessType  int32  `json:"businessType"`    // 业务类型（0其它 1新增 2修改 3删除）
+	Method        string `json:"method"`          // 方法名称
+	RequestMethod string `json:"requestMethod"`   // 请求方式
+	OperatorType  int32  `json:"operatorType"`    // 操作类别（0其它 1后台用户 2手机端用户）
+	OperName      string `json:"operName"`        // 操作人员
+	DeptName      string `json:"deptName"`        // 部门名称
+	OperUrl       string `json:"operUrl"`         // 请求URL
+	OperIp        string `json:"operIp"`          // 主机地址
+	OperLocation  string `json:"operLocation"`    // 操作地点
+	OperParam     string `json:"operParam"`       // 请求参数
+	JsonResult    string `json:"jsonResult"`      // 返回参数
+	Status        int32  `json:"status"`          // 操作状态（0正常 1异常）
+	ErrorMsg      string `json:"errorMsg"`        // 错误消息
+	OperTime      string `json:"operTime"`        // 操作时间
+	CostTime      int64  `json:"costTime,string"` // 消耗时间
 }
 
 type OssDownloadReq struct {
@@ -733,6 +857,19 @@ type SysRoleVo struct {
 	CreateTime string `json:"createTime"`    // 创建时间
 	SuperAdmin bool   `json:"superAdmin"`    // 超级管理员标识
 	Flag       bool   `json:"flag"`          // 用户是否存在此角色标识
+}
+
+type SysUserOnlineVo struct {
+	TokenId       string `json:"tokenId"`          // 会话编号
+	DeptName      string `json:"deptName"`         // 部门名称
+	UserName      string `json:"userName"`         // 用户名称
+	ClientKey     string `json:"clientKey"`        // 客户端
+	DeviceType    string `json:"deviceType"`       // 设备类型
+	Ipaddr        string `json:"ipaddr"`           // 登录IP地址
+	LoginLocation string `json:"loginLocation"`    // 登录地址
+	Browser       string `json:"browser"`          // 浏览器类型
+	Os            string `json:"os"`               // 操作系统
+	LoginTime     int64  `json:"loginTime,string"` // 登录时间（时间戳）
 }
 
 type SysUserVo struct {
