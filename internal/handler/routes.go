@@ -8,6 +8,7 @@ import (
 
 	auth "gozero-ruoyi-vue-plus/internal/handler/auth"
 	monitor "gozero-ruoyi-vue-plus/internal/handler/monitor"
+	sse "gozero-ruoyi-vue-plus/internal/handler/sse"
 	sys "gozero-ruoyi-vue-plus/internal/handler/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 
@@ -134,6 +135,24 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
 		rest.WithPrefix("/monitor"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 建立 SSE 连接
+				Method:  http.MethodGet,
+				Path:    "/",
+				Handler: sse.SseConnectHandler(serverCtx),
+			},
+			{
+				// 关闭 SSE 连接
+				Method:  http.MethodGet,
+				Path:    "/close",
+				Handler: sse.SseCloseHandler(serverCtx),
+			},
+		},
+		rest.WithPrefix("/resource/sse"),
 	)
 
 	server.AddRoutes(

@@ -1,0 +1,22 @@
+syntax = "v1"
+
+info (
+	title:   "SSE 服务 API"
+	desc:    "Server-Sent Events 相关接口，包括建立和关闭 SSE 连接"
+	version: "1.0.0"
+)
+
+@server (
+	prefix: /resource/sse
+	group:  sse
+)
+service admin-api {
+	@doc "建立 SSE 连接"
+	@handler SseConnect
+	get / returns (BaseResp)
+
+	@doc "关闭 SSE 连接"
+	@handler SseClose
+	get /close returns (BaseResp)
+}
+

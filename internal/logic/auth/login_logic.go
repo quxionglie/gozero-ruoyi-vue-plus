@@ -186,7 +186,13 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	// 7. 存储在线 token 缓存到 Redis
 	l.saveOnlineToken(accessToken, user, req.ClientId, timeout)
 
-	// 8. 返回登录信息
+	// 8. 延迟 5 秒后发送 SSE 欢迎消息
+	go func() {
+		time.Sleep(5 * time.Second)
+		l.sendWelcomeMessage(user.UserId)
+	}()
+
+	// 9. 返回登录信息
 	resp = &types.LoginResp{
 		BaseResp: types.BaseResp{
 			Code: 200,
@@ -350,6 +356,36 @@ func (l *LoginLogic) checkTenant(tenantId string) error {
 	}
 
 	return nil
+}
+
+// sendWelcomeMessage 发送登录欢迎消息
+func (l *LoginLogic) sendWelcomeMessage(userId int64) {
+	// 获取当前时间并生成问候语
+	now := time.Now()
+	hour := now.Hour()
+	var timeGreeting string
+	switch {
+	case hour <= 6:
+		timeGreeting = "凌晨"
+	case hour <= 9:
+		timeGreeting = "早上"
+	case hour <= 12:
+		timeGreeting = "上午"
+	case hour <= 14:
+		timeGreeting = "中午"
+	case hour <= 18:
+		timeGreeting = "下午"
+	case hour <= 22:
+		timeGreeting = "晚上"
+	default:
+		timeGreeting = "深夜"
+	}
+
+	message := fmt.Sprintf("%s好，欢迎登录 RuoYi-Vue-Plus 后台管理系统", timeGreeting)
+
+	// 获取 SSE 管理器并发送消息
+	sseManager := util.GetSseEmitterManager()
+	sseManager.SendMessage(userId, message)
 }
 
 // validateCaptcha 验证验证码

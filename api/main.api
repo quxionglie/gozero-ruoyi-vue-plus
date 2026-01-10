@@ -16,3 +16,4 @@ type BaseResp {
 import "auth.api"
 import "system.api"
 import "monitor.api"
+import "sse.api"

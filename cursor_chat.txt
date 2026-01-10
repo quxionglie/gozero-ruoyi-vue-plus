@@ -281,3 +281,26 @@ SysUserOnlineController
 
 2026-01-10T18:16:31+08:00
 升级go-zero到v1.9.4
+
+2026-01-10T18:20:25+08:00
+支持SSE（Server-Sent Events）功能,参考SseController.java类
+
+接口列表：
+/resource/sse 建立 SSE 连接
+/resource/sse/close 关闭 SSE 连接
+
+2026-01-10T18:45:00+08:00
+go-zero已经实现sse，请把连接接口定义在sse.api中
+参考：https://go-zero.dev/docs/tutorials/http/server/sse
+
+2026-01-10T18:50:00+08:00
+参考AuthController.java代码实现/auth/login后发送一条sse消息
+
+java代码：
+Long userId = LoginHelper.getUserId();
+scheduledExecutorService.schedule(() -> {
+    SseMessageDto dto = new SseMessageDto();
+    dto.setMessage(DateUtils.getTodayHour(new Date()) + "好，欢迎登录 RuoYi-Vue-Plus 后台管理系统");
+    dto.setUserIds(List.of(userId));
+    SseMessageUtils.publishMessage(dto);
+}, 5, TimeUnit.SECONDS);
