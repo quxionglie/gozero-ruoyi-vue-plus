@@ -189,3 +189,9 @@ goctl api go 统一使用snake case风格，迁移当前文件名为snake case�
 
 2026-01-10T11:55:00+08:00
 只要int64统一以字符串输出，int32还是以数字输出。
+
+2026-01-10T12:05:00+08:00
+put /system/config 修改参数配置 configId 获取 不到值。报错：type mismatch for field "configId"，前端输入的字符串类似，后端接收参数是int64
+
+2026-01-10T12:08:00+08:00
+自动把我发出的请求文字记录到cursor_chat.txt，你自己的操作日志不要添加

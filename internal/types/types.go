@@ -32,7 +32,7 @@ type ConfigRemoveReq struct {
 }
 
 type ConfigReq struct {
-	ConfigId    int64  `json:"configId,optional"`               // 参数主键
+	ConfigId    int64  `json:"configId,optional,string"`        // 参数主键
 	ConfigName  string `json:"configName"`                      // 参数名称（必填，最大100字符）
 	ConfigKey   string `json:"configKey"`                       // 参数键名（必填，最大100字符）
 	ConfigValue string `json:"configValue"`                     // 参数键值（必填，最大500字符）
@@ -78,7 +78,7 @@ type DictDataRemoveReq struct {
 }
 
 type DictDataReq struct {
-	DictCode  int64  `json:"dictCode,optional"`              // 字典编码
+	DictCode  int64  `json:"dictCode,optional,string"`       // 字典编码
 	DictSort  int32  `json:"dictSort,optional"`              // 字典排序
 	DictLabel string `json:"dictLabel"`                      // 字典标签（必填，最大100字符）
 	DictValue string `json:"dictValue"`                      // 字典键值（必填，最大100字符）
@@ -121,10 +121,10 @@ type DictTypeRemoveReq struct {
 }
 
 type DictTypeReq struct {
-	DictId   int64  `json:"dictId,optional"` // 字典主键
-	DictName string `json:"dictName"`        // 字典名称（必填，最大100字符）
-	DictType string `json:"dictType"`        // 字典类型（必填，最大100字符，必须以小写字母开头，只能包含小写字母、数字、下划线）
-	Remark   string `json:"remark,optional"` // 备注
+	DictId   int64  `json:"dictId,optional,string"` // 字典主键
+	DictName string `json:"dictName"`               // 字典名称（必填，最大100字符）
+	DictType string `json:"dictType"`               // 字典类型（必填，最大100字符，必须以小写字母开头，只能包含小写字母、数字、下划线）
+	Remark   string `json:"remark,optional"`        // 备注
 }
 
 type DictTypeResp struct {
