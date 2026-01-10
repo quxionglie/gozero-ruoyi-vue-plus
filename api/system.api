@@ -88,4 +88,159 @@ service admin-api {
 	@doc "获取路由信息"
 	@handler GetRouters
 	get /menu/getRouters returns (RouterResp)
+
+	// ========== 字典类型接口 ==========
+	@doc "查询字典类型列表"
+	@handler DictTypeList
+	get /dict/type/list returns (TableDataInfoResp)
+
+	@doc "导出字典类型列表"
+	@handler DictTypeExport
+	post /dict/type/export returns (BaseResp)
+
+	@doc "查询字典类型详细"
+	@handler DictTypeGetInfo
+	get /dict/type/:dictId (DictTypeGetInfoReq) returns (DictTypeResp)
+
+	@doc "新增字典类型"
+	@handler DictTypeAdd
+	post /dict/type (DictTypeReq) returns (BaseResp)
+
+	@doc "修改字典类型"
+	@handler DictTypeEdit
+	put /dict/type (DictTypeReq) returns (BaseResp)
+
+	@doc "删除字典类型"
+	@handler DictTypeRemove
+	delete /dict/type/:dictIds (DictTypeRemoveReq) returns (BaseResp)
+
+	@doc "刷新字典缓存"
+	@handler DictTypeRefreshCache
+	delete /dict/type/refreshCache returns (BaseResp)
+
+	@doc "获取字典选择框列表"
+	@handler DictTypeOptionSelect
+	get /dict/type/optionselect returns (DictTypeListResp)
+
+	// ========== 字典数据接口 ==========
+	@doc "查询字典数据列表"
+	@handler DictDataList
+	get /dict/data/list returns (TableDataInfoResp)
+
+	@doc "导出字典数据列表"
+	@handler DictDataExport
+	post /dict/data/export returns (BaseResp)
+
+	@doc "查询字典数据详细"
+	@handler DictDataGetInfo
+	get /dict/data/:dictCode (DictDataGetInfoReq) returns (DictDataResp)
+
+	@doc "根据字典类型查询字典数据"
+	@handler DictDataByType
+	get /dict/data/type/:dictType (DictDataByTypeReq) returns (DictDataListResp)
+
+	@doc "新增字典数据"
+	@handler DictDataAdd
+	post /dict/data (DictDataReq) returns (BaseResp)
+
+	@doc "修改字典数据"
+	@handler DictDataEdit
+	put /dict/data (DictDataReq) returns (BaseResp)
+
+	@doc "删除字典数据"
+	@handler DictDataRemove
+	delete /dict/data/:dictCodes (DictDataRemoveReq) returns (BaseResp)
+}
+
+// ========== 字典类型相关类型定义 ==========
+type DictTypeReq {
+	DictId   int64  `json:"dictId,omitempty"`   // 字典主键
+	DictName string `json:"dictName"`           // 字典名称
+	DictType string `json:"dictType"`           // 字典类型
+	Remark   string `json:"remark,omitempty"`   // 备注
+}
+
+type DictTypeGetInfoReq {
+	DictId int64 `path:"dictId"` // 字典主键
+}
+
+type DictTypeRemoveReq {
+	DictIds string `path:"dictIds"` // 字典ID串（逗号分隔）
+}
+
+type DictTypeResp {
+	BaseResp
+	Data DictTypeVo `json:"data,omitempty"`
+}
+
+type DictTypeVo {
+	DictId    int64  `json:"dictId"`    // 字典主键
+	DictName  string `json:"dictName"`  // 字典名称
+	DictType  string `json:"dictType"`  // 字典类型
+	Remark    string `json:"remark"`    // 备注
+	CreateTime string `json:"createTime"` // 创建时间
+}
+
+type DictTypeListResp {
+	BaseResp
+	Data []DictTypeVo `json:"data"`
+}
+
+// ========== 字典数据相关类型定义 ==========
+type DictDataReq {
+	DictCode  int64  `json:"dictCode,omitempty"`  // 字典编码
+	DictSort  int32  `json:"dictSort"`            // 字典排序
+	DictLabel string `json:"dictLabel"`           // 字典标签
+	DictValue string `json:"dictValue"`           // 字典键值
+	DictType  string `json:"dictType"`            // 字典类型
+	CssClass  string `json:"cssClass,omitempty"`  // 样式属性
+	ListClass string `json:"listClass,omitempty"` // 表格回显样式
+	IsDefault string `json:"isDefault,omitempty"` // 是否默认（Y是 N否）
+	Remark    string `json:"remark,omitempty"`    // 备注
+}
+
+type DictDataGetInfoReq {
+	DictCode int64 `path:"dictCode"` // 字典编码
+}
+
+type DictDataByTypeReq {
+	DictType string `path:"dictType"` // 字典类型
+}
+
+type DictDataRemoveReq {
+	DictCodes string `path:"dictCodes"` // 字典编码串（逗号分隔）
+}
+
+type DictDataResp {
+	BaseResp
+	Data DictDataVo `json:"data,omitempty"`
+}
+
+type DictDataVo {
+	DictCode   int64  `json:"dictCode"`   // 字典编码
+	DictSort   int32  `json:"dictSort"`   // 字典排序
+	DictLabel  string `json:"dictLabel"`  // 字典标签
+	DictValue  string `json:"dictValue"`  // 字典键值
+	DictType   string `json:"dictType"`   // 字典类型
+	CssClass   string `json:"cssClass"`   // 样式属性
+	ListClass  string `json:"listClass"`  // 表格回显样式
+	IsDefault  string `json:"isDefault"`  // 是否默认（Y是 N否）
+	Remark     string `json:"remark"`     // 备注
+	CreateTime string `json:"createTime"` // 创建时间
+}
+
+type DictDataListResp {
+	BaseResp
+	Data []DictDataVo `json:"data"`
+}
+
+// ========== 通用类型定义 ==========
+type TableDataInfoResp {
+	BaseResp
+	Data TableDataInfo `json:"data,omitempty"`
+}
+
+type TableDataInfo {
+	Total int64       `json:"total"` // 总记录数
+	Rows  interface{} `json:"rows"`  // 列表数据
 }

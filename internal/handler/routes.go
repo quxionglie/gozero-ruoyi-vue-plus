@@ -47,6 +47,96 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 新增字典数据
+				Method:  http.MethodPost,
+				Path:    "/dict/data",
+				Handler: sys.DictDataAddHandler(serverCtx),
+			},
+			{
+				// 修改字典数据
+				Method:  http.MethodPut,
+				Path:    "/dict/data",
+				Handler: sys.DictDataEditHandler(serverCtx),
+			},
+			{
+				// 查询字典数据详细
+				Method:  http.MethodGet,
+				Path:    "/dict/data/:dictCode",
+				Handler: sys.DictDataGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除字典数据
+				Method:  http.MethodDelete,
+				Path:    "/dict/data/:dictCodes",
+				Handler: sys.DictDataRemoveHandler(serverCtx),
+			},
+			{
+				// 导出字典数据列表
+				Method:  http.MethodPost,
+				Path:    "/dict/data/export",
+				Handler: sys.DictDataExportHandler(serverCtx),
+			},
+			{
+				// 查询字典数据列表
+				Method:  http.MethodGet,
+				Path:    "/dict/data/list",
+				Handler: sys.DictDataListHandler(serverCtx),
+			},
+			{
+				// 根据字典类型查询字典数据
+				Method:  http.MethodGet,
+				Path:    "/dict/data/type/:dictType",
+				Handler: sys.DictDataByTypeHandler(serverCtx),
+			},
+			{
+				// 新增字典类型
+				Method:  http.MethodPost,
+				Path:    "/dict/type",
+				Handler: sys.DictTypeAddHandler(serverCtx),
+			},
+			{
+				// 修改字典类型
+				Method:  http.MethodPut,
+				Path:    "/dict/type",
+				Handler: sys.DictTypeEditHandler(serverCtx),
+			},
+			{
+				// 查询字典类型详细
+				Method:  http.MethodGet,
+				Path:    "/dict/type/:dictId",
+				Handler: sys.DictTypeGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除字典类型
+				Method:  http.MethodDelete,
+				Path:    "/dict/type/:dictIds",
+				Handler: sys.DictTypeRemoveHandler(serverCtx),
+			},
+			{
+				// 导出字典类型列表
+				Method:  http.MethodPost,
+				Path:    "/dict/type/export",
+				Handler: sys.DictTypeExportHandler(serverCtx),
+			},
+			{
+				// 查询字典类型列表
+				Method:  http.MethodGet,
+				Path:    "/dict/type/list",
+				Handler: sys.DictTypeListHandler(serverCtx),
+			},
+			{
+				// 获取字典选择框列表
+				Method:  http.MethodGet,
+				Path:    "/dict/type/optionselect",
+				Handler: sys.DictTypeOptionSelectHandler(serverCtx),
+			},
+			{
+				// 刷新字典缓存
+				Method:  http.MethodDelete,
+				Path:    "/dict/type/refreshCache",
+				Handler: sys.DictTypeRefreshCacheHandler(serverCtx),
+			},
+			{
 				// 获取路由信息
 				Method:  http.MethodGet,
 				Path:    "/menu/getRouters",

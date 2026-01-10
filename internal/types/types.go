@@ -19,6 +19,86 @@ type CaptchaVo struct {
 	Img            string `json:"img,omitempty"`  // 验证码图片（base64）
 }
 
+type DictDataByTypeReq struct {
+	DictType string `path:"dictType"` // 字典类型
+}
+
+type DictDataGetInfoReq struct {
+	DictCode int64 `path:"dictCode"` // 字典编码
+}
+
+type DictDataListResp struct {
+	BaseResp
+	Data []DictDataVo `json:"data"`
+}
+
+type DictDataRemoveReq struct {
+	DictCodes string `path:"dictCodes"` // 字典编码串（逗号分隔）
+}
+
+type DictDataReq struct {
+	DictCode  int64  `json:"dictCode,omitempty"`  // 字典编码
+	DictSort  int32  `json:"dictSort"`            // 字典排序
+	DictLabel string `json:"dictLabel"`           // 字典标签
+	DictValue string `json:"dictValue"`           // 字典键值
+	DictType  string `json:"dictType"`            // 字典类型
+	CssClass  string `json:"cssClass,omitempty"`  // 样式属性
+	ListClass string `json:"listClass,omitempty"` // 表格回显样式
+	IsDefault string `json:"isDefault,omitempty"` // 是否默认（Y是 N否）
+	Remark    string `json:"remark,omitempty"`    // 备注
+}
+
+type DictDataResp struct {
+	BaseResp
+	Data DictDataVo `json:"data,omitempty"`
+}
+
+type DictDataVo struct {
+	DictCode   int64  `json:"dictCode"`   // 字典编码
+	DictSort   int32  `json:"dictSort"`   // 字典排序
+	DictLabel  string `json:"dictLabel"`  // 字典标签
+	DictValue  string `json:"dictValue"`  // 字典键值
+	DictType   string `json:"dictType"`   // 字典类型
+	CssClass   string `json:"cssClass"`   // 样式属性
+	ListClass  string `json:"listClass"`  // 表格回显样式
+	IsDefault  string `json:"isDefault"`  // 是否默认（Y是 N否）
+	Remark     string `json:"remark"`     // 备注
+	CreateTime string `json:"createTime"` // 创建时间
+}
+
+type DictTypeGetInfoReq struct {
+	DictId int64 `path:"dictId"` // 字典主键
+}
+
+type DictTypeListResp struct {
+	BaseResp
+	Data []DictTypeVo `json:"data"`
+}
+
+type DictTypeRemoveReq struct {
+	DictIds string `path:"dictIds"` // 字典ID串（逗号分隔）
+}
+
+type DictTypeReq struct {
+	DictId   int64  `json:"dictId,omitempty"` // 字典主键
+	DictName string `json:"dictName"`         // 字典名称
+	DictType string `json:"dictType"`         // 字典类型
+	Remark   string `json:"remark,omitempty"` // 备注
+}
+
+type DictTypeResp struct {
+	BaseResp
+	Data DictTypeVo `json:"data,omitempty"`
+}
+
+type DictTypeVo struct {
+	DictId     int64  `json:"dictId"`     // 字典主键
+	DictName   string `json:"dictName"`   // 字典名称
+	DictType   string `json:"dictType"`   // 字典类型
+	Remark     string `json:"remark"`     // 备注
+	CreateTime string `json:"createTime"` // 创建时间
+}
+
 type LoginReq struct {
 	ClientId  string `json:"clientId"`           // 客户端id（必填）
 	GrantType string `json:"grantType"`          // 授权类型（必填）
@@ -103,6 +183,16 @@ type SysUserVo struct {
 	CreateTime  string      `json:"createTime"`  // 创建时间
 	DeptName    string      `json:"deptName"`    // 部门名
 	Roles       []SysRoleVo `json:"roles"`       // 角色对象
+}
+
+type TableDataInfo struct {
+	Total int64       `json:"total"` // 总记录数
+	Rows  interface{} `json:"rows"`  // 列表数据
+}
+
+type TableDataInfoResp struct {
+	BaseResp
+	Data TableDataInfo `json:"data,omitempty"`
 }
 
 type TenantListResp struct {

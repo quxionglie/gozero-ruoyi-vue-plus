@@ -1,11 +1,11 @@
 ###
-GET http://127.0.0.1:58888/auth/code
+GET {{baseUrl}}/auth/code
 clientid: e5cd7e4891bf95d1d19206ce24a7b32e
 
 ###
 
 ###
-POST http://192.168.3.216:58888/auth/login
+POST {{baseUrl}}/auth/login
 clientid: e5cd7e4891bf95d1d19206ce24a7b32e
 encrypt-key: H5ItCokzNITa8l7is0tPUUeD94ZbAkRVfDzqylJVHmjJpAN0BY+mWCqofnVfzOLd3EW97E9nP7z64YFRhMY0tNRcILYGH70gJq+6byemG43TNclcCnQ3YXyAXy0fPecT77SJa6tS93Knoc/TvThwFL3fRFmgpI6wBhACKd+t7Wg=
 isEncrypt: true
@@ -14,7 +14,7 @@ Content-Type: application/json;charset=UTF-8
 "HNDl7vL7cWQ6eB+2v7V1XqyrUi6xJzbUdrK53qkdlZA3irKaZCVrGk9QYIgOa3MzjESm5IlVxXepb0A2FJCLS9SPRXujRlP3t6vNau9xf7hy0ncLMJ/MyApMfZqjopXZjIClilQ6xT5XP+hJt4ITZJvlxs6zhzxfilcT09ELYn1z84rosNAw98GMQz7z0ixqm46/qE+yxyBP9XvAHqRsE6lCGE/X66TdfqjfzMhnjUS5/Za4AXzJvTgvvO0DoMVHEF063/xQ5+7Iaq2ayCd0MPp9qyJJFKuukJZfXFbhHEw="
 
 ### /system/user/getInfo
-GET http://192.168.3.216:58888/system/user/getInfo
+GET {{baseUrl}}/system/user/getInfo
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEsInVzZXJuYW1lIjoiYWRtaW4iLCJ0ZW5hbnRJZCI6IjAwMDAwMCIsImV4cCI6MTc2ODU2MzQ1MiwibmJmIjoxNzY3OTU4NjUyLCJpYXQiOjE3Njc5NTg2NTJ9.-tuVowps-8-YVQLI1cZ1k9u1w4EIEQs41lGYnpzKvgc
 clientid: e5cd7e4891bf95d1d19206ce24a7b32e
 Content-Type: application/json;charset=UTF-8

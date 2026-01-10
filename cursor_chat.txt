@@ -130,3 +130,20 @@ login时也没有设置清除 Redis 在线 token 缓存吧
 
 2026-01-10T09:50:31+08:00
 实现/system/menu/getRouters接口，参考java代码SysMenuController.java实现
+
+2026-01-10T10:11:58+08:00
+实现/system/dict/下面相关接口，参考SysDictDataController.java,SysDictTypeController.java类
+接口列表：
+/system/dict/type
+/system/dict/data
+/system/dict/type/export
+/system/dict/data/export
+/system/dict/type/{dictId}
+/system/dict/type/optionselect
+/system/dict/type/list
+/system/dict/data/{dictCode}
+/system/dict/data/type/{dictType}
+/system/dict/data/list
+/system/dict/type/{dictIds}
+/system/dict/type/refreshCache
+/system/dict/data/{dictCodes}
