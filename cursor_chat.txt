@@ -225,3 +225,9 @@ sql 中order by %s %s 容易造成sql注入。解决此问题
 
 2026-01-10T14:20:00+08:00
 servicecontext.go改名为service_context.go,以后统一用统一使用snake case风格
+
+2026-01-10T14:23:00+08:00
+查询sys.json，列出还未实现的接口
+
+2026-01-10T14:30:00+08:00
+实现NOTICE 模块 (5个)接口，业务逻辑请参考对应java类

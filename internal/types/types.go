@@ -199,6 +199,45 @@ type MetaVo struct {
 	Remark  string `json:"remark,omitempty"`  // 备注
 }
 
+type NoticeGetInfoReq struct {
+	NoticeId int64 `path:"noticeId,range=[1:]"` // 公告ID（必须大于0）
+}
+
+type NoticeListReq struct {
+	NoticeTitle  string `form:"noticeTitle,optional"`  // 公告标题（模糊查询）
+	NoticeType   string `form:"noticeType,optional"`   // 公告类型（1通知 2公告）
+	CreateByName string `form:"createByName,optional"` // 创建人名称
+	PageQuery
+}
+
+type NoticeRemoveReq struct {
+	NoticeIds string `path:"noticeIds"` // 公告ID串（逗号分隔，不能为空）
+}
+
+type NoticeReq struct {
+	NoticeId      int64  `json:"noticeId,optional,string"`    // 公告ID
+	NoticeTitle   string `json:"noticeTitle"`                 // 公告标题（必填，最大50字符）
+	NoticeType    string `json:"noticeType,optional"`         // 公告类型（1通知 2公告）
+	NoticeContent string `json:"noticeContent,optional"`      // 公告内容
+	Status        string `json:"status,optional,options=0|1"` // 公告状态（0正常 1关闭）
+	Remark        string `json:"remark,optional"`             // 备注
+}
+
+type NoticeResp struct {
+	BaseResp
+	Data NoticeVo `json:"data,omitempty"`
+}
+
+type NoticeVo struct {
+	NoticeId      int64  `json:"noticeId,string"` // 公告ID
+	NoticeTitle   string `json:"noticeTitle"`     // 公告标题
+	NoticeType    string `json:"noticeType"`      // 公告类型（1通知 2公告）
+	NoticeContent string `json:"noticeContent"`   // 公告内容
+	Status        string `json:"status"`          // 公告状态（0正常 1关闭）
+	Remark        string `json:"remark"`          // 备注
+	CreateTime    string `json:"createTime"`      // 创建时间
+}
+
 type PageQuery struct {
 	PageNum       int32  `form:"pageNum,optional"`       // 当前页数
 	PageSize      int32  `form:"pageSize,optional"`      // 分页大小

@@ -197,6 +197,36 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: sys.GetRoutersHandler(serverCtx),
 			},
 			{
+				// 新增通知公告
+				Method:  http.MethodPost,
+				Path:    "/notice",
+				Handler: sys.NoticeAddHandler(serverCtx),
+			},
+			{
+				// 修改通知公告
+				Method:  http.MethodPut,
+				Path:    "/notice",
+				Handler: sys.NoticeEditHandler(serverCtx),
+			},
+			{
+				// 查询通知公告详细
+				Method:  http.MethodGet,
+				Path:    "/notice/:noticeId",
+				Handler: sys.NoticeGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除通知公告
+				Method:  http.MethodDelete,
+				Path:    "/notice/:noticeIds",
+				Handler: sys.NoticeRemoveHandler(serverCtx),
+			},
+			{
+				// 查询通知公告列表
+				Method:  http.MethodGet,
+				Path:    "/notice/list",
+				Handler: sys.NoticeListHandler(serverCtx),
+			},
+			{
 				// 获取用户信息
 				Method:  http.MethodGet,
 				Path:    "/user/getInfo",
