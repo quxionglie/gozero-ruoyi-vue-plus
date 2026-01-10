@@ -33,13 +33,11 @@ func (l *DictTypeListLogic) DictTypeList() (resp *types.TableDataInfoResp, err e
 	if err != nil {
 		l.Errorf("查询字典类型列表失败: %v", err)
 		return &types.TableDataInfoResp{
+			Total: 0,
+			Rows:  []types.DictTypeVo{},
 			BaseResp: types.BaseResp{
 				Code: 500,
 				Msg:  "查询字典类型列表失败",
-			},
-			Data: types.TableDataInfo{
-				Total: 0,
-				Rows:  []types.DictTypeVo{},
 			},
 		}, err
 	}
@@ -64,13 +62,11 @@ func (l *DictTypeListLogic) DictTypeList() (resp *types.TableDataInfoResp, err e
 	}
 
 	return &types.TableDataInfoResp{
+		Total: int64(len(voList)),
+		Rows:  voList,
 		BaseResp: types.BaseResp{
 			Code: 200,
-			Msg:  "操作成功",
-		},
-		Data: types.TableDataInfo{
-			Total: int64(len(voList)),
-			Rows:  voList,
+			Msg:  "查询成功",
 		},
 	}, nil
 }

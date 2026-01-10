@@ -64,21 +64,41 @@ func (l *DictDataAddLogic) DictDataAdd(req *types.DictDataReq) (resp *types.Base
 		}, nil
 	}
 
-	// 3. 获取当前用户ID
+	// 3. 获取当前用户信息
 	userId, _ := util.GetUserIdFromContext(l.ctx)
+	tenantId, _ := util.GetTenantIdFromContext(l.ctx)
+
+	// 获取用户的部门ID
+	var deptId int64
+	user, err := l.svcCtx.SysUserModel.FindOne(l.ctx, userId)
+	if err == nil && user.DeptId.Valid {
+		deptId = user.DeptId.Int64
+	}
+
+	// 生成主键ID（使用雪花算法）
+	dictCode, err := util.GenerateID()
+	if err != nil {
+		l.Errorf("生成字典数据ID失败: %v", err)
+		return &types.BaseResp{
+			Code: 500,
+			Msg:  "生成字典数据ID失败",
+		}, err
+	}
 
 	// 4. 构建字典数据实体
 	dictData := &model.SysDictData{
-		TenantId:  "",
-		DictSort:  int64(req.DictSort),
-		DictLabel: req.DictLabel,
-		DictValue: req.DictValue,
-		DictType:  req.DictType,
-		CssClass:  sql.NullString{String: req.CssClass, Valid: req.CssClass != ""},
-		ListClass: sql.NullString{String: req.ListClass, Valid: req.ListClass != ""},
-		IsDefault: req.IsDefault,
-		Remark:    sql.NullString{String: req.Remark, Valid: req.Remark != ""},
-		CreateBy:  sql.NullInt64{Int64: userId, Valid: userId > 0},
+		DictCode:   dictCode,
+		TenantId:   tenantId,
+		DictSort:   int64(req.DictSort),
+		DictLabel:  req.DictLabel,
+		DictValue:  req.DictValue,
+		DictType:   req.DictType,
+		CssClass:   sql.NullString{String: req.CssClass, Valid: req.CssClass != ""},
+		ListClass:  sql.NullString{String: req.ListClass, Valid: req.ListClass != ""},
+		IsDefault:  req.IsDefault,
+		Remark:     sql.NullString{String: req.Remark, Valid: req.Remark != ""},
+		CreateDept: sql.NullInt64{Int64: deptId, Valid: deptId > 0},
+		CreateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
 	}
 
 	// 5. 插入数据库

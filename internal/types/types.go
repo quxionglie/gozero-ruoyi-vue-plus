@@ -20,24 +20,24 @@ type CaptchaVo struct {
 }
 
 type ConfigGetByKeyReq struct {
-	ConfigKey string `path:"configKey"` // 参数键名
+	ConfigKey string `path:"configKey"` // 参数键名（不能为空）
 }
 
 type ConfigGetInfoReq struct {
-	ConfigId int64 `path:"configId"` // 参数主键
+	ConfigId int64 `path:"configId,range=[1:]"` // 参数主键（必须大于0）
 }
 
 type ConfigRemoveReq struct {
-	ConfigIds string `path:"configIds"` // 参数ID串（逗号分隔）
+	ConfigIds string `path:"configIds"` // 参数ID串（逗号分隔，不能为空）
 }
 
 type ConfigReq struct {
-	ConfigId    int64  `json:"configId,omitempty"`   // 参数主键
-	ConfigName  string `json:"configName"`           // 参数名称
-	ConfigKey   string `json:"configKey"`            // 参数键名
-	ConfigValue string `json:"configValue"`          // 参数键值
-	ConfigType  string `json:"configType,omitempty"` // 系统内置（Y是 N否）
-	Remark      string `json:"remark,omitempty"`     // 备注
+	ConfigId    int64  `json:"configId,optional"`               // 参数主键
+	ConfigName  string `json:"configName"`                      // 参数名称（必填，最大100字符）
+	ConfigKey   string `json:"configKey"`                       // 参数键名（必填，最大100字符）
+	ConfigValue string `json:"configValue"`                     // 参数键值（必填，最大500字符）
+	ConfigType  string `json:"configType,optional,options=Y|N"` // 系统内置（Y是 N否）
+	Remark      string `json:"remark,optional"`                 // 备注
 }
 
 type ConfigResp struct {
@@ -61,11 +61,11 @@ type ConfigVo struct {
 }
 
 type DictDataByTypeReq struct {
-	DictType string `path:"dictType"` // 字典类型
+	DictType string `path:"dictType"` // 字典类型（不能为空）
 }
 
 type DictDataGetInfoReq struct {
-	DictCode int64 `path:"dictCode"` // 字典编码
+	DictCode int64 `path:"dictCode,range=[1:]"` // 字典编码（必须大于0）
 }
 
 type DictDataListResp struct {
@@ -74,19 +74,19 @@ type DictDataListResp struct {
 }
 
 type DictDataRemoveReq struct {
-	DictCodes string `path:"dictCodes"` // 字典编码串（逗号分隔）
+	DictCodes string `path:"dictCodes"` // 字典编码串（逗号分隔，不能为空）
 }
 
 type DictDataReq struct {
-	DictCode  int64  `json:"dictCode,omitempty"`  // 字典编码
-	DictSort  int32  `json:"dictSort"`            // 字典排序
-	DictLabel string `json:"dictLabel"`           // 字典标签
-	DictValue string `json:"dictValue"`           // 字典键值
-	DictType  string `json:"dictType"`            // 字典类型
-	CssClass  string `json:"cssClass,omitempty"`  // 样式属性
-	ListClass string `json:"listClass,omitempty"` // 表格回显样式
-	IsDefault string `json:"isDefault,omitempty"` // 是否默认（Y是 N否）
-	Remark    string `json:"remark,omitempty"`    // 备注
+	DictCode  int64  `json:"dictCode,optional"`              // 字典编码
+	DictSort  int32  `json:"dictSort,optional"`              // 字典排序
+	DictLabel string `json:"dictLabel"`                      // 字典标签（必填，最大100字符）
+	DictValue string `json:"dictValue"`                      // 字典键值（必填，最大100字符）
+	DictType  string `json:"dictType"`                       // 字典类型（必填，最大100字符）
+	CssClass  string `json:"cssClass,optional"`              // 样式属性（最大100字符）
+	ListClass string `json:"listClass,optional"`             // 表格回显样式
+	IsDefault string `json:"isDefault,optional,options=Y|N"` // 是否默认（Y是 N否）
+	Remark    string `json:"remark,optional"`                // 备注
 }
 
 type DictDataResp struct {
@@ -108,7 +108,7 @@ type DictDataVo struct {
 }
 
 type DictTypeGetInfoReq struct {
-	DictId int64 `path:"dictId"` // 字典主键
+	DictId int64 `path:"dictId,range=[1:]"` // 字典主键（必须大于0）
 }
 
 type DictTypeListResp struct {
@@ -117,14 +117,14 @@ type DictTypeListResp struct {
 }
 
 type DictTypeRemoveReq struct {
-	DictIds string `path:"dictIds"` // 字典ID串（逗号分隔）
+	DictIds string `path:"dictIds"` // 字典ID串（逗号分隔，不能为空）
 }
 
 type DictTypeReq struct {
-	DictId   int64  `json:"dictId,omitempty"` // 字典主键
-	DictName string `json:"dictName"`         // 字典名称
-	DictType string `json:"dictType"`         // 字典类型
-	Remark   string `json:"remark,omitempty"` // 备注
+	DictId   int64  `json:"dictId,optional"` // 字典主键
+	DictName string `json:"dictName"`        // 字典名称（必填，最大100字符）
+	DictType string `json:"dictType"`        // 字典类型（必填，最大100字符，必须以小写字母开头，只能包含小写字母、数字、下划线）
+	Remark   string `json:"remark,optional"` // 备注
 }
 
 type DictTypeResp struct {
@@ -226,14 +226,10 @@ type SysUserVo struct {
 	Roles       []SysRoleVo `json:"roles"`       // 角色对象
 }
 
-type TableDataInfo struct {
+type TableDataInfoResp struct {
 	Total int64       `json:"total"` // 总记录数
 	Rows  interface{} `json:"rows"`  // 列表数据
-}
-
-type TableDataInfoResp struct {
 	BaseResp
-	Data TableDataInfo `json:"data,omitempty"`
 }
 
 type TenantListResp struct {

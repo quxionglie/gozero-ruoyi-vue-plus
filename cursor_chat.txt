@@ -154,7 +154,7 @@ logic*.go不要直接写sql语句，把访问db的统一抽取到相关model类�
 2026-01-10T10:52:00+08:00
 /dict/data/type/:dictType接口从path获取不到dictType。参考https://go-zero.dev/docs/tutorials/http/server/request-body，system.api接口也应该有Request参数，tag如`path:"xxx"`
 
-2026-01-10T11:15:00+08:00
+2026-01-10T11:01:00+08:00
 实现/system/config/下面相关接口，逻辑参考SysConfigController.java类
 接口列表：
 /system/config
@@ -165,3 +165,18 @@ logic*.go不要直接写sql语句，把访问db的统一抽取到相关model类�
 /system/config/configKey/{configKey}
 /system/config/{configIds}
 /system/config/refreshCache
+
+2026-01-10T11:01:00+08:00
+接口添加参数校验规则。关联接口/system/config/*、/system/dict/*。参考https://go-zero.dev/docs/tutorials/api/parameter。如可空要添加：`json:"foo,optional"`
+
+2026-01-10T11:01:00+08:00
+参考验证在httpx.Parse(r, &req)已经自动验证，util.ValidateRequired没必要。已移除所有ValidateRequired调用，保留字符串长度和正则表达式校验
+
+2026-01-10T11:01:00+08:00
+修复/system/config/list响应格式。要求格式：{"total": 5, "rows": [], "code": 200, "msg": "查询成功"}，total和rows应该在根级别，而不是嵌套在data中。同时修复了/system/dict/type/list和/system/dict/data/list接口的响应格式
+
+2026-01-10T11:25:00+08:00
+新增数据时TenantId定义常量取当前登录用户tenantId，部门等类似。修改相关logic类。已修改configaddlogic.go、dicttypeaddlogic.go、dictdataaddlogic.go，从JWT context获取tenantId，通过查询用户信息获取deptId，设置TenantId和CreateDept字段
+
+2026-01-10T11:30:00+08:00
+生成雪花算法util类，表新增数据时主键使用此算法生成ID。创建了internal/util/snowflake.go工具类，实现雪花算法生成唯一ID。在admin.go中初始化雪花算法（默认workerID=0, datacenterID=0）。修改了configaddlogic.go、dicttypeaddlogic.go、dictdataaddlogic.go，新增数据时使用util.GenerateID()生成主键ID（ConfigId、DictId、DictCode）

@@ -59,17 +59,37 @@ func (l *ConfigAddLogic) ConfigAdd(req *types.ConfigReq) (resp *types.BaseResp, 
 		}, nil
 	}
 
-	// 3. 获取当前用户ID
+	// 3. 获取当前用户信息
 	userId, _ := util.GetUserIdFromContext(l.ctx)
+	tenantId, _ := util.GetTenantIdFromContext(l.ctx)
+
+	// 获取用户的部门ID
+	var deptId int64
+	user, err := l.svcCtx.SysUserModel.FindOne(l.ctx, userId)
+	if err == nil && user.DeptId.Valid {
+		deptId = user.DeptId.Int64
+	}
+
+	// 生成主键ID（使用雪花算法）
+	configId, err := util.GenerateID()
+	if err != nil {
+		l.Errorf("生成配置ID失败: %v", err)
+		return &types.BaseResp{
+			Code: 500,
+			Msg:  "生成配置ID失败",
+		}, err
+	}
 
 	// 4. 构建参数配置实体
 	config := &model.SysConfig{
-		TenantId:    "",
+		ConfigId:    configId,
+		TenantId:    tenantId,
 		ConfigName:  req.ConfigName,
 		ConfigKey:   req.ConfigKey,
 		ConfigValue: req.ConfigValue,
 		ConfigType:  req.ConfigType,
 		Remark:      sql.NullString{String: req.Remark, Valid: req.Remark != ""},
+		CreateDept:  sql.NullInt64{Int64: deptId, Valid: deptId > 0},
 		CreateBy:    sql.NullInt64{Int64: userId, Valid: userId > 0},
 	}
 

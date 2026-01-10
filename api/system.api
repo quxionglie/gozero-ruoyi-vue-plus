@@ -273,13 +273,9 @@ type DictDataListResp {
 
 // ========== 通用类型定义 ==========
 type TableDataInfoResp {
-	BaseResp
-	Data TableDataInfo `json:"data,omitempty"`
-}
-
-type TableDataInfo {
 	Total int64       `json:"total"` // 总记录数
 	Rows  interface{} `json:"rows"`  // 列表数据
+	BaseResp
 }
 
 // ========== 参数配置相关类型定义 ==========

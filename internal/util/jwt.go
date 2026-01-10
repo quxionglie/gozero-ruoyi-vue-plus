@@ -142,6 +142,17 @@ func GetJwtInfo(ctx context.Context) (userId int64, username, tenantId string, e
 	return userId, username, tenantId, nil
 }
 
+// GetDeptIdFromContext 从 context 中获取 deptId（如果 JWT 中包含）
+// 注意：如果 JWT 中不包含 deptId，可能需要查询数据库获取
+func GetDeptIdFromContext(ctx context.Context) (int64, error) {
+	deptIdValue := ctx.Value("deptId")
+	if deptIdValue == nil {
+		return 0, fmt.Errorf("deptId not found in context")
+	}
+
+	return convertToInt64(deptIdValue)
+}
+
 // convertToInt64 将各种数字类型转换为 int64
 // 支持：int64、int、int32、json.Number、float64、string
 func convertToInt64(value interface{}) (int64, error) {
