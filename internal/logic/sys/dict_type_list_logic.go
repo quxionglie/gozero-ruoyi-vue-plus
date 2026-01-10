@@ -6,6 +6,7 @@ package sys
 import (
 	"context"
 
+	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
 
@@ -38,8 +39,21 @@ func (l *DictTypeListLogic) DictTypeList(req *types.DictTypeListReq) (resp *type
 		pageSize = 10
 	}
 
+	// 构建查询条件
+	dictTypeQuery := &model.DictTypeQuery{
+		DictName: req.DictName,
+		DictType: req.DictType,
+		Status:   req.Status,
+	}
+	pageQuery := &model.PageQuery{
+		PageNum:       pageNum,
+		PageSize:      pageSize,
+		OrderByColumn: req.OrderByColumn,
+		IsAsc:         req.IsAsc,
+	}
+
 	// 使用 SQL 分页查询
-	rows, total, err := l.svcCtx.SysDictTypeModel.FindPage(l.ctx, req.DictName, req.DictType, req.Status, pageNum, pageSize, req.OrderByColumn, req.IsAsc)
+	rows, total, err := l.svcCtx.SysDictTypeModel.FindPage(l.ctx, dictTypeQuery, pageQuery)
 	if err != nil {
 		l.Errorf("查询字典类型列表失败: %v", err)
 		return &types.TableDataInfoResp{

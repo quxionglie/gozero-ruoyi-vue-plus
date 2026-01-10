@@ -6,6 +6,7 @@ package sys
 import (
 	"context"
 
+	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
 
@@ -38,8 +39,21 @@ func (l *ConfigListLogic) ConfigList(req *types.ConfigListReq) (resp *types.Tabl
 		pageSize = 10
 	}
 
+	// 构建查询条件
+	configQuery := &model.ConfigQuery{
+		ConfigName: req.ConfigName,
+		ConfigKey:  req.ConfigKey,
+		ConfigType: req.ConfigType,
+	}
+	pageQuery := &model.PageQuery{
+		PageNum:       pageNum,
+		PageSize:      pageSize,
+		OrderByColumn: req.OrderByColumn,
+		IsAsc:         req.IsAsc,
+	}
+
 	// 使用 SQL 分页查询
-	rows, total, err := l.svcCtx.SysConfigModel.FindPage(l.ctx, req.ConfigName, req.ConfigKey, req.ConfigType, pageNum, pageSize, req.OrderByColumn, req.IsAsc)
+	rows, total, err := l.svcCtx.SysConfigModel.FindPage(l.ctx, configQuery, pageQuery)
 	if err != nil {
 		l.Errorf("查询参数配置列表失败: %v", err)
 		return &types.TableDataInfoResp{

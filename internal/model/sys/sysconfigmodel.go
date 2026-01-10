@@ -8,6 +8,21 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+// ConfigQuery 参数配置查询条件
+type ConfigQuery struct {
+	ConfigName string // 参数名称（模糊查询）
+	ConfigKey  string // 参数键名（模糊查询）
+	ConfigType string // 系统内置（Y是 N否）
+}
+
+// PageQuery 分页查询参数
+type PageQuery struct {
+	PageNum       int32  // 当前页数
+	PageSize      int32  // 分页大小
+	OrderByColumn string // 排序列
+	IsAsc         string // 排序方向（desc 或 asc）
+}
+
 var _ SysConfigModel = (*customSysConfigModel)(nil)
 
 type (
@@ -19,7 +34,7 @@ type (
 		FindAll(ctx context.Context) ([]*SysConfig, error)
 		FindByConfigKey(ctx context.Context, configKey string) (*SysConfig, error)
 		CheckConfigKeyUnique(ctx context.Context, configKey string, excludeConfigId int64) (bool, error)
-		FindPage(ctx context.Context, configName, configKey, configType string, pageNum, pageSize int32, orderByColumn, isAsc string) ([]*SysConfig, int64, error)
+		FindPage(ctx context.Context, query *ConfigQuery, pageQuery *PageQuery) ([]*SysConfig, int64, error)
 	}
 
 	customSysConfigModel struct {
@@ -85,22 +100,29 @@ func (m *customSysConfigModel) CheckConfigKeyUnique(ctx context.Context, configK
 }
 
 // FindPage 分页查询参数配置（支持条件查询和分页）
-func (m *customSysConfigModel) FindPage(ctx context.Context, configName, configKey, configType string, pageNum, pageSize int32, orderByColumn, isAsc string) ([]*SysConfig, int64, error) {
+func (m *customSysConfigModel) FindPage(ctx context.Context, query *ConfigQuery, pageQuery *PageQuery) ([]*SysConfig, int64, error) {
+	if query == nil {
+		query = &ConfigQuery{}
+	}
+	if pageQuery == nil {
+		pageQuery = &PageQuery{}
+	}
+
 	// 构建 WHERE 条件
 	whereClause := "1=1"
 	var args []interface{}
 
-	if configName != "" {
+	if query.ConfigName != "" {
 		whereClause += " and config_name like ?"
-		args = append(args, "%"+configName+"%")
+		args = append(args, "%"+query.ConfigName+"%")
 	}
-	if configKey != "" {
+	if query.ConfigKey != "" {
 		whereClause += " and config_key like ?"
-		args = append(args, "%"+configKey+"%")
+		args = append(args, "%"+query.ConfigKey+"%")
 	}
-	if configType != "" {
+	if query.ConfigType != "" {
 		whereClause += " and config_type = ?"
-		args = append(args, configType)
+		args = append(args, query.ConfigType)
 	}
 
 	// 查询总数
@@ -113,23 +135,26 @@ func (m *customSysConfigModel) FindPage(ctx context.Context, configName, configK
 
 	// 构建排序
 	orderBy := "config_id"
-	if orderByColumn != "" {
-		orderBy = orderByColumn
+	if pageQuery.OrderByColumn != "" {
+		orderBy = pageQuery.OrderByColumn
 	}
 	orderDir := "asc"
-	if isAsc == "desc" {
+	if pageQuery.IsAsc == "desc" {
 		orderDir = "desc"
 	}
 
 	// 构建分页查询
-	query := fmt.Sprintf("select %s from %s where %s order by %s %s", sysConfigRows, m.table, whereClause, orderBy, orderDir)
-	if pageSize > 0 {
-		offset := (pageNum - 1) * pageSize
-		query += fmt.Sprintf(" limit %d offset %d", pageSize, offset)
+	sqlQuery := fmt.Sprintf("select %s from %s where %s order by %s %s", sysConfigRows, m.table, whereClause, orderBy, orderDir)
+	if pageQuery.PageSize > 0 {
+		offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
+		if offset < 0 {
+			offset = 0
+		}
+		sqlQuery += fmt.Sprintf(" limit %d offset %d", pageQuery.PageSize, offset)
 	}
 
 	var resp []*SysConfig
-	err = m.conn.QueryRowsPartialCtx(ctx, &resp, query, args...)
+	err = m.conn.QueryRowsPartialCtx(ctx, &resp, sqlQuery, args...)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, 0, err
 	}

@@ -204,3 +204,9 @@ put /system/config 修改参数配置 configId 获取 不到值。报错：type 
 
 2026-01-10T12:40:00+08:00
 注意/system/dict/data/list的请求参数是form参数，不是json
+
+2026-01-10T12:45:00+08:00
+model类应该传入PageQuery和XxxQuery（对应db表查询参数）参数，不要像现在分成多个参数传入
+
+2026-01-10T12:50:00+08:00
+自动把我发出的请求文字记录到cursor_chat.txt，你自己的操作日志不要添加

@@ -8,6 +8,13 @@ import (
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
 
+// DictTypeQuery 字典类型查询条件
+type DictTypeQuery struct {
+	DictName string // 字典名称（模糊查询）
+	DictType string // 字典类型（模糊查询）
+	Status   string // 状态（0正常 1停用）
+}
+
 var _ SysDictTypeModel = (*customSysDictTypeModel)(nil)
 
 type (
@@ -19,7 +26,7 @@ type (
 		FindAll(ctx context.Context) ([]*SysDictType, error)
 		CheckDictTypeUnique(ctx context.Context, dictType string, excludeDictId int64) (bool, error)
 		CountByDictType(ctx context.Context, dictType string) (int64, error)
-		FindPage(ctx context.Context, dictName, dictType, status string, pageNum, pageSize int32, orderByColumn, isAsc string) ([]*SysDictType, int64, error)
+		FindPage(ctx context.Context, query *DictTypeQuery, pageQuery *PageQuery) ([]*SysDictType, int64, error)
 	}
 
 	customSysDictTypeModel struct {
@@ -81,18 +88,25 @@ func (m *customSysDictTypeModel) CountByDictType(ctx context.Context, dictType s
 }
 
 // FindPage 分页查询字典类型（支持条件查询和分页）
-func (m *customSysDictTypeModel) FindPage(ctx context.Context, dictName, dictType, status string, pageNum, pageSize int32, orderByColumn, isAsc string) ([]*SysDictType, int64, error) {
+func (m *customSysDictTypeModel) FindPage(ctx context.Context, query *DictTypeQuery, pageQuery *PageQuery) ([]*SysDictType, int64, error) {
+	if query == nil {
+		query = &DictTypeQuery{}
+	}
+	if pageQuery == nil {
+		pageQuery = &PageQuery{}
+	}
+
 	// 构建 WHERE 条件
 	whereClause := "1=1"
 	var args []interface{}
 
-	if dictName != "" {
+	if query.DictName != "" {
 		whereClause += " and dict_name like ?"
-		args = append(args, "%"+dictName+"%")
+		args = append(args, "%"+query.DictName+"%")
 	}
-	if dictType != "" {
+	if query.DictType != "" {
 		whereClause += " and dict_type like ?"
-		args = append(args, "%"+dictType+"%")
+		args = append(args, "%"+query.DictType+"%")
 	}
 	// 注意：sys_dict_type 表可能没有 status 字段，这里先不处理
 
@@ -106,23 +120,26 @@ func (m *customSysDictTypeModel) FindPage(ctx context.Context, dictName, dictTyp
 
 	// 构建排序
 	orderBy := "dict_id"
-	if orderByColumn != "" {
-		orderBy = orderByColumn
+	if pageQuery.OrderByColumn != "" {
+		orderBy = pageQuery.OrderByColumn
 	}
 	orderDir := "asc"
-	if isAsc == "desc" {
+	if pageQuery.IsAsc == "desc" {
 		orderDir = "desc"
 	}
 
 	// 构建分页查询
-	query := fmt.Sprintf("select %s from %s where %s order by %s %s", sysDictTypeRows, m.table, whereClause, orderBy, orderDir)
-	if pageSize > 0 {
-		offset := (pageNum - 1) * pageSize
-		query += fmt.Sprintf(" limit %d offset %d", pageSize, offset)
+	sqlQuery := fmt.Sprintf("select %s from %s where %s order by %s %s", sysDictTypeRows, m.table, whereClause, orderBy, orderDir)
+	if pageQuery.PageSize > 0 {
+		offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
+		if offset < 0 {
+			offset = 0
+		}
+		sqlQuery += fmt.Sprintf(" limit %d offset %d", pageQuery.PageSize, offset)
 	}
 
 	var resp []*SysDictType
-	err = m.conn.QueryRowsPartialCtx(ctx, &resp, query, args...)
+	err = m.conn.QueryRowsPartialCtx(ctx, &resp, sqlQuery, args...)
 	if err != nil && err != sql.ErrNoRows {
 		return nil, 0, err
 	}
