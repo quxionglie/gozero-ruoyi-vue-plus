@@ -5,7 +5,6 @@ package sys
 
 import (
 	"context"
-	"database/sql"
 	"strconv"
 	"strings"
 	"unicode"
@@ -101,49 +100,18 @@ func (l *GetRoutersLogic) selectMenuTreeByUserId(userId int64) ([]*MenuNode, err
 
 // isSuperAdmin 检查用户是否为超级管理员
 func (l *GetRoutersLogic) isSuperAdmin(userId int64) bool {
-	// 查询用户的角色
-	query := `
-		SELECT DISTINCT r.role_id, r.role_key
-		FROM sys_role r
-		INNER JOIN sys_user_role ur ON r.role_id = ur.role_id
-		WHERE ur.user_id = ? 
-		  AND r.status = '0'
-		  AND r.del_flag = '0'
-	`
-
-	type roleRow struct {
-		RoleId  int64  `db:"role_id"`
-		RoleKey string `db:"role_key"`
-	}
-
-	var rows []roleRow
-	err := l.svcCtx.DB.QueryRowsPartialCtx(l.ctx, &rows, query, userId)
+	// 使用 model 方法检查是否为超级管理员
+	isSuperAdmin, err := l.svcCtx.SysRoleModel.CheckIsSuperAdmin(l.ctx, userId)
 	if err != nil {
 		return false
 	}
-
-	for _, row := range rows {
-		if row.RoleId == 1 || row.RoleKey == "superadmin" {
-			return true
-		}
-	}
-	return false
+	return isSuperAdmin
 }
 
 // selectMenuTreeAll 查询所有菜单（超级管理员）
 func (l *GetRoutersLogic) selectMenuTreeAll() []*sys.SysMenu {
-	query := `
-		SELECT menu_id, menu_name, parent_id, order_num, path, component, query_param, 
-		       is_frame, is_cache, menu_type, visible, status, perms, icon, 
-		       create_dept, create_by, create_time, update_by, update_time, remark
-		FROM sys_menu
-		WHERE menu_type IN ('M', 'C')
-		  AND status = '0'
-		ORDER BY parent_id ASC, order_num ASC
-	`
-
-	var menus []*sys.SysMenu
-	err := l.svcCtx.DB.QueryRowsPartialCtx(l.ctx, &menus, query)
+	// 使用 model 方法查询所有菜单
+	menus, err := l.svcCtx.SysMenuModel.SelectMenuTreeAll(l.ctx)
 	if err != nil {
 		l.Errorf("查询所有菜单失败: %v", err)
 		return []*sys.SysMenu{}
@@ -153,28 +121,8 @@ func (l *GetRoutersLogic) selectMenuTreeAll() []*sys.SysMenu {
 
 // selectMenuListByUserId 根据用户ID查询菜单列表（非超级管理员）
 func (l *GetRoutersLogic) selectMenuListByUserId(userId int64) ([]*sys.SysMenu, error) {
-	// 构建查询 SQL，通过用户角色查询菜单
-	query := `
-		SELECT DISTINCT m.menu_id, m.menu_name, m.parent_id, m.order_num, m.path, m.component, m.query_param,
-		       m.is_frame, m.is_cache, m.menu_type, m.visible, m.status, m.perms, m.icon,
-		       m.create_dept, m.create_by, m.create_time, m.update_by, m.update_time, m.remark
-		FROM sys_menu m
-		INNER JOIN sys_role_menu rm ON m.menu_id = rm.menu_id
-		INNER JOIN sys_user_role ur ON rm.role_id = ur.role_id
-		INNER JOIN sys_role r ON ur.role_id = r.role_id
-		WHERE ur.user_id = ?
-		  AND m.menu_type IN ('M', 'C')
-		  AND m.status = '0'
-		  AND r.status = '0'
-		ORDER BY m.parent_id ASC, m.order_num ASC
-	`
-
-	var menus []*sys.SysMenu
-	err := l.svcCtx.DB.QueryRowsPartialCtx(l.ctx, &menus, query, userId)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-	return menus, nil
+	// 使用 model 方法根据用户ID查询菜单列表
+	return l.svcCtx.SysMenuModel.SelectMenuListByUserId(l.ctx, userId)
 }
 
 // getChildPerms 根据父节点ID构建菜单树

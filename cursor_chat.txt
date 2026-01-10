@@ -219,3 +219,6 @@ sql 中order by %s %s 容易造成sql注入。解决此问题
 
 2026-01-10T14:05:00+08:00
 /system/menu/getRouters接口返回的component字段会有"Layout"，但go里没有，需检查原有逻辑修改go代码。参考SysMenuController.java类
+
+2026-01-10T14:15:00+08:00
+所有的logic*.go不要直接写sql语句，把访问db的统一抽取到相关model类中

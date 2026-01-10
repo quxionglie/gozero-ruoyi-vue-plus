@@ -5,7 +5,6 @@ package sys
 
 import (
 	"context"
-	"database/sql"
 	"strings"
 
 	"gozero-ruoyi-vue-plus/internal/model/sys"
@@ -160,31 +159,9 @@ func (l *GetUserInfoLogic) GetUserInfo() (resp *types.UserInfoResp, err error) {
 
 // getUserRoles 查询用户的角色列表
 func (l *GetUserInfoLogic) getUserRoles(userId int64) ([]types.SysRoleVo, error) {
-	// SQL: 通过 sys_user_role -> sys_role 查询角色信息
-	query := `
-		SELECT r.role_id, r.role_name, r.role_key, r.role_sort, r.data_scope, r.status, r.remark, r.create_time
-		FROM sys_role r
-		INNER JOIN sys_user_role ur ON r.role_id = ur.role_id
-		WHERE ur.user_id = ? 
-		  AND r.status = '0'
-		  AND r.del_flag = '0'
-		ORDER BY r.role_sort ASC
-	`
-
-	type roleRow struct {
-		RoleId     int64          `db:"role_id"`
-		RoleName   string         `db:"role_name"`
-		RoleKey    string         `db:"role_key"`
-		RoleSort   int64          `db:"role_sort"`
-		DataScope  string         `db:"data_scope"`
-		Status     string         `db:"status"`
-		Remark     sql.NullString `db:"remark"`
-		CreateTime sql.NullTime   `db:"create_time"`
-	}
-
-	var rows []roleRow
-	err := l.svcCtx.DB.QueryRowsPartialCtx(l.ctx, &rows, query, userId)
-	if err != nil && err != sql.ErrNoRows {
+	// 使用 model 方法查询角色列表
+	rows, err := l.svcCtx.SysRoleModel.SelectRolesByUserId(l.ctx, userId)
+	if err != nil {
 		return nil, err
 	}
 
@@ -231,83 +208,12 @@ func (l *GetUserInfoLogic) isSuperAdmin(userId int64, roles []types.SysRoleVo) b
 
 // getMenuPermissions 查询用户的菜单权限
 func (l *GetUserInfoLogic) getMenuPermissions(userId int64) ([]string, error) {
-	// SQL: 通过 sys_user_role -> sys_role_menu -> sys_menu 查询菜单权限
-	// 查询逻辑：用户 -> 用户角色 -> 角色菜单 -> 菜单权限标识
-	query := `
-		SELECT DISTINCT m.perms
-		FROM sys_menu m
-		INNER JOIN sys_role_menu rm ON m.menu_id = rm.menu_id
-		INNER JOIN sys_user_role ur ON rm.role_id = ur.role_id
-		WHERE ur.user_id = ? 
-		  AND m.perms IS NOT NULL 
-		  AND m.perms != ''
-		  AND m.status = '0'
-		  AND m.del_flag = '0'
-	`
-
-	type permRow struct {
-		Perms sql.NullString `db:"perms"`
-	}
-
-	var rows []permRow
-	err := l.svcCtx.DB.QueryRowsPartialCtx(l.ctx, &rows, query, userId)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-
-	// 过滤空字符串
-	result := make([]string, 0)
-	for _, row := range rows {
-		if row.Perms.Valid {
-			perm := strings.TrimSpace(row.Perms.String)
-			if perm != "" {
-				result = append(result, perm)
-			}
-		}
-	}
-
-	return result, nil
+	// 使用 model 方法查询菜单权限
+	return l.svcCtx.SysMenuModel.SelectMenuPermissionsByUserId(l.ctx, userId)
 }
 
 // getRolePermissions 查询用户的角色权限
 func (l *GetUserInfoLogic) getRolePermissions(userId int64) ([]string, error) {
-	// SQL: 通过 sys_user_role -> sys_role 查询角色权限标识
-	query := `
-		SELECT DISTINCT r.role_key
-		FROM sys_role r
-		INNER JOIN sys_user_role ur ON r.role_id = ur.role_id
-		WHERE ur.user_id = ? 
-		  AND r.role_key IS NOT NULL 
-		  AND r.role_key != ''
-		  AND r.status = '0'
-		  AND r.del_flag = '0'
-	`
-
-	type roleRow struct {
-		RoleKey string `db:"role_key"`
-	}
-
-	var rows []roleRow
-	err := l.svcCtx.DB.QueryRowsPartialCtx(l.ctx, &rows, query, userId)
-	if err != nil && err != sql.ErrNoRows {
-		return nil, err
-	}
-
-	// 处理角色权限标识（可能包含多个，用逗号分隔）
-	result := make([]string, 0)
-	for _, row := range rows {
-		roleKey := strings.TrimSpace(row.RoleKey)
-		if roleKey != "" {
-			// 如果角色标识包含逗号，拆分成多个
-			keys := strings.Split(roleKey, ",")
-			for _, key := range keys {
-				key = strings.TrimSpace(key)
-				if key != "" {
-					result = append(result, key)
-				}
-			}
-		}
-	}
-
-	return result, nil
+	// 使用 model 方法查询角色权限标识
+	return l.svcCtx.SysRoleModel.SelectRoleKeysByUserId(l.ctx, userId)
 }
