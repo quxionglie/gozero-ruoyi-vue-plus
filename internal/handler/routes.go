@@ -47,6 +47,60 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 	server.AddRoutes(
 		[]rest.Route{
 			{
+				// 新增参数配置
+				Method:  http.MethodPost,
+				Path:    "/config",
+				Handler: sys.ConfigAddHandler(serverCtx),
+			},
+			{
+				// 修改参数配置
+				Method:  http.MethodPut,
+				Path:    "/config",
+				Handler: sys.ConfigEditHandler(serverCtx),
+			},
+			{
+				// 查询参数配置详细
+				Method:  http.MethodGet,
+				Path:    "/config/:configId",
+				Handler: sys.ConfigGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除参数配置
+				Method:  http.MethodDelete,
+				Path:    "/config/:configIds",
+				Handler: sys.ConfigRemoveHandler(serverCtx),
+			},
+			{
+				// 根据参数键名查询参数值
+				Method:  http.MethodGet,
+				Path:    "/config/configKey/:configKey",
+				Handler: sys.ConfigGetByKeyHandler(serverCtx),
+			},
+			{
+				// 导出参数配置列表
+				Method:  http.MethodPost,
+				Path:    "/config/export",
+				Handler: sys.ConfigExportHandler(serverCtx),
+			},
+			{
+				// 查询参数配置列表
+				Method:  http.MethodGet,
+				Path:    "/config/list",
+				Handler: sys.ConfigListHandler(serverCtx),
+			},
+			{
+				// 刷新参数缓存
+				Method:  http.MethodDelete,
+				Path:    "/config/refreshCache",
+				Handler: sys.ConfigRefreshCacheHandler(serverCtx),
+			},
+			{
+				// 根据参数键名修改参数配置
+				Method:  http.MethodPut,
+				Path:    "/config/updateByKey",
+				Handler: sys.ConfigUpdateByKeyHandler(serverCtx),
+			},
+			{
 				// 新增字典数据
 				Method:  http.MethodPost,
 				Path:    "/dict/data",

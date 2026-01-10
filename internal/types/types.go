@@ -19,6 +19,47 @@ type CaptchaVo struct {
 	Img            string `json:"img,omitempty"`  // 验证码图片（base64）
 }
 
+type ConfigGetByKeyReq struct {
+	ConfigKey string `path:"configKey"` // 参数键名
+}
+
+type ConfigGetInfoReq struct {
+	ConfigId int64 `path:"configId"` // 参数主键
+}
+
+type ConfigRemoveReq struct {
+	ConfigIds string `path:"configIds"` // 参数ID串（逗号分隔）
+}
+
+type ConfigReq struct {
+	ConfigId    int64  `json:"configId,omitempty"`   // 参数主键
+	ConfigName  string `json:"configName"`           // 参数名称
+	ConfigKey   string `json:"configKey"`            // 参数键名
+	ConfigValue string `json:"configValue"`          // 参数键值
+	ConfigType  string `json:"configType,omitempty"` // 系统内置（Y是 N否）
+	Remark      string `json:"remark,omitempty"`     // 备注
+}
+
+type ConfigResp struct {
+	BaseResp
+	Data ConfigVo `json:"data,omitempty"`
+}
+
+type ConfigValueResp struct {
+	BaseResp
+	Data string `json:"data,omitempty"` // 参数键值
+}
+
+type ConfigVo struct {
+	ConfigId    int64  `json:"configId"`    // 参数主键
+	ConfigName  string `json:"configName"`  // 参数名称
+	ConfigKey   string `json:"configKey"`   // 参数键名
+	ConfigValue string `json:"configValue"` // 参数键值
+	ConfigType  string `json:"configType"`  // 系统内置（Y是 N否）
+	Remark      string `json:"remark"`      // 备注
+	CreateTime  string `json:"createTime"`  // 创建时间
+}
+
 type DictDataByTypeReq struct {
 	DictType string `path:"dictType"` // 字典类型
 }

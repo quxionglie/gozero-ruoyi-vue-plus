@@ -150,6 +150,43 @@ service admin-api {
 	@doc "删除字典数据"
 	@handler DictDataRemove
 	delete /dict/data/:dictCodes (DictDataRemoveReq) returns (BaseResp)
+
+	// ========== 参数配置接口 ==========
+	@doc "查询参数配置列表"
+	@handler ConfigList
+	get /config/list returns (TableDataInfoResp)
+
+	@doc "导出参数配置列表"
+	@handler ConfigExport
+	post /config/export returns (BaseResp)
+
+	@doc "查询参数配置详细"
+	@handler ConfigGetInfo
+	get /config/:configId (ConfigGetInfoReq) returns (ConfigResp)
+
+	@doc "根据参数键名查询参数值"
+	@handler ConfigGetByKey
+	get /config/configKey/:configKey (ConfigGetByKeyReq) returns (ConfigValueResp)
+
+	@doc "新增参数配置"
+	@handler ConfigAdd
+	post /config (ConfigReq) returns (BaseResp)
+
+	@doc "修改参数配置"
+	@handler ConfigEdit
+	put /config (ConfigReq) returns (BaseResp)
+
+	@doc "根据参数键名修改参数配置"
+	@handler ConfigUpdateByKey
+	put /config/updateByKey (ConfigReq) returns (BaseResp)
+
+	@doc "删除参数配置"
+	@handler ConfigRemove
+	delete /config/:configIds (ConfigRemoveReq) returns (BaseResp)
+
+	@doc "刷新参数缓存"
+	@handler ConfigRefreshCache
+	delete /config/refreshCache returns (BaseResp)
 }
 
 // ========== 字典类型相关类型定义 ==========
@@ -243,4 +280,46 @@ type TableDataInfoResp {
 type TableDataInfo {
 	Total int64       `json:"total"` // 总记录数
 	Rows  interface{} `json:"rows"`  // 列表数据
+}
+
+// ========== 参数配置相关类型定义 ==========
+type ConfigReq {
+	ConfigId    int64  `json:"configId,omitempty"`    // 参数主键
+	ConfigName  string `json:"configName"`            // 参数名称
+	ConfigKey   string `json:"configKey"`             // 参数键名
+	ConfigValue string `json:"configValue"`           // 参数键值
+	ConfigType  string `json:"configType,omitempty"`  // 系统内置（Y是 N否）
+	Remark      string `json:"remark,omitempty"`      // 备注
+}
+
+type ConfigGetInfoReq {
+	ConfigId int64 `path:"configId"` // 参数主键
+}
+
+type ConfigGetByKeyReq {
+	ConfigKey string `path:"configKey"` // 参数键名
+}
+
+type ConfigRemoveReq {
+	ConfigIds string `path:"configIds"` // 参数ID串（逗号分隔）
+}
+
+type ConfigResp {
+	BaseResp
+	Data ConfigVo `json:"data,omitempty"`
+}
+
+type ConfigVo {
+	ConfigId    int64  `json:"configId"`    // 参数主键
+	ConfigName  string `json:"configName"`  // 参数名称
+	ConfigKey   string `json:"configKey"`   // 参数键名
+	ConfigValue string `json:"configValue"` // 参数键值
+	ConfigType  string `json:"configType"`  // 系统内置（Y是 N否）
+	Remark      string `json:"remark"`      // 备注
+	CreateTime  string `json:"createTime"`  // 创建时间
+}
+
+type ConfigValueResp {
+	BaseResp
+	Data string `json:"data,omitempty"` // 参数键值
 }
