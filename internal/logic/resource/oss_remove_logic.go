@@ -11,6 +11,7 @@ import (
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
+	"gozero-ruoyi-vue-plus/internal/util"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -54,19 +55,30 @@ func (l *OssRemoveLogic) OssRemove(req *types.OssRemoveReq) (resp *types.BaseRes
 	}
 
 	// 2. 查询OSS对象信息（用于删除OSS服务中的文件）
-	_, err = l.svcCtx.SysOssModel.FindByIds(l.ctx, ossIds)
+	ossList, err := l.svcCtx.SysOssModel.FindByIds(l.ctx, ossIds)
 	if err != nil {
 		l.Errorf("查询OSS对象信息失败: %v", err)
 		// 即使查询失败，也继续删除数据库记录
 	}
 
-	// 3. 删除OSS服务中的文件（如果需要）
-	// TODO: 调用OSS服务删除文件
-	// for _, oss := range ossList {
-	//     // 调用OSS服务删除文件
-	//     // storage := OssFactory.instance(oss.Service)
-	//     // storage.delete(oss.Url)
-	// }
+	// 3. 删除OSS服务中的文件
+	tenantId, _ := util.GetTenantIdFromContext(l.ctx)
+	for _, ossObj := range ossList {
+		if ossObj.Service != "" {
+			ossClient, err := l.svcCtx.OssManager.GetClientByConfigKey(l.ctx, ossObj.Service, tenantId)
+			if err != nil {
+				l.Infof("获取OSS客户端失败（跳过删除OSS文件）: service=%s, error=%v", ossObj.Service, err)
+				continue
+			}
+
+			// 删除OSS服务中的文件
+			err = ossClient.Delete(ossObj.FileName)
+			if err != nil {
+				l.Infof("删除OSS服务中的文件失败（继续删除数据库记录）: fileName=%s, error=%v", ossObj.FileName, err)
+				// 即使OSS文件删除失败，也继续删除数据库记录
+			}
+		}
+	}
 
 	// 4. 删除数据库记录
 	for _, ossId := range ossIds {

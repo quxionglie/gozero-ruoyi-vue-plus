@@ -678,6 +678,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: sys.RoleOptionSelectHandler(serverCtx),
 			},
 			{
+				// 查询社会化关系列表
+				Method:  http.MethodGet,
+				Path:    "/system/social/list",
+				Handler: sys.SocialListHandler(serverCtx),
+			},
+			{
 				// 新增用户
 				Method:  http.MethodPost,
 				Path:    "/system/user",

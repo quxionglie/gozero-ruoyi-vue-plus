@@ -25,6 +25,8 @@ type (
 		withSession(session sqlx.Session) SysOssConfigModel
 		FindPage(ctx context.Context, query *OssConfigQuery, pageQuery *PageQuery) ([]*SysOssConfig, int64, error)
 		UpdateStatus(ctx context.Context, ossConfigId int64, status string) error
+		FindDefault(ctx context.Context, tenantId string) (*SysOssConfig, error)
+		FindByConfigKey(ctx context.Context, configKey string, tenantId string) (*SysOssConfig, error)
 	}
 
 	customSysOssConfigModel struct {
@@ -127,4 +129,50 @@ func (m *customSysOssConfigModel) UpdateStatus(ctx context.Context, ossConfigId 
 	query := fmt.Sprintf("update %s set `status` = ? where `oss_config_id` = ?", m.table)
 	_, err := m.conn.ExecCtx(ctx, query, status, ossConfigId)
 	return err
+}
+
+// FindDefault 查找默认OSS配置（status=0）
+func (m *customSysOssConfigModel) FindDefault(ctx context.Context, tenantId string) (*SysOssConfig, error) {
+	whereClause := "status = '0'"
+	args := []interface{}{}
+
+	if tenantId != "" {
+		whereClause += " and tenant_id = ?"
+		args = append(args, tenantId)
+	}
+
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysOssConfigRows, m.table, whereClause)
+	var resp SysOssConfig
+	err := m.conn.QueryRowCtx(ctx, &resp, query, args...)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlx.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
+}
+
+// FindByConfigKey 根据配置键查询OSS配置
+func (m *customSysOssConfigModel) FindByConfigKey(ctx context.Context, configKey string, tenantId string) (*SysOssConfig, error) {
+	whereClause := "config_key = ?"
+	args := []interface{}{configKey}
+
+	if tenantId != "" {
+		whereClause += " and tenant_id = ?"
+		args = append(args, tenantId)
+	}
+
+	query := fmt.Sprintf("select %s from %s where %s limit 1", sysOssConfigRows, m.table, whereClause)
+	var resp SysOssConfig
+	err := m.conn.QueryRowCtx(ctx, &resp, query, args...)
+	switch err {
+	case nil:
+		return &resp, nil
+	case sqlx.ErrNotFound:
+		return nil, ErrNotFound
+	default:
+		return nil, err
+	}
 }

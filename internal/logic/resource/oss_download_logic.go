@@ -12,6 +12,7 @@ import (
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
+	"gozero-ruoyi-vue-plus/internal/util"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -33,7 +34,7 @@ func NewOssDownloadLogic(ctx context.Context, svcCtx *svc.ServiceContext) *OssDo
 
 func (l *OssDownloadLogic) OssDownload(req *types.OssDownloadReq, w http.ResponseWriter, r *http.Request) error {
 	// 1. 查询OSS对象信息
-	oss, err := l.svcCtx.SysOssModel.FindOne(l.ctx, req.OssId)
+	ossObj, err := l.svcCtx.SysOssModel.FindOne(l.ctx, req.OssId)
 	if err != nil {
 		if err == model.ErrNotFound {
 			http.Error(w, "文件数据不存在", http.StatusNotFound)
@@ -45,18 +46,32 @@ func (l *OssDownloadLogic) OssDownload(req *types.OssDownloadReq, w http.Respons
 	}
 
 	// 2. 设置响应头
-	originalName := oss.OriginalName
+	originalName := ossObj.OriginalName
 	// URL编码文件名，避免中文乱码
 	encodedName := url.QueryEscape(originalName)
 	w.Header().Set("Content-Disposition", fmt.Sprintf("attachment; filename*=UTF-8''%s", encodedName))
 	w.Header().Set("Content-Type", "application/octet-stream; charset=UTF-8")
 
-	// 3. TODO: 从OSS服务下载文件
-	// 实际应该调用OSS服务下载文件并写入响应
-	// storage := OssFactory.instance(oss.Service)
-	// storage.download(oss.FileName, w)
+	// 3. 获取OSS客户端并下载文件
+	tenantId, _ := util.GetTenantIdFromContext(l.ctx)
+	if ossObj.Service == "" {
+		http.Error(w, "OSS服务商未配置", http.StatusBadRequest)
+		return fmt.Errorf("OSS服务商未配置")
+	}
+	ossClient, err := l.svcCtx.OssManager.GetClientByConfigKey(l.ctx, ossObj.Service, tenantId)
+	if err != nil {
+		l.Errorf("获取OSS客户端失败: %v", err)
+		http.Error(w, "获取OSS客户端失败: "+err.Error(), http.StatusInternalServerError)
+		return err
+	}
 
-	// 临时方案：返回一个错误提示（因为需要实际的OSS服务实现）
-	http.Error(w, "OSS服务未配置，无法下载文件", http.StatusNotImplemented)
-	return fmt.Errorf("OSS服务未配置")
+	// 下载文件
+	err = ossClient.Download(ossObj.FileName, w)
+	if err != nil {
+		l.Errorf("从OSS下载文件失败: %v", err)
+		http.Error(w, "下载文件失败: "+err.Error(), http.StatusInternalServerError)
+		return err
+	}
+
+	return nil
 }

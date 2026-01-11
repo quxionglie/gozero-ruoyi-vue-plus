@@ -645,3 +645,67 @@ DELETE /resource/oss/config/:ossConfigIds                删除对象存储配�
 GET    /resource/oss/config/:ossConfigId                 获取对象存储配置详细信息
 2026-01-11T19:41:01+08:00
 
+2026-01-11T20:07:26+08:00
+实现OssClient.java的接口，实现上传到minio功能。定义接口与minio实现,以后可能要扩展到阿里云 腾讯云 七牛云 AWS
+
+2026-01-11T20:27:37+08:00
+ossClient在service_context.go中定义并初始化，*logic.go直接引用就行
+
+2026-01-11T20:32:32+08:00
+OssClient.java有以下接口，minio_client.go都实现了吗
+
+
+UploadResult upload(Path filePath, String key, String md5Digest, String contentType);
+
+UploadResult upload(InputStream inputStream, String key, Long length, String contentType);
+
+Path fileDownload(String path);
+
+void download(String key, OutputStream out, Consumer<Long> consumer);
+
+WriteOutSubscriber<OutputStream> download(String key, Consumer<Long> contentLengthConsumer);
+
+void delete(String path);
+
+String createPresignedGetUrl(String objectKey, Duration expiredTime);
+
+String createPresignedPutUrl(String objectKey, Duration expiredTime, Map<String, String> metadata);
+
+UploadResult uploadSuffix(byte[] data, String suffix, String contentType);
+
+UploadResult uploadSuffix(InputStream inputStream, String suffix, Long length, String contentType);
+
+UploadResult uploadSuffix(File file, String suffix);
+
+InputStream getObjectContent(String path) throws IOException;
+
+String getEndpoint();
+
+String getDomain();
+
+Region of();
+
+String getUrl();
+
+String getPath(String prefix, String suffix);
+
+String removeBaseUrl(String path);
+
+String getConfigKey();
+
+String getIsHttps();
+
+boolean checkPropertiesSame(OssProperties properties);
+
+AccessPolicyType getAccessPolicy();
+
+2026-01-11T20:36:32+08:00
+
+2026-01-11T21:26:22+08:00
+实现/system/social/list接口，参考SysSocialController.java
+
+2026-01-11T21:32:01+08:00
+
+2026-01-11T21:40:58+08:00
+/system/social/list 未添加路由
+

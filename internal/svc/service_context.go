@@ -7,6 +7,7 @@ import (
 
 	"gozero-ruoyi-vue-plus/internal/config"
 	"gozero-ruoyi-vue-plus/internal/model/sys"
+	"gozero-ruoyi-vue-plus/internal/oss"
 
 	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/core/stores/redis"
@@ -40,6 +41,9 @@ type ServiceContext struct {
 	SysUserModel          sys.SysUserModel
 	SysUserPostModel      sys.SysUserPostModel
 	SysUserRoleModel      sys.SysUserRoleModel
+
+	// OSS客户端管理器
+	OssManager *oss.OssManager
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -86,6 +90,9 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		SysUserModel:          sys.NewSysUserModel(conn),
 		SysUserPostModel:      sys.NewSysUserPostModel(conn),
 		SysUserRoleModel:      sys.NewSysUserRoleModel(conn),
+
+		// 初始化OSS客户端管理器
+		OssManager: oss.NewOssManager(sys.NewSysOssConfigModel(conn)),
 	}
 }
 

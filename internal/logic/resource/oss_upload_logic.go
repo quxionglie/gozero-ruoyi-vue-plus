@@ -96,16 +96,39 @@ func (l *OssUploadLogic) OssUpload(file multipart.File, fileHeader *multipart.Fi
 		}, err
 	}
 
-	// 6. TODO: 上传文件到OSS服务（这里简化处理，直接保存URL）
-	// 实际应该调用OSS服务上传文件，获取文件URL
-	// storage := OssFactory.instance()
-	// uploadResult := storage.uploadSuffix(fileBytes, fileSuffix, fileHeader.Header.Get("Content-Type"))
-	// fileUrl := uploadResult.getUrl()
-	// fileName := uploadResult.getFilename()
+	// 6. 获取OSS客户端并上传文件
+	ossClient, err := l.svcCtx.OssManager.GetDefaultClient(l.ctx, tenantId)
+	if err != nil {
+		l.Errorf("获取OSS客户端失败: %v", err)
+		return &types.OssUploadResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "获取OSS客户端失败: " + err.Error(),
+			},
+		}, err
+	}
 
-	// 临时方案：生成一个模拟的URL和文件名
-	fileUrl := fmt.Sprintf("/oss/%d%s", newOssId, fileSuffix)
-	fileName := fmt.Sprintf("%d%s", newOssId, fileSuffix)
+	// 获取Content-Type
+	contentType := fileHeader.Header.Get("Content-Type")
+	if contentType == "" {
+		contentType = "application/octet-stream"
+	}
+
+	// 上传文件
+	uploadResult, err := ossClient.UploadSuffix(fileBytes, fileSuffix, contentType)
+	if err != nil {
+		l.Errorf("上传文件到OSS失败: %v", err)
+		return &types.OssUploadResp{
+			BaseResp: types.BaseResp{
+				Code: 500,
+				Msg:  "上传文件到OSS失败: " + err.Error(),
+			},
+		}, err
+	}
+
+	fileUrl := uploadResult.URL
+	fileName := uploadResult.Filename
+	configKey := ossClient.GetConfigKey()
 
 	// 7. 构建OSS实体
 	oss := &model.SysOss{
@@ -115,8 +138,8 @@ func (l *OssUploadLogic) OssUpload(file multipart.File, fileHeader *multipart.Fi
 		OriginalName: originalFileName,
 		FileSuffix:   fileSuffix,
 		Url:          fileUrl,
-		Ext1:         sql.NullString{String: fmt.Sprintf(`{"fileSize":%d,"contentType":"%s"}`, len(fileBytes), fileHeader.Header.Get("Content-Type")), Valid: true},
-		Service:      "local", // TODO: 从配置中获取默认服务商
+		Ext1:         sql.NullString{String: fmt.Sprintf(`{"fileSize":%d,"contentType":"%s"}`, len(fileBytes), contentType), Valid: true},
+		Service:      configKey,
 		CreateDept:   sql.NullInt64{Int64: deptId, Valid: deptId > 0},
 		CreateBy:     sql.NullInt64{Int64: userId, Valid: userId > 0},
 	}

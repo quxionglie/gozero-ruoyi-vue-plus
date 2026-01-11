@@ -918,6 +918,11 @@ type RouterVo struct {
 	Children   []RouterVo `json:"children,omitempty"`   // 子路由
 }
 
+type SocialListResp struct {
+	BaseResp
+	Data []SysSocialVo `json:"data,omitempty"`
+}
+
 type SysRoleVo struct {
 	RoleId            int64   `json:"roleId,string"`               // 角色ID
 	RoleName          string  `json:"roleName"`                    // 角色名称
@@ -931,6 +936,33 @@ type SysRoleVo struct {
 	CreateTime        *string `json:"createTime,omitempty"`        // 创建时间
 	SuperAdmin        bool    `json:"superAdmin"`                  // 超级管理员标识
 	Flag              bool    `json:"flag"`                        // 用户是否存在此角色标识
+}
+
+type SysSocialVo struct {
+	Id               int64  `json:"id,string"`                  // 主键
+	UserId           int64  `json:"userId,string"`              // 用户ID
+	TenantId         string `json:"tenantId,omitempty"`         // 租户ID
+	AuthId           string `json:"authId,omitempty"`           // 平台+平台唯一id
+	Source           string `json:"source,omitempty"`           // 用户来源
+	OpenId           string `json:"openId,omitempty"`           // 平台编号唯一id
+	UserName         string `json:"userName,omitempty"`         // 登录账号
+	NickName         string `json:"nickName,omitempty"`         // 用户昵称
+	Email            string `json:"email,omitempty"`            // 用户邮箱
+	Avatar           string `json:"avatar,omitempty"`           // 头像地址
+	AccessToken      string `json:"accessToken,omitempty"`      // 用户的授权令牌
+	ExpireIn         int64  `json:"expireIn,optional,string"`   // 用户的授权令牌的有效期，部分平台可能没有
+	RefreshToken     string `json:"refreshToken,omitempty"`     // 刷新令牌，部分平台可能没有
+	AccessCode       string `json:"accessCode,omitempty"`       // 平台的授权信息，部分平台可能没有
+	UnionId          string `json:"unionId,omitempty"`          // 用户的 unionid
+	Scope            string `json:"scope,omitempty"`            // 授予的权限，部分平台可能没有
+	TokenType        string `json:"tokenType,omitempty"`        // 个别平台的授权信息，部分平台可能没有
+	IdToken          string `json:"idToken,omitempty"`          // id token，部分平台可能没有
+	MacAlgorithm     string `json:"macAlgorithm,omitempty"`     // 小米平台用户的附带属性，部分平台可能没有
+	MacKey           string `json:"macKey,omitempty"`           // 小米平台用户的附带属性，部分平台可能没有
+	Code             string `json:"code,omitempty"`             // 用户的授权code，部分平台可能没有
+	OauthToken       string `json:"oauthToken,omitempty"`       // Twitter平台用户的附带属性，部分平台可能没有
+	OauthTokenSecret string `json:"oauthTokenSecret,omitempty"` // Twitter平台用户的附带属性，部分平台可能没有
+	CreateTime       string `json:"createTime,omitempty"`       // 创建时间
 }
 
 type SysUserOnlineVo struct {
