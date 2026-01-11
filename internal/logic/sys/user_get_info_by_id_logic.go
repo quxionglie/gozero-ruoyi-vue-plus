@@ -59,7 +59,7 @@ func (l *UserGetInfoByIdLogic) UserGetInfoById(req *types.UserGetInfoReq) (resp 
 	}
 
 	// 3. 转换为响应格式
-	userVo := convertUserToVo(user)
+	userVo := convertUserToVo(l.ctx, l.svcCtx, user)
 	roleVos := make([]types.SysRoleVo, 0, len(roles))
 	for _, role := range roles {
 		roleVo := types.SysRoleVo{

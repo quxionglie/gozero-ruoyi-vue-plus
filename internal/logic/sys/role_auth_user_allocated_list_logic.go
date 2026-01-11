@@ -66,7 +66,7 @@ func (l *RoleAuthUserAllocatedListLogic) RoleAuthUserAllocatedList(req *types.Ro
 	// 4. 转换为响应格式
 	rows := make([]types.SysUserVo, 0, len(userList))
 	for _, user := range userList {
-		userVo := convertUserToVo(user)
+		userVo := convertUserToVo(l.ctx, l.svcCtx, user)
 		rows = append(rows, userVo)
 	}
 

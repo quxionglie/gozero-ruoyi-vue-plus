@@ -117,7 +117,7 @@ func (l *UserAuthRoleGetLogic) UserAuthRoleGet(req *types.UserAuthRoleGetReq) (r
 	}
 
 	// 6. 转换为用户响应格式
-	userVo := convertUserToVo(user)
+	userVo := convertUserToVo(l.ctx, l.svcCtx, user)
 	userVo.Roles = roleVos
 
 	return &types.UserDetailResp{

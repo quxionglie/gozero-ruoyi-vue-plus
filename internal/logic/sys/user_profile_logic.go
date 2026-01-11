@@ -2,7 +2,6 @@ package sys
 
 import (
 	"context"
-	"strconv"
 
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
@@ -70,8 +69,15 @@ func (l *UserProfileLogic) UserProfile() (resp *types.UserProfileResp, err error
 	if user.DeptId.Valid {
 		profileVo.DeptId = user.DeptId.Int64
 	}
+	// Avatar 从 sys_oss 表查询 URL
 	if user.Avatar.Valid {
-		profileVo.Avatar = strconv.FormatInt(user.Avatar.Int64, 10)
+		oss, err := l.svcCtx.SysOssModel.FindOne(l.ctx, user.Avatar.Int64)
+		if err == nil {
+			profileVo.Avatar = oss.Url
+		} else {
+			// 如果查询失败，返回空字符串（可能 OSS 记录已删除）
+			profileVo.Avatar = ""
+		}
 	} else {
 		profileVo.Avatar = ""
 	}

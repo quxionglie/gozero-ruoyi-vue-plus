@@ -709,3 +709,9 @@ AccessPolicyType getAccessPolicy();
 2026-01-11T21:40:58+08:00
 /system/social/list 未添加路由
 
+2026-01-11T21:45:36+08:00
+实现/system/user/profile/avatar
+
+2026-01-11T22:02:39+08:00
+/system/user/getInfo响应的Avatar是字符串类型，但数据库表sys_user中avatar存的是oss_id, 需要在后端查询sys_oss表获取url返回给前端。/system/user/profile 也类似
+

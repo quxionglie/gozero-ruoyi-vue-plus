@@ -73,7 +73,7 @@ func (l *UserOptionSelectLogic) UserOptionSelect(req *types.UserOptionSelectReq)
 	for _, user := range users {
 		// 只返回正常状态的用户
 		if user.Status == "0" && user.DelFlag == "0" {
-			userVo := convertUserToVo(user)
+			userVo := convertUserToVo(l.ctx, l.svcCtx, user)
 			rows = append(rows, userVo)
 		}
 	}

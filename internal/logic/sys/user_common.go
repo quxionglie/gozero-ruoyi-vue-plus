@@ -1,14 +1,15 @@
 package sys
 
 import (
-	"strconv"
+	"context"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
+	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
 )
 
 // convertUserToVo 转换用户实体为响应格式
-func convertUserToVo(user *model.SysUser) types.SysUserVo {
+func convertUserToVo(ctx context.Context, svcCtx *svc.ServiceContext, user *model.SysUser) types.SysUserVo {
 	userVo := types.SysUserVo{
 		UserId:      user.UserId,
 		TenantId:    user.TenantId,
@@ -33,10 +34,15 @@ func convertUserToVo(user *model.SysUser) types.SysUserVo {
 		userVo.DeptId = user.DeptId.Int64
 		// TODO: 查询部门名称
 	}
-	// Avatar 现在是 *string，当值为 null 时返回 nil
+	// Avatar 现在是 *string，从 sys_oss 表查询 URL
 	if user.Avatar.Valid {
-		avatarStr := strconv.FormatInt(user.Avatar.Int64, 10)
-		userVo.Avatar = &avatarStr
+		oss, err := svcCtx.SysOssModel.FindOne(ctx, user.Avatar.Int64)
+		if err == nil {
+			userVo.Avatar = &oss.Url
+		} else {
+			// 如果查询失败，返回 nil（可能 OSS 记录已删除）
+			userVo.Avatar = nil
+		}
 	} else {
 		userVo.Avatar = nil
 	}

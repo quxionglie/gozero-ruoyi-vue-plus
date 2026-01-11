@@ -5,7 +5,6 @@ package sys
 
 import (
 	"context"
-	"strconv"
 	"strings"
 
 	"gozero-ruoyi-vue-plus/internal/model/sys"
@@ -95,10 +94,15 @@ func (l *GetUserInfoLogic) GetUserInfo() (resp *types.UserInfoResp, err error) {
 	if user.DeptId.Valid {
 		userVo.DeptId = user.DeptId.Int64
 	}
-	// Avatar 现在是 *string，当值为 null 时返回 nil
+	// Avatar 现在是 *string，从 sys_oss 表查询 URL
 	if user.Avatar.Valid {
-		avatarStr := strconv.FormatInt(user.Avatar.Int64, 10)
-		userVo.Avatar = &avatarStr
+		oss, err := l.svcCtx.SysOssModel.FindOne(l.ctx, user.Avatar.Int64)
+		if err == nil {
+			userVo.Avatar = &oss.Url
+		} else {
+			// 如果查询失败，返回 nil（可能 OSS 记录已删除）
+			userVo.Avatar = nil
+		}
 	} else {
 		userVo.Avatar = nil
 	}

@@ -40,7 +40,7 @@ func (l *UserListByDeptLogic) UserListByDept(req *types.UserListByDeptReq) (resp
 	// 2. 转换为响应格式
 	rows := make([]types.SysUserVo, 0, len(users))
 	for _, user := range users {
-		userVo := convertUserToVo(user)
+		userVo := convertUserToVo(l.ctx, l.svcCtx, user)
 		rows = append(rows, userVo)
 	}
 
