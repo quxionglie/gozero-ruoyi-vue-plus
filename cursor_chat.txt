@@ -621,3 +621,6 @@ Total 总记录数 不转为string, 直接用int64类型。改一下*.api文件
 
 2026-01-11T12:55:56+08:00
 清除多会的文件，goctl 命令要指定--style go_zero，使用snake case风格
+
+2026-01-11T18:48:07+08:00
+SysUserVo 中Avatar 类似用string，当db值为null时返回空串给前端

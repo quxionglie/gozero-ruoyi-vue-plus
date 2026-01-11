@@ -5,6 +5,13 @@ clientid: {{clientid}}
 Content-Type: application/json;charset=UTF-8
 
 ###
+GET {{baseUrl}}/system/user/getInfo
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
+Content-Type: application/json;charset=UTF-8
+
+
+###
 GET {{baseUrl}}/system/dict/data/type/sys_yes_no
 Authorization: {{jwtToken}}
 clientid: {{clientid}}

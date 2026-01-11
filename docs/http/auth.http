@@ -13,6 +13,19 @@ Content-Type: application/json;charset=UTF-8
 
 "HNDl7vL7cWQ6eB+2v7V1XqyrUi6xJzbUdrK53qkdlZA3irKaZCVrGk9QYIgOa3MzjESm5IlVxXepb0A2FJCLS9SPRXujRlP3t6vNau9xf7hy0ncLMJ/MyApMfZqjopXZjIClilQ6xT5XP+hJt4ITZJvlxs6zhzxfilcT09ELYn1z84rosNAw98GMQz7z0ixqm46/qE+yxyBP9XvAHqRsE6lCGE/X66TdfqjfzMhnjUS5/Za4AXzJvTgvvO0DoMVHEF063/xQ5+7Iaq2ayCd0MPp9qyJJFKuukJZfXFbhHEw="
 
+
+### java login
+POST http://192.168.3.216:8080/auth/login
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
+clientid: e5cd7e4891bf95d1d19206ce24a7b32e
+encrypt-key: juHHGXpcS/yas22K1NZJxGnk553tIUQCdsHApksqwtDHOrFfaKshHcghA1Vlgzo3ov0s7M0nBuFXqOBAfZYCmwYujRHgvBp+evU0mcjQUm6RkmlTmhbLmDe/5fm2kQMoDC+6oeds4I0hGWr7WvqZscw05Iw0R3wiO8ndkD/qgvU=
+isEncrypt: true
+Content-Type: application/json;charset=UTF-8
+
+"U9wuLGt+GYPBMxufQxZApUvCXQVNJOHcRc0q2bG0ZhTqOnZLnebSxT4pGydACJ06dXB10tR+HZVZrcQCDuinhbmeHrn37XQalsxqUlUrNhGyWQaMqDJTQfqPfBhSsPUV0jWlayhpywGhLJBPmMFLpveNzeWUKwVgYpV7Fqtncte35sSHu+WChbD52nspxfp5785vyoouoABCbwDTIvhcDg=="
+
+###
+
 ### /system/user/getInfo
 GET {{baseUrl}}/system/user/getInfo
 Authorization: {{jwtToken}}

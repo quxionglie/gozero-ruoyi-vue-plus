@@ -2,6 +2,7 @@ package sys
 
 import (
 	"context"
+	"strconv"
 
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
@@ -61,7 +62,7 @@ func (l *UserProfileLogic) UserProfile() (resp *types.UserProfileResp, err error
 		Email:       user.Email,
 		Phonenumber: user.Phonenumber,
 		Sex:         user.Sex,
-		Avatar:      0,
+		Avatar:      "",
 		LoginIp:     user.LoginIp,
 		LoginDate:   "",
 		DeptName:    "",
@@ -70,7 +71,9 @@ func (l *UserProfileLogic) UserProfile() (resp *types.UserProfileResp, err error
 		profileVo.DeptId = user.DeptId.Int64
 	}
 	if user.Avatar.Valid {
-		profileVo.Avatar = user.Avatar.Int64
+		profileVo.Avatar = strconv.FormatInt(user.Avatar.Int64, 10)
+	} else {
+		profileVo.Avatar = ""
 	}
 	if user.LoginDate.Valid {
 		profileVo.LoginDate = user.LoginDate.Time.Format("2006-01-02 15:04:05")

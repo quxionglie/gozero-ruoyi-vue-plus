@@ -5,6 +5,7 @@ package sys
 
 import (
 	"context"
+	"strconv"
 	"strings"
 
 	"gozero-ruoyi-vue-plus/internal/model/sys"
@@ -82,7 +83,7 @@ func (l *GetUserInfoLogic) GetUserInfo() (resp *types.UserInfoResp, err error) {
 		Email:       user.Email,
 		Phonenumber: user.Phonenumber,
 		Sex:         user.Sex,
-		Avatar:      0,
+		Avatar:      "",
 		Status:      user.Status,
 		LoginIp:     user.LoginIp,
 		LoginDate:   "",
@@ -95,7 +96,9 @@ func (l *GetUserInfoLogic) GetUserInfo() (resp *types.UserInfoResp, err error) {
 		userVo.DeptId = user.DeptId.Int64
 	}
 	if user.Avatar.Valid {
-		userVo.Avatar = user.Avatar.Int64
+		userVo.Avatar = strconv.FormatInt(user.Avatar.Int64, 10)
+	} else {
+		userVo.Avatar = ""
 	}
 	if user.LoginDate.Valid {
 		userVo.LoginDate = user.LoginDate.Time.Format("2006-01-02 15:04:05")
