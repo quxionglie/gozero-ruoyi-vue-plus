@@ -21,7 +21,7 @@ type CacheListInfoVo {
 // ========== 在线用户监控 ==========
 type OnlineListResp {
 	BaseResp
-	Total int64          `json:"total,string"` // 总记录数
+	Total int64          `json:"total"` // 总记录数
 	Rows  []SysUserOnlineVo `json:"rows"`         // 列表数据
 }
 
@@ -50,7 +50,7 @@ type OnlineRemoveReq {
 // ========== 操作日志 ==========
 type OperLogListResp {
 	BaseResp
-	Total int64        `json:"total,string"` // 总记录数
+	Total int64        `json:"total"` // 总记录数
 	Rows  []OperLogVo `json:"rows"`         // 列表数据
 }
 
@@ -103,7 +103,7 @@ type OperLogExportReq {
 // ========== 登录日志 ==========
 type LogininforListResp {
 	BaseResp
-	Total int64            `json:"total,string"` // 总记录数
+	Total int64            `json:"total"` // 总记录数
 	Rows  []LogininforVo `json:"rows"`         // 列表数据
 }
 

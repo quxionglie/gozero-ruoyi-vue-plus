@@ -140,42 +140,66 @@ func (m *customSysDictDataModel) FindPage(ctx context.Context, query *DictDataQu
 	}
 
 	// 构建排序（防止 SQL 注入）
-	// 允许排序的列名白名单（支持多列排序，用逗号分隔）
+	// 允许的排序列（支持 snake_case 和 camelCase，支持多列排序，用逗号分隔）
 	allowedOrderColumns := map[string]bool{
 		"dict_code":   true,
+		"dictCode":    true,
 		"dict_sort":   true,
+		"dictSort":    true,
 		"dict_label":  true,
+		"dictLabel":   true,
 		"dict_value":  true,
+		"dictValue":   true,
 		"dict_type":   true,
+		"dictType":    true,
 		"create_time": true,
+		"createTime":  true,
 		"update_time": true,
+		"updateTime":  true,
 		// 支持多列排序
 		"dict_type, dict_sort": true,
+		"dictType, dictSort":   true,
 	}
+
 	orderBy := "dict_type, dict_sort"
 	if pageQuery.OrderByColumn != "" {
+		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
 		// 检查是否为单列或多列排序（多列用逗号分隔）
-		if allowedOrderColumns[pageQuery.OrderByColumn] {
-			orderBy = pageQuery.OrderByColumn
+		if allowedOrderColumns[originalColumn] {
+			orderBy = originalColumn
 		} else {
-			// 如果是多列排序，检查每一列是否在白名单中
-			columns := strings.Split(pageQuery.OrderByColumn, ",")
-			allValid := true
-			for _, col := range columns {
-				col = strings.TrimSpace(col)
-				if !allowedOrderColumns[col] {
-					allValid = false
-					break
+			// 将 camelCase 转换为 snake_case
+			columnName := camelToSnake(originalColumn)
+			if allowedOrderColumns[columnName] {
+				orderBy = columnName
+			} else {
+				// 如果是多列排序，检查每一列是否在白名单中
+				columns := strings.Split(originalColumn, ",")
+				allValid := true
+				convertedColumns := make([]string, 0, len(columns))
+				for _, col := range columns {
+					col = strings.TrimSpace(col)
+					colSnake := camelToSnake(col)
+					if allowedOrderColumns[col] || allowedOrderColumns[colSnake] {
+						convertedColumns = append(convertedColumns, colSnake)
+					} else {
+						allValid = false
+						break
+					}
 				}
-			}
-			if allValid && len(columns) > 0 {
-				orderBy = pageQuery.OrderByColumn
+				if allValid && len(convertedColumns) > 0 {
+					orderBy = strings.Join(convertedColumns, ", ")
+				}
 			}
 		}
 	}
-	// 只允许 asc 或 desc
+
+	// 处理排序方向（兼容 asc、desc、descending 等）
 	orderDir := "asc"
-	if pageQuery.IsAsc == "desc" {
+	isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
+	if isAscStr == "asc" || isAscStr == "ascending" {
+		orderDir = "asc"
+	} else if isAscStr == "desc" || isAscStr == "descending" {
 		orderDir = "desc"
 	}
 
@@ -186,7 +210,7 @@ func (m *customSysDictDataModel) FindPage(ctx context.Context, query *DictDataQu
 		if offset < 0 {
 			offset = 0
 		}
-		sqlQuery += fmt.Sprintf(" limit %d offset %d", pageQuery.PageSize, offset)
+		sqlQuery += fmt.Sprintf(" limit %d, %d", offset, pageQuery.PageSize)
 	}
 
 	var resp []*SysDictData

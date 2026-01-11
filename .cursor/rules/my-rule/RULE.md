@@ -10,3 +10,4 @@ alwaysApply: false
 - goctl api go 统一使用snake case风格，迁移当前文件名为snake case风格。使用命令：goctl api go -api api/main.api -dir . --style go_zero。将所有handler和logic文件从camelCase重命名为snake_case风格（如configaddlogic.go -> config_add_logic.go），文件名已统一为snake_case，函数名和类型名保持PascalCase（Go标准）
 - logic*.go不要直接写sql语句，把访问db的统一抽取到相关model类中。model包中*_gen.go是自动生成的不要修改，如如sysdict只在sysdicttypemodel.go中修改
 - model类统一使用snake case风格，如sys_client_model.go、sys_client_model_gen.go。以后goctl model mysql需指定--style go_zero
+- Total 总记录数 不转为string, 直接用int64类型。改一下*.api文件

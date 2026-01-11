@@ -157,10 +157,10 @@ func (m *customSysUserModel) FindAllocatedPage(ctx context.Context, query *UserQ
 		LEFT JOIN sys_role r ON r.role_id = sur.role_id
 		WHERE %s
 		ORDER BY u.user_id ASC
-		LIMIT ? OFFSET ?
+		LIMIT ?, ?
 	`, userRows, whereClause)
 
-	args = append(args, limit, offset)
+	args = append(args, offset, limit)
 
 	var userList []*SysUser
 	err = m.conn.QueryRowsPartialCtx(ctx, &userList, querySQL, args...)
@@ -258,10 +258,10 @@ func (m *customSysUserModel) FindUnallocatedPage(ctx context.Context, query *Use
 		LEFT JOIN sys_role r ON r.role_id = sur.role_id
 		WHERE %s
 		ORDER BY u.user_id ASC
-		LIMIT ? OFFSET ?
+		LIMIT ?, ?
 	`, userRows, whereClause)
 
-	args = append(args, limit, offset)
+	args = append(args, offset, limit)
 
 	var userList []*SysUser
 	err = m.conn.QueryRowsPartialCtx(ctx, &userList, querySQL, args...)

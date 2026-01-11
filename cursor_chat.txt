@@ -606,3 +606,18 @@ redis可以用go-zero的eval命令代替，类似 eval "return redis.call('info'
 
 2026-01-11T12:09:34+08:00
 /auth/login 登录成功，没有记录登录信息到sys_logininfor表。
+
+2026-01-11T12:31:31+08:00
+PageQuery的orderByColumn=loginTime&isAsc=descending，所以model的FindPage方法需要调整，构建排序（防止 SQL 注入）与排序检查都要兼容。
+
+2026-01-11T12:40:46+08:00
+检查一下所有分页查询方法，也一起做一下兼容
+
+2026-01-11T12:48:00+08:00
+Total 总记录数 不转为string, 直接用int64类型。改一下*.api文件
+
+2026-01-11T12:50:44+08:00
+数据库分页使用SELECT ... LIMIT skip, count 格式，不使用SELECT ... LIMIT count OFFSET skip，改一下所有model类
+
+2026-01-11T12:55:56+08:00
+清除多会的文件，goctl 命令要指定--style go_zero，使用snake case风格

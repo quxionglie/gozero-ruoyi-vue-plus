@@ -603,7 +603,7 @@ type PageQuery {
 }
 
 type TableDataInfoResp {
-	Total int64       `json:"total,string"` // 总记录数
+	Total int64       `json:"total"` // 总记录数
 	Rows  interface{} `json:"rows"`  // 列表数据
 	BaseResp
 }
@@ -992,7 +992,7 @@ type OssRemoveReq {
 
 type OssListResp {
 	BaseResp
-	Total int64   `json:"total,string"` // 总记录数
+	Total int64   `json:"total"` // 总记录数
 	Rows  []OssVo `json:"rows"`         // 列表数据
 }
 
@@ -1104,7 +1104,7 @@ type MenuRoleMenuTreeselectReq {
 
 type RoleListResp {
 	BaseResp
-	Total int64    `json:"total,string"` // 总记录数
+	Total int64    `json:"total"` // 总记录数
 	Rows  []RoleVo `json:"rows"`         // 列表数据
 }
 
@@ -1158,7 +1158,7 @@ type RoleVo {
 
 type UserListResp {
 	BaseResp
-	Total int64      `json:"total,string"` // 总记录数
+	Total int64      `json:"total"` // 总记录数
 	Rows  []SysUserVo `json:"rows"`        // 列表数据
 }
 

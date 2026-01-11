@@ -208,17 +208,31 @@ func (m *customSysRoleModel) FindPage(ctx context.Context, query *RoleQuery, pag
 		return nil, 0, err
 	}
 
-	// 构建 ORDER BY 子句
+	// 构建 ORDER BY 子句（防止 SQL 注入）
+	// 允许的排序列（支持 snake_case 和 camelCase）
+	allowedOrderColumns := map[string]bool{
+		"role_id":     true,
+		"roleId":      true,
+		"role_sort":   true,
+		"roleSort":    true,
+		"create_time": true,
+		"createTime":  true,
+		"role_name":   true,
+		"roleName":    true,
+	}
+
 	orderBy := "role_sort ASC, create_time ASC"
 	if pageQuery.OrderByColumn != "" {
-		// 列名白名单验证（防止SQL注入）
-		roleOrderColumns := map[string]bool{
-			"role_id": true, "role_sort": true, "create_time": true, "role_name": true,
-		}
-		orderColumn := strings.ToLower(pageQuery.OrderByColumn)
-		if roleOrderColumns[orderColumn] {
-			orderBy = pageQuery.OrderByColumn + " "
-			if pageQuery.IsAsc == "ascending" || pageQuery.IsAsc == "asc" {
+		// 将 camelCase 转换为 snake_case
+		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
+		// 检查原始字段名和转换后的字段名是否在允许列表中
+		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
+		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
+			// 使用转换后的 snake_case 字段名
+			orderBy = columnName + " "
+			// 处理排序方向（兼容 asc、desc、descending 等）
+			isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
+			if isAscStr == "asc" || isAscStr == "ascending" {
 				orderBy += "ASC"
 			} else {
 				orderBy += "DESC"
@@ -237,10 +251,10 @@ func (m *customSysRoleModel) FindPage(ctx context.Context, query *RoleQuery, pag
 		FROM %s
 		WHERE %s
 		ORDER BY %s
-		LIMIT ? OFFSET ?
+		LIMIT ?, ?
 	`, rows, m.table, whereClause, orderBy)
 
-	args = append(args, limit, offset)
+	args = append(args, offset, limit)
 
 	var roleList []*SysRole
 	err = m.conn.QueryRowsPartialCtx(ctx, &roleList, querySQL, args...)

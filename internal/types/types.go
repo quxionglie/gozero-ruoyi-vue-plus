@@ -356,8 +356,8 @@ type LogininforListReq struct {
 
 type LogininforListResp struct {
 	BaseResp
-	Total int64          `json:"total,string"` // 总记录数
-	Rows  []LogininforVo `json:"rows"`         // 列表数据
+	Total int64          `json:"total"` // 总记录数
+	Rows  []LogininforVo `json:"rows"`  // 列表数据
 }
 
 type LogininforRemoveReq struct {
@@ -529,8 +529,8 @@ type OnlineListReq struct {
 
 type OnlineListResp struct {
 	BaseResp
-	Total int64             `json:"total,string"` // 总记录数
-	Rows  []SysUserOnlineVo `json:"rows"`         // 列表数据
+	Total int64             `json:"total"` // 总记录数
+	Rows  []SysUserOnlineVo `json:"rows"`  // 列表数据
 }
 
 type OnlineRemoveReq struct {
@@ -560,8 +560,8 @@ type OperLogListReq struct {
 
 type OperLogListResp struct {
 	BaseResp
-	Total int64       `json:"total,string"` // 总记录数
-	Rows  []OperLogVo `json:"rows"`         // 列表数据
+	Total int64       `json:"total"` // 总记录数
+	Rows  []OperLogVo `json:"rows"`  // 列表数据
 }
 
 type OperLogRemoveReq struct {
@@ -613,8 +613,8 @@ type OssListReq struct {
 
 type OssListResp struct {
 	BaseResp
-	Total int64   `json:"total,string"` // 总记录数
-	Rows  []OssVo `json:"rows"`         // 列表数据
+	Total int64   `json:"total"` // 总记录数
+	Rows  []OssVo `json:"rows"`  // 列表数据
 }
 
 type OssRemoveReq struct {
@@ -783,8 +783,8 @@ type RoleListReq struct {
 
 type RoleListResp struct {
 	BaseResp
-	Total int64    `json:"total,string"` // 总记录数
-	Rows  []RoleVo `json:"rows"`         // 列表数据
+	Total int64    `json:"total"` // 总记录数
+	Rows  []RoleVo `json:"rows"`  // 列表数据
 }
 
 type RoleOptionSelectReq struct {
@@ -900,8 +900,8 @@ type SysUserVo struct {
 }
 
 type TableDataInfoResp struct {
-	Total int64       `json:"total,string"` // 总记录数
-	Rows  interface{} `json:"rows"`         // 列表数据
+	Total int64       `json:"total"` // 总记录数
+	Rows  interface{} `json:"rows"`  // 列表数据
 	BaseResp
 }
 
@@ -983,8 +983,8 @@ type UserListReq struct {
 
 type UserListResp struct {
 	BaseResp
-	Total int64       `json:"total,string"` // 总记录数
-	Rows  []SysUserVo `json:"rows"`         // 列表数据
+	Total int64       `json:"total"` // 总记录数
+	Rows  []SysUserVo `json:"rows"`  // 列表数据
 }
 
 type UserOptionSelectReq struct {

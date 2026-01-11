@@ -86,15 +86,38 @@ func (m *customSysUserModel) FindPage(ctx context.Context, query *UserQuery, pag
 		}
 	}
 
-	// 构建排序
+	// 构建排序（防止 SQL 注入）
+	// 允许的排序列（支持 snake_case 和 camelCase，需要包含表别名）
+	allowedOrderColumns := map[string]bool{
+		"u.user_id":     true,
+		"u.userId":      true,
+		"u.user_name":   true,
+		"u.userName":    true,
+		"u.create_time": true,
+		"u.createTime":  true,
+		"u.status":      true,
+	}
+
 	orderBy := "u.user_id ASC"
 	if pageQuery.OrderByColumn != "" {
-		// TODO: 验证列名安全性
-		orderBy = pageQuery.OrderByColumn
-		if pageQuery.IsAsc == "asc" {
-			orderBy += " ASC"
-		} else {
-			orderBy += " DESC"
+		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
+		// 如果没有表别名，添加 u. 前缀
+		if !strings.Contains(originalColumn, ".") {
+			originalColumn = "u." + originalColumn
+		}
+		// 将 camelCase 转换为 snake_case
+		columnName := camelToSnake(originalColumn)
+		// 检查原始字段名和转换后的字段名是否在允许列表中
+		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
+			// 使用转换后的 snake_case 字段名
+			orderBy = columnName
+			// 处理排序方向（兼容 asc、desc、descending 等）
+			isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
+			if isAscStr == "asc" || isAscStr == "ascending" {
+				orderBy += " ASC"
+			} else {
+				orderBy += " DESC"
+			}
 		}
 	}
 
@@ -132,10 +155,10 @@ func (m *customSysUserModel) FindPage(ctx context.Context, query *UserQuery, pag
 		LEFT JOIN sys_dept d ON u.dept_id = d.dept_id
 		WHERE %s
 		ORDER BY %s
-		LIMIT ? OFFSET ?
+		LIMIT ?, ?
 	`, userRows, whereClause, orderBy)
 
-	args = append(args, limit, offset)
+	args = append(args, offset, limit)
 
 	var userList []*SysUser
 	err = m.conn.QueryRowsPartialCtx(ctx, &userList, querySQL, args...)

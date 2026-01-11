@@ -1,82 +1,147 @@
 {
-  "code": 200,
-  "msg": "操作成功",
-  "data": [
+  "total": 16,
+  "rows": [
     {
-      "id": 100,
-      "parentId": 0,
-      "label": "XXX科技",
-      "weight": 0,
-      "disabled": false,
-      "children": [
-        {
-          "id": 101,
-          "parentId": 100,
-          "label": "深圳总公司",
-          "weight": 1,
-          "disabled": false,
-          "children": [
-            {
-              "id": 103,
-              "parentId": 101,
-              "label": "研发部门",
-              "weight": 1,
-              "disabled": false
-            },
-            {
-              "id": 104,
-              "parentId": 101,
-              "label": "市场部门",
-              "weight": 2,
-              "disabled": false
-            },
-            {
-              "id": 105,
-              "parentId": 101,
-              "label": "测试部门",
-              "weight": 3,
-              "disabled": false
-            },
-            {
-              "id": 106,
-              "parentId": 101,
-              "label": "财务部门",
-              "weight": 4,
-              "disabled": false
-            },
-            {
-              "id": 107,
-              "parentId": 101,
-              "label": "运维部门",
-              "weight": 5,
-              "disabled": false
-            }
-          ]
-        },
-        {
-          "id": 102,
-          "parentId": 100,
-          "label": "长沙分公司",
-          "weight": 2,
-          "disabled": false,
-          "children": [
-            {
-              "id": 108,
-              "parentId": 102,
-              "label": "市场部门",
-              "weight": 1,
-              "disabled": false
-            },
-            {
-              "id": 109,
-              "parentId": 102,
-              "label": "财务部门",
-              "weight": 2,
-              "disabled": false
-            }
-          ]
-        }
-      ]
+      "infoId": "2010205943156957186",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Chrome",
+      "os": "OSX",
+      "msg": "登录成功",
+      "loginTime": "2026-01-11 12:23:39"
+    },
+    {
+      "infoId": "268593931539709952",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "",
+      "browser": "Chrome",
+      "os": "macOS",
+      "msg": "登录成功",
+      "loginTime": "2026-01-11 12:16:24"
+    },
+    {
+      "infoId": "2009973057879130113",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Chrome",
+      "os": "OSX",
+      "msg": "退出成功",
+      "loginTime": "2026-01-10 20:58:15"
+    },
+    {
+      "infoId": "2009964498617483266",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Unknown",
+      "os": "Unknown",
+      "msg": "Login successful",
+      "loginTime": "2026-01-10 20:24:14"
+    },
+    {
+      "infoId": "2009964074493657090",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Chrome",
+      "os": "OSX",
+      "msg": "登录成功",
+      "loginTime": "2026-01-10 20:22:33"
+    },
+    {
+      "infoId": "2009863201402732545",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Chrome",
+      "os": "OSX",
+      "msg": "登录成功",
+      "loginTime": "2026-01-10 13:41:43"
+    },
+    {
+      "infoId": "2009823910102384641",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Chrome",
+      "os": "OSX",
+      "msg": "登录成功",
+      "loginTime": "2026-01-10 11:05:36"
+    },
+    {
+      "infoId": "2009615587969155073",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Chrome",
+      "os": "OSX",
+      "msg": "登录成功",
+      "loginTime": "2026-01-09 21:17:48"
+    },
+    {
+      "infoId": "2009585304528089090",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Chrome",
+      "os": "OSX",
+      "msg": "登录成功",
+      "loginTime": "2026-01-09 19:17:28"
+    },
+    {
+      "infoId": "2009513264844386305",
+      "tenantId": "000000",
+      "userName": "admin",
+      "clientKey": "pc",
+      "deviceType": "pc",
+      "status": "0",
+      "ipaddr": "192.168.3.216",
+      "loginLocation": "内网IP",
+      "browser": "Chrome",
+      "os": "OSX",
+      "msg": "登录成功",
+      "loginTime": "2026-01-09 14:31:12"
     }
-  ]
+  ],
+  "code": 200,
+  "msg": "查询成功"
 }

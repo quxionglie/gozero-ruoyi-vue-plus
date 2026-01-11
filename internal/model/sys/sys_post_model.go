@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -99,23 +100,41 @@ func (m *customSysPostModel) FindPage(ctx context.Context, query *PostQuery, pag
 	}
 
 	// 构建排序（防止 SQL 注入）
-	// 允许排序的列名白名单
+	// 允许的排序列（支持 snake_case 和 camelCase）
 	allowedOrderColumns := map[string]bool{
 		"post_id":     true,
+		"postId":      true,
 		"post_code":   true,
+		"postCode":    true,
 		"post_name":   true,
+		"postName":    true,
 		"post_sort":   true,
+		"postSort":    true,
 		"status":      true,
 		"create_time": true,
+		"createTime":  true,
 		"update_time": true,
+		"updateTime":  true,
 	}
+
 	orderBy := "post_sort"
-	if pageQuery.OrderByColumn != "" && allowedOrderColumns[pageQuery.OrderByColumn] {
-		orderBy = pageQuery.OrderByColumn
+	if pageQuery.OrderByColumn != "" {
+		// 将 camelCase 转换为 snake_case
+		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
+		// 检查原始字段名和转换后的字段名是否在允许列表中
+		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
+		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
+			// 使用转换后的 snake_case 字段名
+			orderBy = columnName
+		}
 	}
-	// 只允许 asc 或 desc
+
+	// 处理排序方向（兼容 asc、desc、descending 等）
 	orderDir := "asc"
-	if pageQuery.IsAsc == "desc" {
+	isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
+	if isAscStr == "asc" || isAscStr == "ascending" {
+		orderDir = "asc"
+	} else if isAscStr == "desc" || isAscStr == "descending" {
 		orderDir = "desc"
 	}
 
@@ -126,7 +145,7 @@ func (m *customSysPostModel) FindPage(ctx context.Context, query *PostQuery, pag
 		if offset < 0 {
 			offset = 0
 		}
-		sqlQuery += fmt.Sprintf(" limit %d offset %d", pageQuery.PageSize, offset)
+		sqlQuery += fmt.Sprintf(" limit %d, %d", offset, pageQuery.PageSize)
 	}
 
 	var resp []*SysPost

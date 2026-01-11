@@ -278,11 +278,11 @@ func SomeHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 go-zero 提供了强大的代码生成工具，可以快速生成 API 定义、模型代码等：
 
 ```bash
-# 生成 API 定义
-goctl api go -api api/user.api -dir . -style gozero
+# 生成 API 定义（使用 snake_case 风格）
+goctl api go -api api/main.api -dir . --style go_zero
 
-# 从数据库生成模型代码
-goctl model mysql datasource -url="user:password@tcp(127.0.0.1:3306)/ruoyi" -table="user" -dir="./model" -c
+# 从数据库生成模型代码（使用 snake_case 风格）
+goctl model mysql datasource -url="user:password@tcp(127.0.0.1:3306)/ruoyi" -table="user" -dir="./internal/model/sys" -c --style go_zero
 ```
 
 更多 goctl 使用说明请参考 [go-zero 文档](https://go-zero.dev/cn/docs/design/overview)。
