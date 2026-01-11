@@ -715,3 +715,6 @@ AccessPolicyType getAccessPolicy();
 2026-01-11T22:02:39+08:00
 /system/user/getInfo响应的Avatar是字符串类型，但数据库表sys_user中avatar存的是oss_id, 需要在后端查询sys_oss表获取url返回给前端。/system/user/profile 也类似
 
+2026-01-11T22:22:27+08:00
+更新README.md的项目结构
+
