@@ -87,7 +87,7 @@ gozero-ruoyi-vue-plus/
 ### 1. 克隆项目
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/quxionglie/gozero-ruoyi-vue-plus.git
 cd gozero-ruoyi-vue-plus
 ```
 
@@ -104,8 +104,6 @@ go mod download
 
 ### 3. 安装 goctl 工具（可选）
 
-go-zero 提供了强大的代码生成工具 goctl，建议安装：
-
 ```bash
 go install github.com/zeromicro/go-zero/tools/goctl@latest
 ```
@@ -115,7 +113,7 @@ go install github.com/zeromicro/go-zero/tools/goctl@latest
 #### 创建 MySQL 数据库
 
 ```sql
-CREATE DATABASE IF NOT EXISTS ruoyi DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+CREATE DATABASE ry-vue DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 ```
 
 #### 修改配置文件
@@ -150,10 +148,13 @@ go build -o bin/gozero-ruoyi-vue-plus admin.go
 
 ### 6. 验证服务
 
-服务启动后，默认监听 `0.0.0.0:8888`，可以测试健康检查接口：
+服务启动后，默认监听 `0.0.0.0:58888`，可以测试健康检查接口：
 
 ```bash
-curl http://localhost:8888/api/ping
+curl 'http://localhost:58888/auth/code' \
+  -H 'Accept: application/json, text/plain, */*' \
+  -H 'clientid: e5cd7e4891bf95d1d19206ce24a7b32e' \
+  --insecure
 ```
 
 预期响应：
