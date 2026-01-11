@@ -83,7 +83,7 @@ func (l *GetUserInfoLogic) GetUserInfo() (resp *types.UserInfoResp, err error) {
 		Email:       user.Email,
 		Phonenumber: user.Phonenumber,
 		Sex:         user.Sex,
-		Avatar:      "",
+		Avatar:      nil, // *string 类型，初始化为 nil
 		Status:      user.Status,
 		LoginIp:     user.LoginIp,
 		LoginDate:   "",
@@ -95,10 +95,12 @@ func (l *GetUserInfoLogic) GetUserInfo() (resp *types.UserInfoResp, err error) {
 	if user.DeptId.Valid {
 		userVo.DeptId = user.DeptId.Int64
 	}
+	// Avatar 现在是 *string，当值为 null 时返回 nil
 	if user.Avatar.Valid {
-		userVo.Avatar = strconv.FormatInt(user.Avatar.Int64, 10)
+		avatarStr := strconv.FormatInt(user.Avatar.Int64, 10)
+		userVo.Avatar = &avatarStr
 	} else {
-		userVo.Avatar = ""
+		userVo.Avatar = nil
 	}
 	if user.LoginDate.Valid {
 		userVo.LoginDate = user.LoginDate.Time.Format("2006-01-02 15:04:05")
@@ -117,6 +119,10 @@ func (l *GetUserInfoLogic) GetUserInfo() (resp *types.UserInfoResp, err error) {
 		userRoles = []types.SysRoleVo{}
 	}
 	userVo.Roles = userRoles
+	// RoleIds, PostIds, RoleId 设置为 nil（匹配 Java 返回）
+	userVo.RoleIds = nil
+	userVo.PostIds = nil
+	userVo.RoleId = nil
 
 	// 6. 检查是否为超级管理员（role_id = 1 或 role_key = 'superadmin'）
 	isSuperAdmin := l.isSuperAdmin(userId, userRoles)
@@ -174,22 +180,28 @@ func (l *GetUserInfoLogic) getUserRoles(userId int64) ([]types.SysRoleVo, error)
 		isSuperAdmin := row.RoleId == 1 || strings.ToLower(row.RoleKey) == "superadmin"
 
 		roleVo := types.SysRoleVo{
-			RoleId:     row.RoleId,
-			RoleName:   row.RoleName,
-			RoleKey:    row.RoleKey,
-			RoleSort:   int32(row.RoleSort),
-			DataScope:  row.DataScope,
-			Status:     row.Status,
-			Remark:     "",
-			CreateTime: "",
-			SuperAdmin: isSuperAdmin,
-			Flag:       true, // 用户已拥有的角色，flag 为 true
+			RoleId:            row.RoleId,
+			RoleName:          row.RoleName,
+			RoleKey:           row.RoleKey,
+			RoleSort:          int32(row.RoleSort),
+			DataScope:         row.DataScope,
+			MenuCheckStrictly: nil, // 匹配 Java 返回 null
+			DeptCheckStrictly: nil, // 匹配 Java 返回 null
+			Status:            row.Status,
+			Remark:            nil,
+			CreateTime:        nil,
+			SuperAdmin:        isSuperAdmin,
+			Flag:              true, // 用户已拥有的角色，flag 为 true
 		}
+		// Remark 现在是 *string，当值为 null 时返回 nil
 		if row.Remark.Valid {
-			roleVo.Remark = row.Remark.String
+			remarkStr := row.Remark.String
+			roleVo.Remark = &remarkStr
 		}
+		// CreateTime 现在是 *string，当值为 null 时返回 nil
 		if row.CreateTime.Valid {
-			roleVo.CreateTime = row.CreateTime.Time.Format("2006-01-02 15:04:05")
+			createTimeStr := row.CreateTime.Time.Format("2006-01-02 15:04:05")
+			roleVo.CreateTime = &createTimeStr
 		}
 		result = append(result, roleVo)
 	}

@@ -1,0 +1,187 @@
+syntax = "v1"
+
+info (
+	title: "资源管理服务 API"
+	desc: "资源管理相关接口，包括OSS对象存储等"
+	version: "1.0.0"
+)
+
+// ========== OSS对象存储相关类型定义 ==========
+type OssListReq {
+	FileName     string `form:"fileName,optional"`     // 文件名（模糊查询）
+	OriginalName string `form:"originalName,optional"` // 原名（模糊查询）
+	FileSuffix   string `form:"fileSuffix,optional"`   // 文件后缀名
+	Url          string `form:"url,optional"`          // URL地址
+	CreateBy     int64  `form:"createBy,optional,string"` // 创建者
+	Service      string `form:"service,optional"`      // 服务商
+	PageQuery
+}
+
+type OssListByIdsReq {
+	OssIds string `path:"ossIds"` // OSS对象ID串（逗号分隔）
+}
+
+type OssUploadReq {
+	// 文件上传使用 multipart/form-data，file 字段
+}
+
+type OssDownloadReq {
+	OssId int64 `path:"ossId,range=[1:]"` // OSS对象ID（必须大于0）
+}
+
+type OssRemoveReq {
+	OssIds string `path:"ossIds"` // OSS对象ID串（逗号分隔）
+}
+
+type OssListResp {
+	BaseResp
+	Total int64   `json:"total"` // 总记录数
+	Rows  []OssVo `json:"rows"`         // 列表数据
+}
+
+type OssUploadResp {
+	BaseResp
+	Data OssUploadVo `json:"data,omitempty"`
+}
+
+type OssDownloadResp {
+	BaseResp
+	// 文件下载直接返回文件流，不返回JSON
+}
+
+type OssVo {
+	OssId        int64  `json:"ossId,string"`        // 对象存储主键
+	FileName     string `json:"fileName"`            // 文件名
+	OriginalName string `json:"originalName"`        // 原名
+	FileSuffix   string `json:"fileSuffix"`          // 文件后缀名
+	Url          string `json:"url"`                 // URL地址
+	Ext1         string `json:"ext1"`                // 扩展字段
+	CreateTime   string `json:"createTime"`          // 创建时间
+	CreateBy     int64  `json:"createBy,string"`     // 上传人
+	CreateByName string `json:"createByName"`        // 上传人名称
+	Service      string `json:"service"`             // 服务商
+}
+
+type OssUploadVo {
+	Url      string `json:"url"`      // URL地址
+	FileName string `json:"fileName"` // 文件名
+	OssId    string `json:"ossId"`    // 对象存储主键
+}
+
+// ========== OSS对象存储配置相关类型定义 ==========
+type OssConfigReq {
+	OssConfigId  int64  `json:"ossConfigId,optional,string"`  // 主键
+	ConfigKey    string `json:"configKey"`                     // 配置key（必填）
+	AccessKey    string `json:"accessKey"`                     // accessKey（必填）
+	SecretKey    string `json:"secretKey"`                     // 秘钥（必填）
+	BucketName   string `json:"bucketName"`                    // 桶名称（必填）
+	Prefix       string `json:"prefix,optional"`               // 前缀
+	Endpoint     string `json:"endpoint"`                      // 访问站点（必填）
+	Domain       string `json:"domain,optional"`               // 自定义域名
+	IsHttps      string `json:"isHttps,optional,options=Y|N"` // 是否https（Y=是,N=否）
+	Region       string `json:"region,optional"`               // 域
+	AccessPolicy string `json:"accessPolicy,optional,options=0|1|2"` // 桶权限类型(0=private 1=public 2=custom)
+	Status       string `json:"status,optional,options=0|1"`   // 是否默认（0=是,1=否）
+	Ext1         string `json:"ext1,optional"`                 // 扩展字段
+	Remark       string `json:"remark,optional"`               // 备注
+}
+
+type OssConfigGetInfoReq {
+	OssConfigId int64 `path:"ossConfigId,range=[1:]"` // 主键（必须大于0）
+}
+
+type OssConfigListReq {
+	ConfigKey string `form:"configKey,optional"` // 配置key（模糊查询）
+	Status    string `form:"status,optional"`    // 状态（0是 1否）
+	PageQuery
+}
+
+type OssConfigRemoveReq {
+	OssConfigIds string `path:"ossConfigIds"` // 主键ID串（逗号分隔，不能为空）
+}
+
+type OssConfigChangeStatusReq {
+	OssConfigId int64  `json:"ossConfigId,range=[1:]"`  // 主键（必须大于0）
+	Status      string `json:"status,options=0|1"`      // 状态（0是 1否）
+}
+
+type OssConfigResp {
+	BaseResp
+	Data OssConfigVo `json:"data,omitempty"`
+}
+
+type OssConfigListResp {
+	BaseResp
+	Total int64          `json:"total"` // 总记录数
+	Rows  []OssConfigVo `json:"rows"`         // 列表数据
+}
+
+type OssConfigVo {
+	OssConfigId  int64  `json:"ossConfigId,string"`  // 主键
+	ConfigKey    string `json:"configKey"`           // 配置key
+	AccessKey    string `json:"accessKey"`           // accessKey
+	SecretKey    string `json:"secretKey"`           // 秘钥
+	BucketName   string `json:"bucketName"`          // 桶名称
+	Prefix       string `json:"prefix"`              // 前缀
+	Endpoint     string `json:"endpoint"`            // 访问站点
+	Domain       string `json:"domain"`              // 自定义域名
+	IsHttps      string `json:"isHttps"`             // 是否https（Y=是,N=否）
+	Region       string `json:"region"`              // 域
+	AccessPolicy string `json:"accessPolicy"`        // 桶权限类型(0=private 1=public 2=custom)
+	Status       string `json:"status"`              // 是否默认（0=是,1=否）
+	Ext1         string `json:"ext1"`                // 扩展字段
+	Remark       string `json:"remark"`              // 备注
+	CreateTime   string `json:"createTime"`          // 创建时间
+}
+
+@server (
+	group:  resource
+	jwt: Auth
+)
+service admin-api {
+	// ========== OSS对象存储接口 ==========
+	@doc "查询OSS对象存储列表"
+	@handler OssList
+	get /resource/oss/list (OssListReq) returns (OssListResp)
+
+	@doc "查询OSS对象基于id串"
+	@handler OssListByIds
+	get /resource/oss/listByIds/:ossIds (OssListByIdsReq) returns (OssListResp)
+
+	@doc "上传OSS对象存储"
+	@handler OssUpload
+	post /resource/oss/upload (OssUploadReq) returns (OssUploadResp)
+
+	@doc "下载OSS对象"
+	@handler OssDownload
+	get /resource/oss/download/:ossId (OssDownloadReq) returns (OssDownloadResp)
+
+	@doc "删除OSS对象存储"
+	@handler OssRemove
+	delete /resource/oss/:ossIds (OssRemoveReq) returns (BaseResp)
+
+	// ========== OSS对象存储配置接口 ==========
+	@doc "查询对象存储配置列表"
+	@handler OssConfigList
+	get /resource/oss/config/list (OssConfigListReq) returns (OssConfigListResp)
+
+	@doc "获取对象存储配置详细信息"
+	@handler OssConfigGetInfo
+	get /resource/oss/config/:ossConfigId (OssConfigGetInfoReq) returns (OssConfigResp)
+
+	@doc "新增对象存储配置"
+	@handler OssConfigAdd
+	post /resource/oss/config (OssConfigReq) returns (BaseResp)
+
+	@doc "修改对象存储配置"
+	@handler OssConfigEdit
+	put /resource/oss/config (OssConfigReq) returns (BaseResp)
+
+	@doc "状态修改"
+	@handler OssConfigChangeStatus
+	put /resource/oss/config/changeStatus (OssConfigChangeStatusReq) returns (BaseResp)
+
+	@doc "删除对象存储配置"
+	@handler OssConfigRemove
+	delete /resource/oss/config/:ossConfigIds (OssConfigRemoveReq) returns (BaseResp)
+}

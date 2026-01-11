@@ -63,21 +63,29 @@ func (l *UserGetInfoByIdLogic) UserGetInfoById(req *types.UserGetInfoReq) (resp 
 	roleVos := make([]types.SysRoleVo, 0, len(roles))
 	for _, role := range roles {
 		roleVo := types.SysRoleVo{
-			RoleId:    role.RoleId,
-			RoleName:  role.RoleName,
-			RoleKey:   role.RoleKey,
-			RoleSort:  int32(role.RoleSort),
-			DataScope: role.DataScope,
-			Status:    role.Status,
+			RoleId:            role.RoleId,
+			RoleName:          role.RoleName,
+			RoleKey:           role.RoleKey,
+			RoleSort:          int32(role.RoleSort),
+			DataScope:         role.DataScope,
+			MenuCheckStrictly: nil, // 匹配 Java 返回 null
+			DeptCheckStrictly: nil, // 匹配 Java 返回 null
+			Status:            role.Status,
+			Remark:            nil,
+			CreateTime:        nil,
+			SuperAdmin:        role.RoleId == 1 || role.RoleKey == "superadmin",
+			Flag:              false, // 默认值
 		}
+		// Remark 现在是 *string，当值为 null 时返回 nil
 		if role.Remark.Valid {
-			roleVo.Remark = role.Remark.String
+			remarkStr := role.Remark.String
+			roleVo.Remark = &remarkStr
 		}
+		// CreateTime 现在是 *string，当值为 null 时返回 nil
 		if role.CreateTime.Valid {
-			roleVo.CreateTime = role.CreateTime.Time.Format("2006-01-02 15:04:05")
+			createTimeStr := role.CreateTime.Time.Format("2006-01-02 15:04:05")
+			roleVo.CreateTime = &createTimeStr
 		}
-		// 判断是否为超级管理员
-		roleVo.SuperAdmin = role.RoleId == 1 || role.RoleKey == "superadmin"
 		roleVos = append(roleVos, roleVo)
 	}
 	userVo.Roles = roleVos

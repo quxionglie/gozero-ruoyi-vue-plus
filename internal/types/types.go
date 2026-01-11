@@ -589,6 +589,71 @@ type OperLogVo struct {
 	CostTime      int64  `json:"costTime,string"` // 消耗时间
 }
 
+type OssConfigChangeStatusReq struct {
+	OssConfigId int64  `json:"ossConfigId,range=[1:]"` // 主键（必须大于0）
+	Status      string `json:"status,options=0|1"`     // 状态（0是 1否）
+}
+
+type OssConfigGetInfoReq struct {
+	OssConfigId int64 `path:"ossConfigId,range=[1:]"` // 主键（必须大于0）
+}
+
+type OssConfigListReq struct {
+	ConfigKey string `form:"configKey,optional"` // 配置key（模糊查询）
+	Status    string `form:"status,optional"`    // 状态（0是 1否）
+	PageQuery
+}
+
+type OssConfigListResp struct {
+	BaseResp
+	Total int64         `json:"total"` // 总记录数
+	Rows  []OssConfigVo `json:"rows"`  // 列表数据
+}
+
+type OssConfigRemoveReq struct {
+	OssConfigIds string `path:"ossConfigIds"` // 主键ID串（逗号分隔，不能为空）
+}
+
+type OssConfigReq struct {
+	OssConfigId  int64  `json:"ossConfigId,optional,string"`         // 主键
+	ConfigKey    string `json:"configKey"`                           // 配置key（必填）
+	AccessKey    string `json:"accessKey"`                           // accessKey（必填）
+	SecretKey    string `json:"secretKey"`                           // 秘钥（必填）
+	BucketName   string `json:"bucketName"`                          // 桶名称（必填）
+	Prefix       string `json:"prefix,optional"`                     // 前缀
+	Endpoint     string `json:"endpoint"`                            // 访问站点（必填）
+	Domain       string `json:"domain,optional"`                     // 自定义域名
+	IsHttps      string `json:"isHttps,optional,options=Y|N"`        // 是否https（Y=是,N=否）
+	Region       string `json:"region,optional"`                     // 域
+	AccessPolicy string `json:"accessPolicy,optional,options=0|1|2"` // 桶权限类型(0=private 1=public 2=custom)
+	Status       string `json:"status,optional,options=0|1"`         // 是否默认（0=是,1=否）
+	Ext1         string `json:"ext1,optional"`                       // 扩展字段
+	Remark       string `json:"remark,optional"`                     // 备注
+}
+
+type OssConfigResp struct {
+	BaseResp
+	Data OssConfigVo `json:"data,omitempty"`
+}
+
+type OssConfigVo struct {
+	OssConfigId  int64  `json:"ossConfigId,string"` // 主键
+	ConfigKey    string `json:"configKey"`          // 配置key
+	AccessKey    string `json:"accessKey"`          // accessKey
+	SecretKey    string `json:"secretKey"`          // 秘钥
+	BucketName   string `json:"bucketName"`         // 桶名称
+	Prefix       string `json:"prefix"`             // 前缀
+	Endpoint     string `json:"endpoint"`           // 访问站点
+	Domain       string `json:"domain"`             // 自定义域名
+	IsHttps      string `json:"isHttps"`            // 是否https（Y=是,N=否）
+	Region       string `json:"region"`             // 域
+	AccessPolicy string `json:"accessPolicy"`       // 桶权限类型(0=private 1=public 2=custom)
+	Status       string `json:"status"`             // 是否默认（0=是,1=否）
+	Ext1         string `json:"ext1"`               // 扩展字段
+	Remark       string `json:"remark"`             // 备注
+	CreateTime   string `json:"createTime"`         // 创建时间
+}
+
 type OssDownloadReq struct {
 	OssId int64 `path:"ossId,range=[1:]"` // OSS对象ID（必须大于0）
 }
@@ -854,16 +919,18 @@ type RouterVo struct {
 }
 
 type SysRoleVo struct {
-	RoleId     int64  `json:"roleId,string"` // 角色ID
-	RoleName   string `json:"roleName"`      // 角色名称
-	RoleKey    string `json:"roleKey"`       // 角色权限字符串
-	RoleSort   int32  `json:"roleSort"`      // 显示顺序
-	DataScope  string `json:"dataScope"`     // 数据范围
-	Status     string `json:"status"`        // 角色状态（0正常 1停用）
-	Remark     string `json:"remark"`        // 备注
-	CreateTime string `json:"createTime"`    // 创建时间
-	SuperAdmin bool   `json:"superAdmin"`    // 超级管理员标识
-	Flag       bool   `json:"flag"`          // 用户是否存在此角色标识
+	RoleId            int64   `json:"roleId,string"`               // 角色ID
+	RoleName          string  `json:"roleName"`                    // 角色名称
+	RoleKey           string  `json:"roleKey"`                     // 角色权限字符串
+	RoleSort          int32   `json:"roleSort"`                    // 显示顺序
+	DataScope         string  `json:"dataScope"`                   // 数据范围
+	MenuCheckStrictly *bool   `json:"menuCheckStrictly,omitempty"` // 菜单树选择项是否关联显示
+	DeptCheckStrictly *bool   `json:"deptCheckStrictly,omitempty"` // 部门树选择项是否关联显示
+	Status            string  `json:"status"`                      // 角色状态（0正常 1停用）
+	Remark            *string `json:"remark,omitempty"`            // 备注
+	CreateTime        *string `json:"createTime,omitempty"`        // 创建时间
+	SuperAdmin        bool    `json:"superAdmin"`                  // 超级管理员标识
+	Flag              bool    `json:"flag"`                        // 用户是否存在此角色标识
 }
 
 type SysUserOnlineVo struct {
@@ -880,23 +947,26 @@ type SysUserOnlineVo struct {
 }
 
 type SysUserVo struct {
-	UserId      int64       `json:"userId,string"` // 用户ID
-	TenantId    string      `json:"tenantId"`      // 租户ID
-	DeptId      int64       `json:"deptId,string"` // 部门ID
-	UserName    string      `json:"userName"`      // 用户账号
-	NickName    string      `json:"nickName"`      // 用户昵称
-	UserType    string      `json:"userType"`      // 用户类型（sys_user系统用户）
-	Email       string      `json:"email"`         // 用户邮箱
-	Phonenumber string      `json:"phonenumber"`   // 手机号码
-	Sex         string      `json:"sex"`           // 用户性别（0男 1女 2未知）
-	Avatar      string      `json:"avatar"`        // 头像地址
-	Status      string      `json:"status"`        // 帐号状态（0正常 1停用）
-	LoginIp     string      `json:"loginIp"`       // 最后登录IP
-	LoginDate   string      `json:"loginDate"`     // 最后登录时间
-	Remark      string      `json:"remark"`        // 备注
-	CreateTime  string      `json:"createTime"`    // 创建时间
-	DeptName    string      `json:"deptName"`      // 部门名
-	Roles       []SysRoleVo `json:"roles"`         // 角色对象
+	UserId      int64       `json:"userId,string"`     // 用户ID
+	TenantId    string      `json:"tenantId"`          // 租户ID
+	DeptId      int64       `json:"deptId,string"`     // 部门ID
+	UserName    string      `json:"userName"`          // 用户账号
+	NickName    string      `json:"nickName"`          // 用户昵称
+	UserType    string      `json:"userType"`          // 用户类型（sys_user系统用户）
+	Email       string      `json:"email"`             // 用户邮箱
+	Phonenumber string      `json:"phonenumber"`       // 手机号码
+	Sex         string      `json:"sex"`               // 用户性别（0男 1女 2未知）
+	Avatar      *string     `json:"avatar,omitempty"`  // 头像地址
+	Status      string      `json:"status"`            // 帐号状态（0正常 1停用）
+	LoginIp     string      `json:"loginIp"`           // 最后登录IP
+	LoginDate   string      `json:"loginDate"`         // 最后登录时间
+	Remark      string      `json:"remark"`            // 备注
+	CreateTime  string      `json:"createTime"`        // 创建时间
+	DeptName    string      `json:"deptName"`          // 部门名
+	Roles       []SysRoleVo `json:"roles"`             // 角色对象
+	RoleIds     []int64     `json:"roleIds,omitempty"` // 角色ID列表
+	PostIds     []int64     `json:"postIds,omitempty"` // 岗位ID列表
+	RoleId      *int64      `json:"roleId,omitempty"`  // 角色ID
 }
 
 type TableDataInfoResp struct {

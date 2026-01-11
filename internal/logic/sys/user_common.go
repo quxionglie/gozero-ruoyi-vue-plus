@@ -19,7 +19,7 @@ func convertUserToVo(user *model.SysUser) types.SysUserVo {
 		Email:       user.Email,
 		Phonenumber: user.Phonenumber,
 		Sex:         user.Sex,
-		Avatar:      "",
+		Avatar:      nil, // *string 类型，初始化为 nil
 		Status:      user.Status,
 		LoginIp:     user.LoginIp,
 		LoginDate:   "",
@@ -33,10 +33,12 @@ func convertUserToVo(user *model.SysUser) types.SysUserVo {
 		userVo.DeptId = user.DeptId.Int64
 		// TODO: 查询部门名称
 	}
+	// Avatar 现在是 *string，当值为 null 时返回 nil
 	if user.Avatar.Valid {
-		userVo.Avatar = strconv.FormatInt(user.Avatar.Int64, 10)
+		avatarStr := strconv.FormatInt(user.Avatar.Int64, 10)
+		userVo.Avatar = &avatarStr
 	} else {
-		userVo.Avatar = ""
+		userVo.Avatar = nil
 	}
 	if user.LoginDate.Valid {
 		userVo.LoginDate = user.LoginDate.Time.Format("2006-01-02 15:04:05")

@@ -1,0 +1,7 @@
+
+###
+GET {{baseUrl}}/resource/oss/list?pageNum=1&pageSize=10&orderByColumn=createTime&isAsc=ascending
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
+Content-Type: application/json;charset=UTF-8
+###

@@ -89,23 +89,29 @@ func (l *UserAuthRoleGetLogic) UserAuthRoleGet(req *types.UserAuthRoleGetReq) (r
 		}
 
 		roleVo := types.SysRoleVo{
-			RoleId:    role.RoleId,
-			RoleName:  role.RoleName,
-			RoleKey:   role.RoleKey,
-			RoleSort:  int32(role.RoleSort),
-			DataScope: role.DataScope,
-			Status:    role.Status,
-			Flag:      userRoleIds[role.RoleId], // 用户是否存在此角色标识
+			RoleId:            role.RoleId,
+			RoleName:          role.RoleName,
+			RoleKey:           role.RoleKey,
+			RoleSort:          int32(role.RoleSort),
+			DataScope:         role.DataScope,
+			MenuCheckStrictly: nil, // 匹配 Java 返回 null
+			DeptCheckStrictly: nil, // 匹配 Java 返回 null
+			Status:            role.Status,
+			Remark:            nil,
+			CreateTime:        nil,
+			SuperAdmin:        role.RoleId == 1 || role.RoleKey == "superadmin",
+			Flag:              userRoleIds[role.RoleId], // 用户是否存在此角色标识
 		}
 
-		// 判断是否为超级管理员
-		roleVo.SuperAdmin = role.RoleId == 1 || role.RoleKey == "superadmin"
-
+		// Remark 现在是 *string，当值为 null 时返回 nil
 		if role.Remark.Valid {
-			roleVo.Remark = role.Remark.String
+			remarkStr := role.Remark.String
+			roleVo.Remark = &remarkStr
 		}
+		// CreateTime 现在是 *string，当值为 null 时返回 nil
 		if role.CreateTime.Valid {
-			roleVo.CreateTime = role.CreateTime.Time.Format("2006-01-02 15:04:05")
+			createTimeStr := role.CreateTime.Time.Format("2006-01-02 15:04:05")
+			roleVo.CreateTime = &createTimeStr
 		}
 		roleVos = append(roleVos, roleVo)
 	}

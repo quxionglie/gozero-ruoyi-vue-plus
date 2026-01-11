@@ -624,3 +624,24 @@ Total 总记录数 不转为string, 直接用int64类型。改一下*.api文件
 
 2026-01-11T18:48:07+08:00
 SysUserVo 中Avatar 类似用string，当db值为null时返回空串给前端
+
+2026-01-11T19:00:00+08:00
+/system/user/getInfo接口, java返回java.json，go返回go.json。检查两个文件的差异并调整当前go代码。int64 json输出要用string类型，别手动改types.go文件
+
+2026-01-11T19:15:00+08:00
+/resource/oss/**的接口移到resource.api中，url前辍去掉/system，他们不是system模块的。参考SysOssConfigController.java,SysOssController.java
+
+2026-01-11T19:30:00+08:00
+实现/resource/oss/**等接口的业务逻辑
+
+2026-01-11T19:36:52+08:00
+GO实现下面接口，参考SysOssConfigController.java
+## 对象存储配置
+POST   /resource/oss/config                               新增对象存储配置
+PUT    /resource/oss/config                               修改对象存储配置
+PUT    /resource/oss/config/changeStatus                  状态修改
+GET    /resource/oss/config/list                          查询对象存储配置列表
+DELETE /resource/oss/config/:ossConfigIds                删除对象存储配置
+GET    /resource/oss/config/:ossConfigId                 获取对象存储配置详细信息
+2026-01-11T19:41:01+08:00
+

@@ -8,6 +8,7 @@ import (
 
 	auth "gozero-ruoyi-vue-plus/internal/handler/auth"
 	monitor "gozero-ruoyi-vue-plus/internal/handler/monitor"
+	resource "gozero-ruoyi-vue-plus/internal/handler/resource"
 	sse "gozero-ruoyi-vue-plus/internal/handler/sse"
 	sys "gozero-ruoyi-vue-plus/internal/handler/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -130,6 +131,78 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/monitor/operlog/list",
 				Handler: monitor.OperLogListHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				// 删除OSS对象存储
+				Method:  http.MethodDelete,
+				Path:    "/resource/oss/:ossIds",
+				Handler: resource.OssRemoveHandler(serverCtx),
+			},
+			{
+				// 新增对象存储配置
+				Method:  http.MethodPost,
+				Path:    "/resource/oss/config",
+				Handler: resource.OssConfigAddHandler(serverCtx),
+			},
+			{
+				// 修改对象存储配置
+				Method:  http.MethodPut,
+				Path:    "/resource/oss/config",
+				Handler: resource.OssConfigEditHandler(serverCtx),
+			},
+			{
+				// 获取对象存储配置详细信息
+				Method:  http.MethodGet,
+				Path:    "/resource/oss/config/:ossConfigId",
+				Handler: resource.OssConfigGetInfoHandler(serverCtx),
+			},
+			{
+				// 删除对象存储配置
+				Method:  http.MethodDelete,
+				Path:    "/resource/oss/config/:ossConfigIds",
+				Handler: resource.OssConfigRemoveHandler(serverCtx),
+			},
+			{
+				// 状态修改
+				Method:  http.MethodPut,
+				Path:    "/resource/oss/config/changeStatus",
+				Handler: resource.OssConfigChangeStatusHandler(serverCtx),
+			},
+			{
+				// 查询对象存储配置列表
+				Method:  http.MethodGet,
+				Path:    "/resource/oss/config/list",
+				Handler: resource.OssConfigListHandler(serverCtx),
+			},
+			{
+				// 下载OSS对象
+				Method:  http.MethodGet,
+				Path:    "/resource/oss/download/:ossId",
+				Handler: resource.OssDownloadHandler(serverCtx),
+			},
+			{
+				// 查询OSS对象存储列表
+				Method:  http.MethodGet,
+				Path:    "/resource/oss/list",
+				Handler: resource.OssListHandler(serverCtx),
+			},
+			{
+				// 查询OSS对象基于id串
+				Method:  http.MethodGet,
+				Path:    "/resource/oss/listByIds/:ossIds",
+				Handler: resource.OssListByIdsHandler(serverCtx),
+			},
+			{
+				// 上传OSS对象存储
+				Method:  http.MethodPost,
+				Path:    "/resource/oss/upload",
+				Handler: resource.OssUploadHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.Auth.AccessSecret),
@@ -513,36 +586,6 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Method:  http.MethodGet,
 				Path:    "/system/post/optionselect",
 				Handler: sys.PostOptionSelectHandler(serverCtx),
-			},
-			{
-				// 删除OSS对象存储
-				Method:  http.MethodDelete,
-				Path:    "/system/resource/oss/:ossIds",
-				Handler: sys.OssRemoveHandler(serverCtx),
-			},
-			{
-				// 下载OSS对象
-				Method:  http.MethodGet,
-				Path:    "/system/resource/oss/download/:ossId",
-				Handler: sys.OssDownloadHandler(serverCtx),
-			},
-			{
-				// 查询OSS对象存储列表
-				Method:  http.MethodGet,
-				Path:    "/system/resource/oss/list",
-				Handler: sys.OssListHandler(serverCtx),
-			},
-			{
-				// 查询OSS对象基于id串
-				Method:  http.MethodGet,
-				Path:    "/system/resource/oss/listByIds/:ossIds",
-				Handler: sys.OssListByIdsHandler(serverCtx),
-			},
-			{
-				// 上传OSS对象存储
-				Method:  http.MethodPost,
-				Path:    "/system/resource/oss/upload",
-				Handler: sys.OssUploadHandler(serverCtx),
 			},
 			{
 				// 新增角色
