@@ -5,6 +5,7 @@ package auth
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
 	"strings"
@@ -186,13 +187,16 @@ func (l *LoginLogic) Login(req *types.LoginReq) (resp *types.LoginResp, err erro
 	// 7. 存储在线 token 缓存到 Redis
 	l.saveOnlineToken(accessToken, user, req.ClientId, timeout)
 
-	// 8. 延迟 5 秒后发送 SSE 欢迎消息
+	// 8. 记录登录信息到数据库
+	l.recordLoginInfo(user, req.ClientId, "0", "登录成功")
+
+	// 9. 延迟 5 秒后发送 SSE 欢迎消息
 	go func() {
 		time.Sleep(5 * time.Second)
 		l.sendWelcomeMessage(user.UserId)
 	}()
 
-	// 9. 返回登录信息
+	// 10. 返回登录信息
 	resp = &types.LoginResp{
 		BaseResp: types.BaseResp{
 			Code: 200,
@@ -418,4 +422,72 @@ func (l *LoginLogic) validateCaptcha(tenantId, username, code, uuid string) erro
 	}
 
 	return nil
+}
+
+// recordLoginInfo 记录登录信息到数据库
+func (l *LoginLogic) recordLoginInfo(user *sys.SysUser, clientId string, status string, msg string) {
+	// 从 context 中获取请求信息
+	clientIP := ""
+	if ipValue := l.ctx.Value("clientIP"); ipValue != nil {
+		if ip, ok := ipValue.(string); ok {
+			clientIP = ip
+		}
+	}
+
+	userAgent := ""
+	if uaValue := l.ctx.Value("userAgent"); uaValue != nil {
+		if ua, ok := uaValue.(string); ok {
+			userAgent = ua
+		}
+	}
+
+	// 解析 User-Agent 获取浏览器和操作系统信息
+	browser := parseBrowser(userAgent)
+	os := parseOS(userAgent)
+
+	// 获取客户端信息
+	clientKey := clientId
+	deviceType := "web" // 默认设备类型
+	client, err := l.svcCtx.SysClientModel.FindOneByClientId(l.ctx, clientId)
+	if err == nil {
+		if client.ClientKey.Valid {
+			clientKey = client.ClientKey.String
+		}
+		if client.DeviceType.Valid {
+			deviceType = client.DeviceType.String
+		}
+	}
+
+	// 生成 infoId（使用雪花算法）
+	infoId, err := util.GenerateID()
+	if err != nil {
+		l.Errorf("生成登录信息ID失败: %v", err)
+		return
+	}
+
+	// 构建登录信息对象
+	loginInfo := &sys.SysLogininfor{
+		InfoId:        infoId,
+		TenantId:      user.TenantId,
+		UserName:      user.UserName,
+		ClientKey:     clientKey,
+		DeviceType:    deviceType,
+		Ipaddr:        clientIP,
+		LoginLocation: "", // 登录地点（需要 IP 地址库，暂时留空）
+		Browser:       browser,
+		Os:            os,
+		Status:        status, // "0" 成功, "1" 失败
+		Msg:           msg,
+		LoginTime:     sql.NullTime{Time: time.Now(), Valid: true},
+	}
+
+	// 插入数据库（使用 goroutine 异步插入，避免影响登录响应速度）
+	go func() {
+		_, err := l.svcCtx.SysLogininforModel.Insert(context.Background(), loginInfo)
+		if err != nil {
+			l.Errorf("记录登录信息失败: %v", err)
+		} else {
+			l.Infof("记录登录信息成功: 用户=%s, IP=%s, 状态=%s", user.UserName, clientIP, status)
+		}
+	}()
 }
