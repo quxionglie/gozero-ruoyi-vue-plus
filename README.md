@@ -9,6 +9,8 @@
 
 对应ui版本：[plus-ui](https://github.com/JavaLionLi/plus-ui) tag: v5.5.2-v2.5.2 , 需更换RSA 公钥/私钥 VITE_APP_RSA_PUBLIC_KEY、VITE_APP_RSA_PRIVATE_KEY
 
+RuoYi-Vue-Plus与plus-ui可查看当前项目对应git分支。
+
 基于 [go-zero](https://github.com/zeromicro/go-zero) 框架的高性能后端服务项目，集成 MySQL 和 Redis，提供 RESTful API 服务。
  
 ## 🛠️ 技术栈
