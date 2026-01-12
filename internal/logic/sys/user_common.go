@@ -32,7 +32,11 @@ func convertUserToVo(ctx context.Context, svcCtx *svc.ServiceContext, user *mode
 
 	if user.DeptId.Valid {
 		userVo.DeptId = user.DeptId.Int64
-		// TODO: 查询部门名称
+		// 查询部门名称
+		dept, err := svcCtx.SysDeptModel.FindOne(ctx, user.DeptId.Int64)
+		if err == nil {
+			userVo.DeptName = dept.DeptName
+		}
 	}
 	// Avatar 现在是 *string，从 sys_oss 表查询 URL
 	if user.Avatar.Valid {

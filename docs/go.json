@@ -3,41 +3,111 @@
     "msg": "操作成功",
     "data": {
         "user": {
-            "userId": "1",
+            "userId": "2009482281181097986",
             "tenantId": "000000",
-            "deptId": "103",
-            "userName": "admin",
-            "nickName": "疯狂的狮子Li",
+            "deptId": "100",
+            "userName": "21321323",
+            "nickName": "11",
             "userType": "sys_user",
-            "email": "crazyLionLi@163.com",
-            "phonenumber": "15888888888",
-            "sex": "1",
-            "status": "0",
-            "loginIp": "192.168.3.216",
-            "loginDate": "2026-01-11 18:37:55",
-            "remark": "管理员",
-            "createTime": "2026-01-02 21:32:02",
-            "deptName": "研发部门",
+            "email": "",
+            "phonenumber": "",
+            "sex": "0",
+            "status": "1",
+            "loginIp": "",
+            "loginDate": "",
+            "remark": "",
+            "createTime": "2026-01-09 12:28:05",
+            "deptName": "XXX科技",
             "roles": [
                 {
-                    "roleId": "1",
-                    "roleName": "超级管理员",
-                    "roleKey": "superadmin",
-                    "roleSort": 1,
-                    "dataScope": "1",
+                    "roleId": "4",
+                    "roleName": "仅本人",
+                    "roleKey": "test2",
+                    "roleSort": 4,
+                    "dataScope": "5",
                     "status": "0",
-                    "remark": "超级管理员",
+                    "remark": "",
                     "createTime": "2026-01-02 21:32:02",
-                    "superAdmin": true,
-                    "flag": true
+                    "superAdmin": false,
+                    "flag": false
                 }
             ]
         },
-        "permissions": [
-            "*:*:*"
+        "roleIds": [
+            4
         ],
         "roles": [
-            "superadmin"
+            {
+                "roleId": "268698441482240000",
+                "roleName": "11",
+                "roleKey": "11",
+                "roleSort": 1,
+                "dataScope": "1",
+                "menuCheckStrictly": false,
+                "deptCheckStrictly": false,
+                "status": "0",
+                "delFlag": "0",
+                "createBy": "1",
+                "createTime": "",
+                "updateBy": "0",
+                "updateTime": "",
+                "remark": ""
+            },
+            {
+                "roleId": "4",
+                "roleName": "仅本人",
+                "roleKey": "test2",
+                "roleSort": 4,
+                "dataScope": "5",
+                "menuCheckStrictly": true,
+                "deptCheckStrictly": true,
+                "status": "0",
+                "delFlag": "0",
+                "createBy": "1",
+                "createTime": "2026-01-02 21:32:02",
+                "updateBy": "1",
+                "updateTime": "2026-01-09 12:32:27",
+                "remark": ""
+            }
+        ],
+        "postIds": null,
+        "posts": [
+            {
+                "postId": "2",
+                "deptId": "100",
+                "postCode": "se",
+                "postCategory": "",
+                "postName": "项目经理",
+                "postSort": 2,
+                "status": "0",
+                "remark": "",
+                "createTime": "2026-01-02 21:32:02",
+                "deptName": "XXX科技"
+            },
+            {
+                "postId": "3",
+                "deptId": "100",
+                "postCode": "hr",
+                "postCategory": "",
+                "postName": "人力资源",
+                "postSort": 3,
+                "status": "0",
+                "remark": "",
+                "createTime": "2026-01-02 21:32:02",
+                "deptName": "XXX科技"
+            },
+            {
+                "postId": "4",
+                "deptId": "100",
+                "postCode": "user",
+                "postCategory": "",
+                "postName": "普通员工",
+                "postSort": 4,
+                "status": "0",
+                "remark": "",
+                "createTime": "2026-01-02 21:32:02",
+                "deptName": "XXX科技"
+            }
         ]
     }
 }

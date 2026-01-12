@@ -719,3 +719,9 @@ AccessPolicyType getAccessPolicy();
 2026-01-12T18:11:25+08:00
 pageQuery.Normalize()移到*mode.go的分页查询类中调用
 
+2026-01-12T18:32:25+08:00
+/system/user/:userId接口，go.json是go返回，java.json是java返回。对比差异并修改go代码。参考SysUserController.java的getInfo(@PathVariable(value = "userId", required = false) Long userId)方法
+
+2026-01-12T18:52:21+08:00
+*.api中RoleId、DeptId、PostId字段不转为string,tag移除string
+
