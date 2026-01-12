@@ -1,0 +1,1 @@
+docker run --name ruoyi_redis -p 16379:6379 -d redis --requirepass "ruoyi123"
