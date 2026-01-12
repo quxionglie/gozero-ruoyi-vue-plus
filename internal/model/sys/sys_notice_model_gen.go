@@ -18,8 +18,8 @@ import (
 var (
 	sysNoticeFieldNames          = builder.RawFieldNames(&SysNotice{})
 	sysNoticeRows                = strings.Join(sysNoticeFieldNames, ",")
-	sysNoticeRowsExpectAutoSet   = strings.Join(stringx.Remove(sysNoticeFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysNoticeRowsWithPlaceHolder = strings.Join(stringx.Remove(sysNoticeFieldNames, "`notice_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysNoticeRowsExpectAutoSet   = strings.Join(stringx.Remove(sysNoticeFieldNames, "`=`"), ",")
+	sysNoticeRowsWithPlaceHolder = strings.Join(stringx.Remove(sysNoticeFieldNames, "`notice_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -79,14 +79,14 @@ func (m *defaultSysNoticeModel) FindOne(ctx context.Context, noticeId int64) (*S
 }
 
 func (m *defaultSysNoticeModel) Insert(ctx context.Context, data *SysNotice) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysNoticeRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.NoticeId, data.TenantId, data.NoticeTitle, data.NoticeType, data.NoticeContent, data.Status, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysNoticeRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.NoticeId, data.TenantId, data.NoticeTitle, data.NoticeType, data.NoticeContent, data.Status, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysNoticeModel) Update(ctx context.Context, data *SysNotice) error {
 	query := fmt.Sprintf("update %s set %s where `notice_id` = ?", m.table, sysNoticeRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.NoticeTitle, data.NoticeType, data.NoticeContent, data.Status, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark, data.NoticeId)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.NoticeTitle, data.NoticeType, data.NoticeContent, data.Status, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark, data.NoticeId)
 	return err
 }
 

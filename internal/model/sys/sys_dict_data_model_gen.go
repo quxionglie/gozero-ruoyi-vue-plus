@@ -18,8 +18,8 @@ import (
 var (
 	sysDictDataFieldNames          = builder.RawFieldNames(&SysDictData{})
 	sysDictDataRows                = strings.Join(sysDictDataFieldNames, ",")
-	sysDictDataRowsExpectAutoSet   = strings.Join(stringx.Remove(sysDictDataFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysDictDataRowsWithPlaceHolder = strings.Join(stringx.Remove(sysDictDataFieldNames, "`dict_code`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysDictDataRowsExpectAutoSet   = strings.Join(stringx.Remove(sysDictDataFieldNames, "`=`"), ",")
+	sysDictDataRowsWithPlaceHolder = strings.Join(stringx.Remove(sysDictDataFieldNames, "`dict_code`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -82,14 +82,14 @@ func (m *defaultSysDictDataModel) FindOne(ctx context.Context, dictCode int64) (
 }
 
 func (m *defaultSysDictDataModel) Insert(ctx context.Context, data *SysDictData) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysDictDataRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.DictCode, data.TenantId, data.DictSort, data.DictLabel, data.DictValue, data.DictType, data.CssClass, data.ListClass, data.IsDefault, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysDictDataRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.DictCode, data.TenantId, data.DictSort, data.DictLabel, data.DictValue, data.DictType, data.CssClass, data.ListClass, data.IsDefault, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysDictDataModel) Update(ctx context.Context, data *SysDictData) error {
 	query := fmt.Sprintf("update %s set %s where `dict_code` = ?", m.table, sysDictDataRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.DictSort, data.DictLabel, data.DictValue, data.DictType, data.CssClass, data.ListClass, data.IsDefault, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark, data.DictCode)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.DictSort, data.DictLabel, data.DictValue, data.DictType, data.CssClass, data.ListClass, data.IsDefault, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark, data.DictCode)
 	return err
 }
 

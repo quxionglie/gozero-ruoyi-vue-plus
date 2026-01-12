@@ -17,6 +17,8 @@ type (
 		withSession(session sqlx.Session) SysRoleMenuModel
 		// InsertBatch 批量插入角色菜单关联
 		InsertBatch(ctx context.Context, roleId int64, menuIds []int64) error
+		// DeleteByRoleId 根据角色ID删除角色菜单关联
+		DeleteByRoleId(ctx context.Context, roleId int64) error
 		// DeleteByRoleIds 批量删除角色菜单关联（根据角色ID列表）
 		DeleteByRoleIds(ctx context.Context, roleIds []int64) error
 	}
@@ -56,6 +58,13 @@ func (m *customSysRoleMenuModel) InsertBatch(ctx context.Context, roleId int64, 
 
 	query := fmt.Sprintf("INSERT INTO %s (role_id, menu_id) VALUES %s", m.table, placeholders)
 	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
+}
+
+// DeleteByRoleId 根据角色ID删除角色菜单关联
+func (m *customSysRoleMenuModel) DeleteByRoleId(ctx context.Context, roleId int64) error {
+	query := fmt.Sprintf("DELETE FROM %s WHERE role_id = ?", m.table)
+	_, err := m.conn.ExecCtx(ctx, query, roleId)
 	return err
 }
 

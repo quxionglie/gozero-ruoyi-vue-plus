@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -170,6 +171,7 @@ func (l *DeptEditLogic) DeptEdit(req *types.DeptReq) (resp *types.BaseResp, err 
 		dept.Status = req.Status
 	}
 	dept.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
+	dept.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
 
 	// 11. 更新数据库
 	err = l.svcCtx.SysDeptModel.Update(l.ctx, dept)

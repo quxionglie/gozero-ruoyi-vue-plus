@@ -18,8 +18,8 @@ import (
 var (
 	sysConfigFieldNames          = builder.RawFieldNames(&SysConfig{})
 	sysConfigRows                = strings.Join(sysConfigFieldNames, ",")
-	sysConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(sysConfigFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(sysConfigFieldNames, "`config_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(sysConfigFieldNames, "`=`"), ",")
+	sysConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(sysConfigFieldNames, "`config_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -79,14 +79,14 @@ func (m *defaultSysConfigModel) FindOne(ctx context.Context, configId int64) (*S
 }
 
 func (m *defaultSysConfigModel) Insert(ctx context.Context, data *SysConfig) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysConfigRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.ConfigId, data.TenantId, data.ConfigName, data.ConfigKey, data.ConfigValue, data.ConfigType, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysConfigRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.ConfigId, data.TenantId, data.ConfigName, data.ConfigKey, data.ConfigValue, data.ConfigType, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysConfigModel) Update(ctx context.Context, data *SysConfig) error {
 	query := fmt.Sprintf("update %s set %s where `config_id` = ?", m.table, sysConfigRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.ConfigName, data.ConfigKey, data.ConfigValue, data.ConfigType, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark, data.ConfigId)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.ConfigName, data.ConfigKey, data.ConfigValue, data.ConfigType, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark, data.ConfigId)
 	return err
 }
 

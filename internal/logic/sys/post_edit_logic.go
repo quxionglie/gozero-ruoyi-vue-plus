@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -129,6 +130,7 @@ func (l *PostEditLogic) PostEdit(req *types.PostReq) (resp *types.BaseResp, err 
 	}
 	post.Remark = sql.NullString{String: req.Remark, Valid: req.Remark != ""}
 	post.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
+	post.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
 
 	// 9. 更新数据库
 	err = l.svcCtx.SysPostModel.Update(l.ctx, post)

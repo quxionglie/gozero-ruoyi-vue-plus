@@ -18,8 +18,8 @@ import (
 var (
 	sysOssFieldNames          = builder.RawFieldNames(&SysOss{})
 	sysOssRows                = strings.Join(sysOssFieldNames, ",")
-	sysOssRowsExpectAutoSet   = strings.Join(stringx.Remove(sysOssFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysOssRowsWithPlaceHolder = strings.Join(stringx.Remove(sysOssFieldNames, "`oss_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysOssRowsExpectAutoSet   = strings.Join(stringx.Remove(sysOssFieldNames, "`=`"), ",")
+	sysOssRowsWithPlaceHolder = strings.Join(stringx.Remove(sysOssFieldNames, "`oss_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -80,14 +80,14 @@ func (m *defaultSysOssModel) FindOne(ctx context.Context, ossId int64) (*SysOss,
 }
 
 func (m *defaultSysOssModel) Insert(ctx context.Context, data *SysOss) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOssRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.OssId, data.TenantId, data.FileName, data.OriginalName, data.FileSuffix, data.Url, data.Ext1, data.CreateDept, data.CreateBy, data.UpdateBy, data.Service)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOssRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.OssId, data.TenantId, data.FileName, data.OriginalName, data.FileSuffix, data.Url, data.Ext1, data.CreateDept, data.CreateTime, data.CreateBy, data.UpdateTime, data.UpdateBy, data.Service)
 	return ret, err
 }
 
 func (m *defaultSysOssModel) Update(ctx context.Context, data *SysOss) error {
 	query := fmt.Sprintf("update %s set %s where `oss_id` = ?", m.table, sysOssRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.FileName, data.OriginalName, data.FileSuffix, data.Url, data.Ext1, data.CreateDept, data.CreateBy, data.UpdateBy, data.Service, data.OssId)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.FileName, data.OriginalName, data.FileSuffix, data.Url, data.Ext1, data.CreateDept, data.CreateTime, data.CreateBy, data.UpdateTime, data.UpdateBy, data.Service, data.OssId)
 	return err
 }
 

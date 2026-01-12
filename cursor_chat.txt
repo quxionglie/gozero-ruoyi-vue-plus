@@ -725,3 +725,15 @@ pageQuery.Normalize()移到*mode.go的分页查询类中调用
 2026-01-12T18:52:21+08:00
 *.api中RoleId、DeptId、PostId字段不转为string,tag移除string
 
+2026-01-12T19:06:06+08:00
+使用命令：goctl model不忽略任何字段：goctl model -i="" ... (传空值).create_time、update_time由前端输入。重新模板生成model代码
+
+2026-01-12T19:18:44+08:00
+*logic.go插入更新表时，要初始化create_time、update_time字段值
+
+2026-01-12T19:35:48+08:00
+检查一下*logic.go添加数据时create_dept、create_by 、create_time是否赋值
+
+2026-01-12T19:56:38+08:00
+添加数据时create_dept、create_by 、create_time成功，update时会把上面值update为空。检查原因并修改代码
+

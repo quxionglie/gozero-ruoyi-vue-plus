@@ -18,8 +18,8 @@ import (
 var (
 	sysLogininforFieldNames          = builder.RawFieldNames(&SysLogininfor{})
 	sysLogininforRows                = strings.Join(sysLogininforFieldNames, ",")
-	sysLogininforRowsExpectAutoSet   = strings.Join(stringx.Remove(sysLogininforFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysLogininforRowsWithPlaceHolder = strings.Join(stringx.Remove(sysLogininforFieldNames, "`info_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysLogininforRowsExpectAutoSet   = strings.Join(stringx.Remove(sysLogininforFieldNames, "`=`"), ",")
+	sysLogininforRowsWithPlaceHolder = strings.Join(stringx.Remove(sysLogininforFieldNames, "`info_id`", "`=`"), "=?,") + "=?"
 )
 
 type (

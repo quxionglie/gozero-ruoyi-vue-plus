@@ -3,6 +3,7 @@ package sys
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -151,6 +152,8 @@ func (l *UserAddLogic) UserAdd(req *types.UserReq) (resp *types.BaseResp, err er
 		DelFlag:     "0",
 		CreateBy:    sql.NullInt64{Int64: userId, Valid: true},
 		CreateDept:  sql.NullInt64{Int64: createDept, Valid: createDept > 0},
+		CreateTime:  sql.NullTime{Time: time.Now(), Valid: true},
+		UpdateTime:  sql.NullTime{Time: time.Now(), Valid: true},
 	}
 	if req.DeptId > 0 {
 		newUser.DeptId = sql.NullInt64{Int64: req.DeptId, Valid: true}

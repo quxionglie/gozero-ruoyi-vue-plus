@@ -18,8 +18,8 @@ import (
 var (
 	sysSocialFieldNames          = builder.RawFieldNames(&SysSocial{})
 	sysSocialRows                = strings.Join(sysSocialFieldNames, ",")
-	sysSocialRowsExpectAutoSet   = strings.Join(stringx.Remove(sysSocialFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysSocialRowsWithPlaceHolder = strings.Join(stringx.Remove(sysSocialFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysSocialRowsExpectAutoSet   = strings.Join(stringx.Remove(sysSocialFieldNames, "`=`"), ",")
+	sysSocialRowsWithPlaceHolder = strings.Join(stringx.Remove(sysSocialFieldNames, "`id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -96,14 +96,14 @@ func (m *defaultSysSocialModel) FindOne(ctx context.Context, id int64) (*SysSoci
 }
 
 func (m *defaultSysSocialModel) Insert(ctx context.Context, data *SysSocial) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysSocialRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.Id, data.UserId, data.TenantId, data.AuthId, data.Source, data.OpenId, data.UserName, data.NickName, data.Email, data.Avatar, data.AccessToken, data.ExpireIn, data.RefreshToken, data.AccessCode, data.UnionId, data.Scope, data.TokenType, data.IdToken, data.MacAlgorithm, data.MacKey, data.Code, data.OauthToken, data.OauthTokenSecret, data.CreateDept, data.CreateBy, data.UpdateBy, data.DelFlag)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysSocialRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.Id, data.UserId, data.TenantId, data.AuthId, data.Source, data.OpenId, data.UserName, data.NickName, data.Email, data.Avatar, data.AccessToken, data.ExpireIn, data.RefreshToken, data.AccessCode, data.UnionId, data.Scope, data.TokenType, data.IdToken, data.MacAlgorithm, data.MacKey, data.Code, data.OauthToken, data.OauthTokenSecret, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.DelFlag)
 	return ret, err
 }
 
 func (m *defaultSysSocialModel) Update(ctx context.Context, data *SysSocial) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysSocialRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.UserId, data.TenantId, data.AuthId, data.Source, data.OpenId, data.UserName, data.NickName, data.Email, data.Avatar, data.AccessToken, data.ExpireIn, data.RefreshToken, data.AccessCode, data.UnionId, data.Scope, data.TokenType, data.IdToken, data.MacAlgorithm, data.MacKey, data.Code, data.OauthToken, data.OauthTokenSecret, data.CreateDept, data.CreateBy, data.UpdateBy, data.DelFlag, data.Id)
+	_, err := m.conn.ExecCtx(ctx, query, data.UserId, data.TenantId, data.AuthId, data.Source, data.OpenId, data.UserName, data.NickName, data.Email, data.Avatar, data.AccessToken, data.ExpireIn, data.RefreshToken, data.AccessCode, data.UnionId, data.Scope, data.TokenType, data.IdToken, data.MacAlgorithm, data.MacKey, data.Code, data.OauthToken, data.OauthTokenSecret, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.DelFlag, data.Id)
 	return err
 }
 

@@ -18,8 +18,8 @@ import (
 var (
 	sysUserFieldNames          = builder.RawFieldNames(&SysUser{})
 	sysUserRows                = strings.Join(sysUserFieldNames, ",")
-	sysUserRowsExpectAutoSet   = strings.Join(stringx.Remove(sysUserFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysUserRowsWithPlaceHolder = strings.Join(stringx.Remove(sysUserFieldNames, "`user_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysUserRowsExpectAutoSet   = strings.Join(stringx.Remove(sysUserFieldNames, "`=`"), ",")
+	sysUserRowsWithPlaceHolder = strings.Join(stringx.Remove(sysUserFieldNames, "`user_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -88,14 +88,14 @@ func (m *defaultSysUserModel) FindOne(ctx context.Context, userId int64) (*SysUs
 }
 
 func (m *defaultSysUserModel) Insert(ctx context.Context, data *SysUser) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.TenantId, data.DeptId, data.UserName, data.NickName, data.UserType, data.Email, data.Phonenumber, data.Sex, data.Avatar, data.Password, data.Status, data.DelFlag, data.LoginIp, data.LoginDate, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysUserRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.TenantId, data.DeptId, data.UserName, data.NickName, data.UserType, data.Email, data.Phonenumber, data.Sex, data.Avatar, data.Password, data.Status, data.DelFlag, data.LoginIp, data.LoginDate, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysUserModel) Update(ctx context.Context, data *SysUser) error {
 	query := fmt.Sprintf("update %s set %s where `user_id` = ?", m.table, sysUserRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.DeptId, data.UserName, data.NickName, data.UserType, data.Email, data.Phonenumber, data.Sex, data.Avatar, data.Password, data.Status, data.DelFlag, data.LoginIp, data.LoginDate, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark, data.UserId)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.DeptId, data.UserName, data.NickName, data.UserType, data.Email, data.Phonenumber, data.Sex, data.Avatar, data.Password, data.Status, data.DelFlag, data.LoginIp, data.LoginDate, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark, data.UserId)
 	return err
 }
 

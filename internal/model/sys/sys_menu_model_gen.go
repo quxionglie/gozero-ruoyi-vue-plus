@@ -18,8 +18,8 @@ import (
 var (
 	sysMenuFieldNames          = builder.RawFieldNames(&SysMenu{})
 	sysMenuRows                = strings.Join(sysMenuFieldNames, ",")
-	sysMenuRowsExpectAutoSet   = strings.Join(stringx.Remove(sysMenuFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysMenuRowsWithPlaceHolder = strings.Join(stringx.Remove(sysMenuFieldNames, "`menu_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysMenuRowsExpectAutoSet   = strings.Join(stringx.Remove(sysMenuFieldNames, "`=`"), ",")
+	sysMenuRowsWithPlaceHolder = strings.Join(stringx.Remove(sysMenuFieldNames, "`menu_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -87,14 +87,14 @@ func (m *defaultSysMenuModel) FindOne(ctx context.Context, menuId int64) (*SysMe
 }
 
 func (m *defaultSysMenuModel) Insert(ctx context.Context, data *SysMenu) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.MenuId, data.MenuName, data.ParentId, data.OrderNum, data.Path, data.Component, data.QueryParam, data.IsFrame, data.IsCache, data.MenuType, data.Visible, data.Status, data.Perms, data.Icon, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysMenuRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.MenuId, data.MenuName, data.ParentId, data.OrderNum, data.Path, data.Component, data.QueryParam, data.IsFrame, data.IsCache, data.MenuType, data.Visible, data.Status, data.Perms, data.Icon, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysMenuModel) Update(ctx context.Context, data *SysMenu) error {
 	query := fmt.Sprintf("update %s set %s where `menu_id` = ?", m.table, sysMenuRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.MenuName, data.ParentId, data.OrderNum, data.Path, data.Component, data.QueryParam, data.IsFrame, data.IsCache, data.MenuType, data.Visible, data.Status, data.Perms, data.Icon, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark, data.MenuId)
+	_, err := m.conn.ExecCtx(ctx, query, data.MenuName, data.ParentId, data.OrderNum, data.Path, data.Component, data.QueryParam, data.IsFrame, data.IsCache, data.MenuType, data.Visible, data.Status, data.Perms, data.Icon, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark, data.MenuId)
 	return err
 }
 

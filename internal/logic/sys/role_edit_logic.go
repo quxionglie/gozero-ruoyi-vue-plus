@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -181,7 +182,9 @@ func (l *RoleEditLogic) RoleEdit(req *types.RoleReq) (resp *types.BaseResp, err 
 		DelFlag:           role.DelFlag,    // 保持原值
 		CreateDept:        role.CreateDept, // 保持原值
 		CreateBy:          role.CreateBy,   // 保持原值
+		CreateTime:        role.CreateTime, // 保持原创建时间
 		UpdateBy:          sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime:        sql.NullTime{Time: time.Now(), Valid: true},
 		Remark:            sql.NullString{String: req.Remark, Valid: req.Remark != ""},
 	}
 

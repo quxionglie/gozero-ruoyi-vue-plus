@@ -18,8 +18,8 @@ import (
 var (
 	sysOssConfigFieldNames          = builder.RawFieldNames(&SysOssConfig{})
 	sysOssConfigRows                = strings.Join(sysOssConfigFieldNames, ",")
-	sysOssConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(sysOssConfigFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysOssConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(sysOssConfigFieldNames, "`oss_config_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysOssConfigRowsExpectAutoSet   = strings.Join(stringx.Remove(sysOssConfigFieldNames, "`=`"), ",")
+	sysOssConfigRowsWithPlaceHolder = strings.Join(stringx.Remove(sysOssConfigFieldNames, "`oss_config_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -87,14 +87,14 @@ func (m *defaultSysOssConfigModel) FindOne(ctx context.Context, ossConfigId int6
 }
 
 func (m *defaultSysOssConfigModel) Insert(ctx context.Context, data *SysOssConfig) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOssConfigRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.OssConfigId, data.TenantId, data.ConfigKey, data.AccessKey, data.SecretKey, data.BucketName, data.Prefix, data.Endpoint, data.Domain, data.IsHttps, data.Region, data.AccessPolicy, data.Status, data.Ext1, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysOssConfigRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.OssConfigId, data.TenantId, data.ConfigKey, data.AccessKey, data.SecretKey, data.BucketName, data.Prefix, data.Endpoint, data.Domain, data.IsHttps, data.Region, data.AccessPolicy, data.Status, data.Ext1, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysOssConfigModel) Update(ctx context.Context, data *SysOssConfig) error {
 	query := fmt.Sprintf("update %s set %s where `oss_config_id` = ?", m.table, sysOssConfigRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.ConfigKey, data.AccessKey, data.SecretKey, data.BucketName, data.Prefix, data.Endpoint, data.Domain, data.IsHttps, data.Region, data.AccessPolicy, data.Status, data.Ext1, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark, data.OssConfigId)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.ConfigKey, data.AccessKey, data.SecretKey, data.BucketName, data.Prefix, data.Endpoint, data.Domain, data.IsHttps, data.Region, data.AccessPolicy, data.Status, data.Ext1, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark, data.OssConfigId)
 	return err
 }
 

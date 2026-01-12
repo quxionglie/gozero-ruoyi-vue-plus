@@ -18,8 +18,8 @@ import (
 var (
 	sysPostFieldNames          = builder.RawFieldNames(&SysPost{})
 	sysPostRows                = strings.Join(sysPostFieldNames, ",")
-	sysPostRowsExpectAutoSet   = strings.Join(stringx.Remove(sysPostFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysPostRowsWithPlaceHolder = strings.Join(stringx.Remove(sysPostFieldNames, "`post_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysPostRowsExpectAutoSet   = strings.Join(stringx.Remove(sysPostFieldNames, "`=`"), ",")
+	sysPostRowsWithPlaceHolder = strings.Join(stringx.Remove(sysPostFieldNames, "`post_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -81,14 +81,14 @@ func (m *defaultSysPostModel) FindOne(ctx context.Context, postId int64) (*SysPo
 }
 
 func (m *defaultSysPostModel) Insert(ctx context.Context, data *SysPost) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysPostRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.PostId, data.TenantId, data.DeptId, data.PostCode, data.PostCategory, data.PostName, data.PostSort, data.Status, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysPostRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.PostId, data.TenantId, data.DeptId, data.PostCode, data.PostCategory, data.PostName, data.PostSort, data.Status, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysPostModel) Update(ctx context.Context, data *SysPost) error {
 	query := fmt.Sprintf("update %s set %s where `post_id` = ?", m.table, sysPostRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.DeptId, data.PostCode, data.PostCategory, data.PostName, data.PostSort, data.Status, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark, data.PostId)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.DeptId, data.PostCode, data.PostCategory, data.PostName, data.PostSort, data.Status, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark, data.PostId)
 	return err
 }
 

@@ -10,6 +10,7 @@ import (
 	"io"
 	"mime/multipart"
 	"path/filepath"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -142,6 +143,8 @@ func (l *OssUploadLogic) OssUpload(file multipart.File, fileHeader *multipart.Fi
 		Service:      configKey,
 		CreateDept:   sql.NullInt64{Int64: deptId, Valid: deptId > 0},
 		CreateBy:     sql.NullInt64{Int64: userId, Valid: userId > 0},
+		CreateTime:   sql.NullTime{Time: time.Now(), Valid: true},
+		UpdateTime:   sql.NullTime{Time: time.Now(), Valid: true},
 	}
 
 	// 8. 插入数据库

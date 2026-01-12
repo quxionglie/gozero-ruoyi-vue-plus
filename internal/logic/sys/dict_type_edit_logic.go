@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -87,11 +88,15 @@ func (l *DictTypeEditLogic) DictTypeEdit(req *types.DictTypeReq) (resp *types.Ba
 
 	// 5. 更新字典类型
 	dictType := &model.SysDictType{
-		DictId:   req.DictId,
-		DictName: req.DictName,
-		DictType: req.DictType,
-		Remark:   sql.NullString{String: req.Remark, Valid: req.Remark != ""},
-		UpdateBy: sql.NullInt64{Int64: userId, Valid: userId > 0},
+		DictId:     req.DictId,
+		DictName:   req.DictName,
+		DictType:   req.DictType,
+		Remark:     sql.NullString{String: req.Remark, Valid: req.Remark != ""},
+		CreateDept: oldDictType.CreateDept, // 保持原部门ID
+		CreateBy:   oldDictType.CreateBy,   // 保持原创建者
+		CreateTime: oldDictType.CreateTime, // 保持原创建时间
+		UpdateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
 	}
 
 	err = l.svcCtx.SysDictTypeModel.Update(l.ctx, dictType)

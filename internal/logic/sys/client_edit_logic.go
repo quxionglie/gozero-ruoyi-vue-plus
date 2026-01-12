@@ -9,6 +9,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -106,6 +107,7 @@ func (l *ClientEditLogic) ClientEdit(req *types.ClientReq) (resp *types.BaseResp
 		client.Status = req.Status
 	}
 	client.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
+	client.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
 
 	// 8. 更新数据库
 	err = l.svcCtx.SysClientModel.Update(l.ctx, client)

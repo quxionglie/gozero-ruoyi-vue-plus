@@ -18,8 +18,8 @@ import (
 var (
 	sysTenantFieldNames          = builder.RawFieldNames(&SysTenant{})
 	sysTenantRows                = strings.Join(sysTenantFieldNames, ",")
-	sysTenantRowsExpectAutoSet   = strings.Join(stringx.Remove(sysTenantFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysTenantRowsWithPlaceHolder = strings.Join(stringx.Remove(sysTenantFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysTenantRowsExpectAutoSet   = strings.Join(stringx.Remove(sysTenantFieldNames, "`=`"), ",")
+	sysTenantRowsWithPlaceHolder = strings.Join(stringx.Remove(sysTenantFieldNames, "`id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -87,14 +87,14 @@ func (m *defaultSysTenantModel) FindOne(ctx context.Context, id int64) (*SysTena
 }
 
 func (m *defaultSysTenantModel) Insert(ctx context.Context, data *SysTenant) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysTenantRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.Id, data.TenantId, data.ContactUserName, data.ContactPhone, data.CompanyName, data.LicenseNumber, data.Address, data.Intro, data.Domain, data.Remark, data.PackageId, data.ExpireTime, data.AccountCount, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysTenantRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.Id, data.TenantId, data.ContactUserName, data.ContactPhone, data.CompanyName, data.LicenseNumber, data.Address, data.Intro, data.Domain, data.Remark, data.PackageId, data.ExpireTime, data.AccountCount, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime)
 	return ret, err
 }
 
 func (m *defaultSysTenantModel) Update(ctx context.Context, data *SysTenant) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysTenantRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.ContactUserName, data.ContactPhone, data.CompanyName, data.LicenseNumber, data.Address, data.Intro, data.Domain, data.Remark, data.PackageId, data.ExpireTime, data.AccountCount, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy, data.Id)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.ContactUserName, data.ContactPhone, data.CompanyName, data.LicenseNumber, data.Address, data.Intro, data.Domain, data.Remark, data.PackageId, data.ExpireTime, data.AccountCount, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Id)
 	return err
 }
 

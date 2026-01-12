@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -141,6 +142,8 @@ func (l *MenuAddLogic) MenuAdd(req *types.MenuReq) (resp *types.BaseResp, err er
 		Remark:     req.Remark,
 		CreateDept: sql.NullInt64{Int64: deptId, Valid: deptId > 0},
 		CreateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
+		CreateTime: sql.NullTime{Time: time.Now(), Valid: true},
+		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
 	}
 	if menu.Visible == "" {
 		menu.Visible = "0"

@@ -18,8 +18,8 @@ import (
 var (
 	sysDictTypeFieldNames          = builder.RawFieldNames(&SysDictType{})
 	sysDictTypeRows                = strings.Join(sysDictTypeFieldNames, ",")
-	sysDictTypeRowsExpectAutoSet   = strings.Join(stringx.Remove(sysDictTypeFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysDictTypeRowsWithPlaceHolder = strings.Join(stringx.Remove(sysDictTypeFieldNames, "`dict_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysDictTypeRowsExpectAutoSet   = strings.Join(stringx.Remove(sysDictTypeFieldNames, "`=`"), ",")
+	sysDictTypeRowsWithPlaceHolder = strings.Join(stringx.Remove(sysDictTypeFieldNames, "`dict_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -92,14 +92,14 @@ func (m *defaultSysDictTypeModel) FindOneByTenantIdDictType(ctx context.Context,
 }
 
 func (m *defaultSysDictTypeModel) Insert(ctx context.Context, data *SysDictType) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysDictTypeRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.DictId, data.TenantId, data.DictName, data.DictType, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysDictTypeRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.DictId, data.TenantId, data.DictName, data.DictType, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysDictTypeModel) Update(ctx context.Context, newData *SysDictType) error {
 	query := fmt.Sprintf("update %s set %s where `dict_id` = ?", m.table, sysDictTypeRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.TenantId, newData.DictName, newData.DictType, newData.CreateDept, newData.CreateBy, newData.UpdateBy, newData.Remark, newData.DictId)
+	_, err := m.conn.ExecCtx(ctx, query, newData.TenantId, newData.DictName, newData.DictType, newData.CreateDept, newData.CreateBy, newData.CreateTime, newData.UpdateBy, newData.UpdateTime, newData.Remark, newData.DictId)
 	return err
 }
 

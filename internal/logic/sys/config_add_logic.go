@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -91,6 +92,8 @@ func (l *ConfigAddLogic) ConfigAdd(req *types.ConfigReq) (resp *types.BaseResp, 
 		Remark:      sql.NullString{String: req.Remark, Valid: req.Remark != ""},
 		CreateDept:  sql.NullInt64{Int64: deptId, Valid: deptId > 0},
 		CreateBy:    sql.NullInt64{Int64: userId, Valid: userId > 0},
+		CreateTime:  sql.NullTime{Time: time.Now(), Valid: true},
+		UpdateTime:  sql.NullTime{Time: time.Now(), Valid: true},
 	}
 
 	// 5. 插入数据库

@@ -16,6 +16,8 @@ alwaysApply: false
 - goctl api go 统一使用snake case风格，迁移当前文件名为snake case风格。使用命令：goctl api go -api api/main.api -dir . --style go_zero。将所有handler和logic文件从camelCase重命名为snake_case风格（如configaddlogic.go -> config_add_logic.go），文件名已统一为snake_case，函数名和类型名保持PascalCase（Go标准）
 - 使用命令：goctl api go -api api/main.api -dir . --style go_zero，别把main.api改成system.api。main.api是入口文件。
 - 使用命令：goctl model 也指定 --style go_zero
+- 使用命令：goctl model不忽略任何字段：goctl model -i="" ... (传空值).create_time、update_time由前端输入
+
 
 ## *.api限制
 - 响应json int64数据，统一以字符串输出。但RoleId、DeptId、PostId字段除外不要转为string,tag移除string。

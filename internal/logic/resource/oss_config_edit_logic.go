@@ -6,6 +6,7 @@ package resource
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -107,7 +108,9 @@ func (l *OssConfigEditLogic) OssConfigEdit(req *types.OssConfigReq) (resp *types
 		Ext1:         req.Ext1,
 		CreateDept:   oldOssConfig.CreateDept, // 保持原部门ID
 		CreateBy:     oldOssConfig.CreateBy,   // 保持原创建者
+		CreateTime:   oldOssConfig.CreateTime, // 保持原创建时间
 		UpdateBy:     sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime:   sql.NullTime{Time: time.Now(), Valid: true},
 		Remark:       sql.NullString{String: req.Remark, Valid: req.Remark != ""},
 	}
 

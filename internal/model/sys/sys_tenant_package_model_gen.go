@@ -18,8 +18,8 @@ import (
 var (
 	sysTenantPackageFieldNames          = builder.RawFieldNames(&SysTenantPackage{})
 	sysTenantPackageRows                = strings.Join(sysTenantPackageFieldNames, ",")
-	sysTenantPackageRowsExpectAutoSet   = strings.Join(stringx.Remove(sysTenantPackageFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysTenantPackageRowsWithPlaceHolder = strings.Join(stringx.Remove(sysTenantPackageFieldNames, "`package_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysTenantPackageRowsExpectAutoSet   = strings.Join(stringx.Remove(sysTenantPackageFieldNames, "`=`"), ",")
+	sysTenantPackageRowsWithPlaceHolder = strings.Join(stringx.Remove(sysTenantPackageFieldNames, "`package_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -79,14 +79,14 @@ func (m *defaultSysTenantPackageModel) FindOne(ctx context.Context, packageId in
 }
 
 func (m *defaultSysTenantPackageModel) Insert(ctx context.Context, data *SysTenantPackage) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysTenantPackageRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.PackageId, data.PackageName, data.MenuIds, data.Remark, data.MenuCheckStrictly, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysTenantPackageRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.PackageId, data.PackageName, data.MenuIds, data.Remark, data.MenuCheckStrictly, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime)
 	return ret, err
 }
 
 func (m *defaultSysTenantPackageModel) Update(ctx context.Context, data *SysTenantPackage) error {
 	query := fmt.Sprintf("update %s set %s where `package_id` = ?", m.table, sysTenantPackageRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.PackageName, data.MenuIds, data.Remark, data.MenuCheckStrictly, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy, data.PackageId)
+	_, err := m.conn.ExecCtx(ctx, query, data.PackageName, data.MenuIds, data.Remark, data.MenuCheckStrictly, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.PackageId)
 	return err
 }
 

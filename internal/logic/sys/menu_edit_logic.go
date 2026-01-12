@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -155,6 +156,7 @@ func (l *MenuEditLogic) MenuEdit(req *types.MenuReq) (resp *types.BaseResp, err 
 	menu.Icon = req.Icon
 	menu.Remark = req.Remark
 	menu.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
+	menu.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
 
 	// 11. 更新数据库
 	err = l.svcCtx.SysMenuModel.Update(l.ctx, menu)

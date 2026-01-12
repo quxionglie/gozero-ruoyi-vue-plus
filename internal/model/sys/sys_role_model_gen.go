@@ -18,8 +18,8 @@ import (
 var (
 	sysRoleFieldNames          = builder.RawFieldNames(&SysRole{})
 	sysRoleRows                = strings.Join(sysRoleFieldNames, ",")
-	sysRoleRowsExpectAutoSet   = strings.Join(stringx.Remove(sysRoleFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysRoleRowsWithPlaceHolder = strings.Join(stringx.Remove(sysRoleFieldNames, "`role_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysRoleRowsExpectAutoSet   = strings.Join(stringx.Remove(sysRoleFieldNames, "`=`"), ",")
+	sysRoleRowsWithPlaceHolder = strings.Join(stringx.Remove(sysRoleFieldNames, "`role_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -83,14 +83,14 @@ func (m *defaultSysRoleModel) FindOne(ctx context.Context, roleId int64) (*SysRo
 }
 
 func (m *defaultSysRoleModel) Insert(ctx context.Context, data *SysRole) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.RoleId, data.TenantId, data.RoleName, data.RoleKey, data.RoleSort, data.DataScope, data.MenuCheckStrictly, data.DeptCheckStrictly, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysRoleRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.RoleId, data.TenantId, data.RoleName, data.RoleKey, data.RoleSort, data.DataScope, data.MenuCheckStrictly, data.DeptCheckStrictly, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark)
 	return ret, err
 }
 
 func (m *defaultSysRoleModel) Update(ctx context.Context, data *SysRole) error {
 	query := fmt.Sprintf("update %s set %s where `role_id` = ?", m.table, sysRoleRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.RoleName, data.RoleKey, data.RoleSort, data.DataScope, data.MenuCheckStrictly, data.DeptCheckStrictly, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy, data.Remark, data.RoleId)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.RoleName, data.RoleKey, data.RoleSort, data.DataScope, data.MenuCheckStrictly, data.DeptCheckStrictly, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Remark, data.RoleId)
 	return err
 }
 

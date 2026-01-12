@@ -2,8 +2,10 @@ package sys
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"strings"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -123,6 +125,7 @@ func (l *UserRemoveLogic) UserRemove(req *types.UserRemoveReq) (resp *types.Base
 		}
 
 		user.DelFlag = "1"
+		user.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
 		err = l.svcCtx.SysUserModel.Update(l.ctx, user)
 		if err != nil {
 			l.Errorf("删除用户失败: %v", err)

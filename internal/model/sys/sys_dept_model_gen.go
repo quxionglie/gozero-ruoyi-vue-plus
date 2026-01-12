@@ -18,8 +18,8 @@ import (
 var (
 	sysDeptFieldNames          = builder.RawFieldNames(&SysDept{})
 	sysDeptRows                = strings.Join(sysDeptFieldNames, ",")
-	sysDeptRowsExpectAutoSet   = strings.Join(stringx.Remove(sysDeptFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysDeptRowsWithPlaceHolder = strings.Join(stringx.Remove(sysDeptFieldNames, "`dept_id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysDeptRowsExpectAutoSet   = strings.Join(stringx.Remove(sysDeptFieldNames, "`=`"), ",")
+	sysDeptRowsWithPlaceHolder = strings.Join(stringx.Remove(sysDeptFieldNames, "`dept_id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -84,14 +84,14 @@ func (m *defaultSysDeptModel) FindOne(ctx context.Context, deptId int64) (*SysDe
 }
 
 func (m *defaultSysDeptModel) Insert(ctx context.Context, data *SysDept) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysDeptRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.DeptId, data.TenantId, data.ParentId, data.Ancestors, data.DeptName, data.DeptCategory, data.OrderNum, data.Leader, data.Phone, data.Email, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysDeptRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.DeptId, data.TenantId, data.ParentId, data.Ancestors, data.DeptName, data.DeptCategory, data.OrderNum, data.Leader, data.Phone, data.Email, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime)
 	return ret, err
 }
 
 func (m *defaultSysDeptModel) Update(ctx context.Context, data *SysDept) error {
 	query := fmt.Sprintf("update %s set %s where `dept_id` = ?", m.table, sysDeptRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.ParentId, data.Ancestors, data.DeptName, data.DeptCategory, data.OrderNum, data.Leader, data.Phone, data.Email, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy, data.DeptId)
+	_, err := m.conn.ExecCtx(ctx, query, data.TenantId, data.ParentId, data.Ancestors, data.DeptName, data.DeptCategory, data.OrderNum, data.Leader, data.Phone, data.Email, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.DeptId)
 	return err
 }
 

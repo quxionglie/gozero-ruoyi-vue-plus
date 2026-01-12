@@ -3,6 +3,7 @@ package sys
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -206,7 +207,11 @@ func (l *UserEditLogic) UserEdit(req *types.UserReq) (resp *types.BaseResp, err 
 		Phonenumber: req.Phonenumber,
 		Sex:         req.Sex,
 		Status:      req.Status,
+		CreateDept:  oldUser.CreateDept, // 保持原部门ID
+		CreateBy:    oldUser.CreateBy,   // 保持原创建者
+		CreateTime:  oldUser.CreateTime, // 保持原创建时间
 		UpdateBy:    sql.NullInt64{Int64: userId, Valid: true},
+		UpdateTime:  sql.NullTime{Time: time.Now(), Valid: true},
 	}
 	if req.DeptId > 0 {
 		updateUser.DeptId = sql.NullInt64{Int64: req.DeptId, Valid: true}

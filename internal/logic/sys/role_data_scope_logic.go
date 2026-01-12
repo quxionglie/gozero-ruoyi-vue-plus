@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"strings"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -85,7 +86,9 @@ func (l *RoleDataScopeLogic) RoleDataScope(req *types.RoleReq) (resp *types.Base
 		DelFlag:           role.DelFlag,           // 保持原值
 		CreateDept:        role.CreateDept,        // 保持原值
 		CreateBy:          role.CreateBy,          // 保持原值
+		CreateTime:        role.CreateTime,        // 保持原创建时间
 		UpdateBy:          sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime:        sql.NullTime{Time: time.Now(), Valid: true},
 		Remark:            role.Remark, // 保持原值
 	}
 

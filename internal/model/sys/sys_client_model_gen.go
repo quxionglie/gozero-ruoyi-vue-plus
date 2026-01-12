@@ -18,8 +18,8 @@ import (
 var (
 	sysClientFieldNames          = builder.RawFieldNames(&SysClient{})
 	sysClientRows                = strings.Join(sysClientFieldNames, ",")
-	sysClientRowsExpectAutoSet   = strings.Join(stringx.Remove(sysClientFieldNames, "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
-	sysClientRowsWithPlaceHolder = strings.Join(stringx.Remove(sysClientFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+	sysClientRowsExpectAutoSet   = strings.Join(stringx.Remove(sysClientFieldNames, "`=`"), ",")
+	sysClientRowsWithPlaceHolder = strings.Join(stringx.Remove(sysClientFieldNames, "`id`", "`=`"), "=?,") + "=?"
 )
 
 type (
@@ -82,14 +82,14 @@ func (m *defaultSysClientModel) FindOne(ctx context.Context, id int64) (*SysClie
 }
 
 func (m *defaultSysClientModel) Insert(ctx context.Context, data *SysClient) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysClientRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.Id, data.ClientId, data.ClientKey, data.ClientSecret, data.GrantType, data.DeviceType, data.ActiveTimeout, data.Timeout, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy)
+	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, sysClientRowsExpectAutoSet)
+	ret, err := m.conn.ExecCtx(ctx, query, data.Id, data.ClientId, data.ClientKey, data.ClientSecret, data.GrantType, data.DeviceType, data.ActiveTimeout, data.Timeout, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime)
 	return ret, err
 }
 
 func (m *defaultSysClientModel) Update(ctx context.Context, data *SysClient) error {
 	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, sysClientRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.ClientId, data.ClientKey, data.ClientSecret, data.GrantType, data.DeviceType, data.ActiveTimeout, data.Timeout, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.UpdateBy, data.Id)
+	_, err := m.conn.ExecCtx(ctx, query, data.ClientId, data.ClientKey, data.ClientSecret, data.GrantType, data.DeviceType, data.ActiveTimeout, data.Timeout, data.Status, data.DelFlag, data.CreateDept, data.CreateBy, data.CreateTime, data.UpdateBy, data.UpdateTime, data.Id)
 	return err
 }
 

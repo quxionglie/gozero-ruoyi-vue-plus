@@ -6,6 +6,7 @@ package sys
 import (
 	"context"
 	"database/sql"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -74,6 +75,7 @@ func (l *NoticeEditLogic) NoticeEdit(req *types.NoticeReq) (resp *types.BaseResp
 	}
 	notice.Remark = sql.NullString{String: req.Remark, Valid: req.Remark != ""}
 	notice.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
+	notice.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
 
 	// 6. 更新数据库
 	err = l.svcCtx.SysNoticeModel.Update(l.ctx, notice)

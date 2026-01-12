@@ -23,6 +23,8 @@ type (
 		DeleteByUserId(ctx context.Context, userId int64) error
 		// DeleteByRoleIdAndUserIds 根据角色ID和用户ID列表删除用户角色关联
 		DeleteByRoleIdAndUserIds(ctx context.Context, roleId int64, userIds []int64) error
+		// FindByUserId 根据用户ID查询用户角色关联列表
+		FindByUserId(ctx context.Context, userId int64) ([]*SysUserRole, error)
 		// SelectUserIdsByRoleId 根据角色ID查询用户ID列表
 		SelectUserIdsByRoleId(ctx context.Context, roleId int64) ([]int64, error)
 	}
@@ -117,6 +119,17 @@ func (m *customSysUserRoleModel) DeleteByUserId(ctx context.Context, userId int6
 	query := fmt.Sprintf("DELETE FROM %s WHERE user_id = ?", m.table)
 	_, err := m.conn.ExecCtx(ctx, query, userId)
 	return err
+}
+
+// FindByUserId 根据用户ID查询用户角色关联列表
+func (m *customSysUserRoleModel) FindByUserId(ctx context.Context, userId int64) ([]*SysUserRole, error) {
+	query := fmt.Sprintf("SELECT %s FROM %s WHERE user_id = ?", sysUserRoleRows, m.table)
+	var resp []*SysUserRole
+	err := m.conn.QueryRowsCtx(ctx, &resp, query, userId)
+	if err != nil && err != sqlx.ErrNotFound {
+		return nil, err
+	}
+	return resp, nil
 }
 
 // SelectUserIdsByRoleId 根据角色ID查询用户ID列表

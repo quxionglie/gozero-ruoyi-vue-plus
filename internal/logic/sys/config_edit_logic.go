@@ -7,6 +7,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"time"
 
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
@@ -66,10 +67,20 @@ func (l *ConfigEditLogic) ConfigEdit(req *types.ConfigReq) (resp *types.BaseResp
 		}, nil
 	}
 
-	// 3. 查询原配置（用于清除旧缓存）
+	// 3. 查询原配置（用于清除旧缓存和保留创建信息）
 	oldConfig, err := l.svcCtx.SysConfigModel.FindOne(l.ctx, req.ConfigId)
-	if err != nil && err != model.ErrNotFound {
+	if err != nil {
+		if err == model.ErrNotFound {
+			return &types.BaseResp{
+				Code: 500,
+				Msg:  "参数配置不存在",
+			}, nil
+		}
 		l.Errorf("查询参数配置失败: %v", err)
+		return &types.BaseResp{
+			Code: 500,
+			Msg:  "查询参数配置失败",
+		}, err
 	}
 
 	// 4. 获取当前用户ID
@@ -83,7 +94,11 @@ func (l *ConfigEditLogic) ConfigEdit(req *types.ConfigReq) (resp *types.BaseResp
 		ConfigValue: req.ConfigValue,
 		ConfigType:  req.ConfigType,
 		Remark:      sql.NullString{String: req.Remark, Valid: req.Remark != ""},
+		CreateDept:  oldConfig.CreateDept, // 保持原部门ID
+		CreateBy:    oldConfig.CreateBy,   // 保持原创建者
+		CreateTime:  oldConfig.CreateTime, // 保持原创建时间
 		UpdateBy:    sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime:  sql.NullTime{Time: time.Now(), Valid: true},
 	}
 
 	err = l.svcCtx.SysConfigModel.Update(l.ctx, config)
