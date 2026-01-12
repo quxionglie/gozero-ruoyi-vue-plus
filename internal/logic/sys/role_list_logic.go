@@ -44,12 +44,6 @@ func (l *RoleListLogic) RoleList(req *types.RoleListReq) (resp *types.RoleListRe
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}
-	if pageQuery.PageNum <= 0 {
-		pageQuery.PageNum = 1
-	}
-	if pageQuery.PageSize <= 0 {
-		pageQuery.PageSize = 10
-	}
 
 	// 3. 查询数据
 	roleList, total, err := l.svcCtx.SysRoleModel.FindPage(l.ctx, roleQuery, pageQuery)

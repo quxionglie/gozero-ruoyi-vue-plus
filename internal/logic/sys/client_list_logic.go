@@ -30,17 +30,7 @@ func NewClientListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Client
 }
 
 func (l *ClientListLogic) ClientList(req *types.ClientListReq) (resp *types.TableDataInfoResp, err error) {
-	// 1. 设置默认分页参数
-	pageNum := req.PageNum
-	pageSize := req.PageSize
-	if pageNum <= 0 {
-		pageNum = 1
-	}
-	if pageSize <= 0 {
-		pageSize = 10
-	}
-
-	// 2. 构建查询条件
+	// 1. 构建查询条件
 	clientQuery := &sys.ClientQuery{
 		ClientId:     req.ClientId,
 		ClientKey:    req.ClientKey,
@@ -48,8 +38,8 @@ func (l *ClientListLogic) ClientList(req *types.ClientListReq) (resp *types.Tabl
 		Status:       req.Status,
 	}
 	pageQuery := &sys.PageQuery{
-		PageNum:       pageNum,
-		PageSize:      pageSize,
+		PageNum:       req.PageNum,
+		PageSize:      req.PageSize,
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}

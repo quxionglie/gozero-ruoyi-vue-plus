@@ -29,17 +29,7 @@ func NewPostListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *PostList
 }
 
 func (l *PostListLogic) PostList(req *types.PostListReq) (resp *types.TableDataInfoResp, err error) {
-	// 1. 设置默认分页参数
-	pageNum := req.PageNum
-	pageSize := req.PageSize
-	if pageNum <= 0 {
-		pageNum = 1
-	}
-	if pageSize <= 0 {
-		pageSize = 10
-	}
-
-	// 2. 构建查询条件
+	// 1. 构建查询条件
 	postQuery := &sys.PostQuery{
 		PostCode:     req.PostCode,
 		PostCategory: req.PostCategory,
@@ -49,8 +39,8 @@ func (l *PostListLogic) PostList(req *types.PostListReq) (resp *types.TableDataI
 		BelongDeptId: req.BelongDeptId,
 	}
 	pageQuery := &sys.PageQuery{
-		PageNum:       pageNum,
-		PageSize:      pageSize,
+		PageNum:       req.PageNum,
+		PageSize:      req.PageSize,
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}

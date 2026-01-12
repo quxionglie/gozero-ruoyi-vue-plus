@@ -44,12 +44,6 @@ func (l *RoleAuthUserAllocatedListLogic) RoleAuthUserAllocatedList(req *types.Ro
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}
-	if pageQuery.PageNum <= 0 {
-		pageQuery.PageNum = 1
-	}
-	if pageQuery.PageSize <= 0 {
-		pageQuery.PageSize = 10
-	}
 
 	// 3. 查询已分配用户列表
 	userList, total, err := l.svcCtx.SysUserModel.FindAllocatedPage(l.ctx, userQuery, pageQuery)

@@ -104,6 +104,9 @@ func (m *customSysUserModel) FindAllocatedPage(ctx context.Context, query *UserQ
 			PageNum:  1,
 			PageSize: 10,
 		}
+	} else {
+		// 初始化分页参数的非合规值
+		pageQuery.Normalize()
 	}
 
 	// 构建 WHERE 条件
@@ -181,6 +184,9 @@ func (m *customSysUserModel) FindUnallocatedPage(ctx context.Context, query *Use
 			PageNum:  1,
 			PageSize: 10,
 		}
+	} else {
+		// 初始化分页参数的非合规值
+		pageQuery.Normalize()
 	}
 
 	// 1. 查询已分配该角色的用户ID列表（通过sys_user_role表）

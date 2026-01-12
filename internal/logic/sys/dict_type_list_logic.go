@@ -29,16 +29,6 @@ func NewDictTypeListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Dict
 }
 
 func (l *DictTypeListLogic) DictTypeList(req *types.DictTypeListReq) (resp *types.TableDataInfoResp, err error) {
-	// 设置默认分页参数
-	pageNum := req.PageNum
-	pageSize := req.PageSize
-	if pageNum <= 0 {
-		pageNum = 1
-	}
-	if pageSize <= 0 {
-		pageSize = 10
-	}
-
 	// 构建查询条件
 	dictTypeQuery := &model.DictTypeQuery{
 		DictName: req.DictName,
@@ -46,8 +36,8 @@ func (l *DictTypeListLogic) DictTypeList(req *types.DictTypeListReq) (resp *type
 		Status:   req.Status,
 	}
 	pageQuery := &model.PageQuery{
-		PageNum:       pageNum,
-		PageSize:      pageSize,
+		PageNum:       req.PageNum,
+		PageSize:      req.PageSize,
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}

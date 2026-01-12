@@ -29,16 +29,6 @@ func NewLogininforListLogic(ctx context.Context, svcCtx *svc.ServiceContext) *Lo
 }
 
 func (l *LogininforListLogic) LogininforList(req *types.LogininforListReq) (resp *types.LogininforListResp, err error) {
-	// 设置默认分页参数
-	pageNum := req.PageNum
-	pageSize := req.PageSize
-	if pageNum <= 0 {
-		pageNum = 1
-	}
-	if pageSize <= 0 {
-		pageSize = 10
-	}
-
 	// 构建查询条件
 	query := &model.LogininforQuery{
 		Ipaddr:    req.Ipaddr,
@@ -48,8 +38,8 @@ func (l *LogininforListLogic) LogininforList(req *types.LogininforListReq) (resp
 		EndTime:   req.EndTime,
 	}
 	pageQuery := &model.PageQuery{
-		PageNum:       pageNum,
-		PageSize:      pageSize,
+		PageNum:       req.PageNum,
+		PageSize:      req.PageSize,
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}

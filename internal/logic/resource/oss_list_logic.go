@@ -46,12 +46,6 @@ func (l *OssListLogic) OssList(req *types.OssListReq) (resp *types.OssListResp, 
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}
-	if pageQuery.PageNum <= 0 {
-		pageQuery.PageNum = 1
-	}
-	if pageQuery.PageSize <= 0 {
-		pageQuery.PageSize = 10
-	}
 
 	// 3. 查询数据
 	ossList, total, err := l.svcCtx.SysOssModel.FindPage(l.ctx, ossQuery, pageQuery)

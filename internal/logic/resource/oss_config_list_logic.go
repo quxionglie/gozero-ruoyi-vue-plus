@@ -42,12 +42,6 @@ func (l *OssConfigListLogic) OssConfigList(req *types.OssConfigListReq) (resp *t
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}
-	if pageQuery.PageNum <= 0 {
-		pageQuery.PageNum = 1
-	}
-	if pageQuery.PageSize <= 0 {
-		pageQuery.PageSize = 10
-	}
 
 	// 3. 查询数据
 	ossConfigList, total, err := l.svcCtx.SysOssConfigModel.FindPage(l.ctx, ossConfigQuery, pageQuery)

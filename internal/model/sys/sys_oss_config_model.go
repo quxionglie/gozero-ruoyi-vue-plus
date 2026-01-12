@@ -55,6 +55,9 @@ func (m *customSysOssConfigModel) FindPage(ctx context.Context, query *OssConfig
 			PageNum:  1,
 			PageSize: 10,
 		}
+	} else {
+		// 初始化分页参数的非合规值
+		pageQuery.Normalize()
 	}
 
 	// 构建 WHERE 条件

@@ -16,13 +16,8 @@ type ConfigQuery struct {
 	ConfigType string // 系统内置（Y是 N否）
 }
 
-// PageQuery 分页查询参数
-type PageQuery struct {
-	PageNum       int32  // 当前页数
-	PageSize      int32  // 分页大小
-	OrderByColumn string // 排序列
-	IsAsc         string // 排序方向（desc 或 asc）
-}
+// PageQuery 已移至 vars.go，这里保留类型别名以保持兼容性
+// 实际使用请使用 vars.go 中的 PageQuery 和 Normalize 方法
 
 var _ SysConfigModel = (*customSysConfigModel)(nil)
 
@@ -108,6 +103,8 @@ func (m *customSysConfigModel) FindPage(ctx context.Context, query *ConfigQuery,
 	if pageQuery == nil {
 		pageQuery = &PageQuery{}
 	}
+	// 初始化分页参数的非合规值
+	pageQuery.Normalize()
 
 	// 构建 WHERE 条件
 	whereClause := "1=1"

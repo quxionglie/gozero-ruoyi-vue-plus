@@ -60,12 +60,6 @@ func (l *UserListLogic) UserList(req *types.UserListReq) (resp *types.UserListRe
 		OrderByColumn: req.OrderByColumn,
 		IsAsc:         req.IsAsc,
 	}
-	if pageQuery.PageNum <= 0 {
-		pageQuery.PageNum = 1
-	}
-	if pageQuery.PageSize <= 0 {
-		pageQuery.PageSize = 10
-	}
 
 	// 4. 查询用户列表
 	userList, total, err := l.svcCtx.SysUserModel.FindPage(l.ctx, userQuery, pageQuery)

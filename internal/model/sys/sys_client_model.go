@@ -90,6 +90,8 @@ func (m *customSysClientModel) FindPage(ctx context.Context, query *ClientQuery,
 	if pageQuery == nil {
 		pageQuery = &PageQuery{}
 	}
+	// 初始化分页参数的非合规值
+	pageQuery.Normalize()
 
 	// 构建 WHERE 条件
 	whereClause := "del_flag = '0'"

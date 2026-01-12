@@ -643,7 +643,6 @@ PUT    /resource/oss/config/changeStatus                  状态修改
 GET    /resource/oss/config/list                          查询对象存储配置列表
 DELETE /resource/oss/config/:ossConfigIds                删除对象存储配置
 GET    /resource/oss/config/:ossConfigId                 获取对象存储配置详细信息
-2026-01-11T19:41:01+08:00
 
 2026-01-11T20:07:26+08:00
 实现OssClient.java的接口，实现上传到minio功能。定义接口与minio实现,以后可能要扩展到阿里云 腾讯云 七牛云 AWS
@@ -699,12 +698,8 @@ boolean checkPropertiesSame(OssProperties properties);
 
 AccessPolicyType getAccessPolicy();
 
-2026-01-11T20:36:32+08:00
-
 2026-01-11T21:26:22+08:00
 实现/system/social/list接口，参考SysSocialController.java
-
-2026-01-11T21:32:01+08:00
 
 2026-01-11T21:40:58+08:00
 /system/social/list 未添加路由
@@ -717,4 +712,10 @@ AccessPolicyType getAccessPolicy();
 
 2026-01-11T22:22:27+08:00
 更新README.md的项目结构
+
+2026-01-12T18:04:47+08:00
+下面参数的非合规值在model.PageQuery定义方法进行初始化。检查所有分页*logic.go类
+
+2026-01-12T18:11:25+08:00
+pageQuery.Normalize()移到*mode.go的分页查询类中调用
 
