@@ -788,3 +788,9 @@ RoleIds     []int64 `json:"roleIds,optional"` 如何输出字符串数组？
 
 2026-01-13T12:45:00+08:00
 UserReq的RoleIds，PostIds 也还是用[]int64
+
+2026-01-13T12:50:00+08:00
+/system/menu/roleMenuTreeselect/:roleId接口，go.json是go输出，java.json是java输出，对比差异并修改go代码。当前接口响应需新建响应对象吧
+
+2026-01-13T14:00:00+08:00
+你对比一下go.json、java.json，menus对象里的字段完全不一样

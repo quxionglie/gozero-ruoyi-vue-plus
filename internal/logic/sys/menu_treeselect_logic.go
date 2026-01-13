@@ -97,8 +97,14 @@ func (l *MenuTreeselectLogic) buildMenuTreeSelect(menus []*model.SysMenu) []type
 			if menu.ParentId == parentId {
 				treeNode := types.MenuTreeVo{
 					Id:       menu.MenuId,
-					Label:    menu.MenuName,
 					ParentId: menu.ParentId,
+					Name:     menu.MenuName,
+					Label:    menu.MenuName,
+					Weight:   int32(menu.OrderNum),
+					MenuType: menu.MenuType,
+					Icon:     menu.Icon,
+					Visible:  menu.Visible,
+					Status:   menu.Status,
 					Children: buildTree(menu.MenuId),
 				}
 				children = append(children, treeNode)

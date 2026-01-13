@@ -1,453 +1,881 @@
 {
     "code": 200,
     "msg": "操作成功",
-    "data": [
-        {
-            "id": "1",
-            "label": "系统管理",
-            "parentId": "0",
-            "children": [
-                {
-                    "id": "100",
-                    "label": "用户管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1001",
-                            "label": "用户查询",
-                            "parentId": "100"
-                        },
-                        {
-                            "id": "1002",
-                            "label": "用户新增",
-                            "parentId": "100"
-                        },
-                        {
-                            "id": "1003",
-                            "label": "用户修改",
-                            "parentId": "100"
-                        },
-                        {
-                            "id": "1004",
-                            "label": "用户删除",
-                            "parentId": "100"
-                        },
-                        {
-                            "id": "1005",
-                            "label": "用户导出",
-                            "parentId": "100"
-                        },
-                        {
-                            "id": "1006",
-                            "label": "用户导入",
-                            "parentId": "100"
-                        },
-                        {
-                            "id": "1007",
-                            "label": "重置密码",
-                            "parentId": "100"
-                        }
-                    ]
-                },
-                {
-                    "id": "131",
-                    "label": "分配角色",
-                    "parentId": "1"
-                },
-                {
-                    "id": "101",
-                    "label": "角色管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1008",
-                            "label": "角色查询",
-                            "parentId": "101"
-                        },
-                        {
-                            "id": "1009",
-                            "label": "角色新增",
-                            "parentId": "101"
-                        },
-                        {
-                            "id": "1010",
-                            "label": "角色修改",
-                            "parentId": "101"
-                        },
-                        {
-                            "id": "1011",
-                            "label": "角色删除",
-                            "parentId": "101"
-                        },
-                        {
-                            "id": "1012",
-                            "label": "角色导出",
-                            "parentId": "101"
-                        }
-                    ]
-                },
-                {
-                    "id": "130",
-                    "label": "分配用户",
-                    "parentId": "1"
-                },
-                {
-                    "id": "102",
-                    "label": "菜单管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1013",
-                            "label": "菜单查询",
-                            "parentId": "102"
-                        },
-                        {
-                            "id": "1014",
-                            "label": "菜单新增",
-                            "parentId": "102"
-                        },
-                        {
-                            "id": "1015",
-                            "label": "菜单修改",
-                            "parentId": "102"
-                        },
-                        {
-                            "id": "1016",
-                            "label": "菜单删除",
-                            "parentId": "102"
-                        }
-                    ]
-                },
-                {
-                    "id": "103",
-                    "label": "部门管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1017",
-                            "label": "部门查询",
-                            "parentId": "103"
-                        },
-                        {
-                            "id": "1018",
-                            "label": "部门新增",
-                            "parentId": "103"
-                        },
-                        {
-                            "id": "1019",
-                            "label": "部门修改",
-                            "parentId": "103"
-                        },
-                        {
-                            "id": "1020",
-                            "label": "部门删除",
-                            "parentId": "103"
-                        }
-                    ]
-                },
-                {
-                    "id": "104",
-                    "label": "岗位管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1021",
-                            "label": "岗位查询",
-                            "parentId": "104"
-                        },
-                        {
-                            "id": "1022",
-                            "label": "岗位新增",
-                            "parentId": "104"
-                        },
-                        {
-                            "id": "1023",
-                            "label": "岗位修改",
-                            "parentId": "104"
-                        },
-                        {
-                            "id": "1024",
-                            "label": "岗位删除",
-                            "parentId": "104"
-                        },
-                        {
-                            "id": "1025",
-                            "label": "岗位导出",
-                            "parentId": "104"
-                        }
-                    ]
-                },
-                {
-                    "id": "105",
-                    "label": "字典管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1026",
-                            "label": "字典查询",
-                            "parentId": "105"
-                        },
-                        {
-                            "id": "1027",
-                            "label": "字典新增",
-                            "parentId": "105"
-                        },
-                        {
-                            "id": "1028",
-                            "label": "字典修改",
-                            "parentId": "105"
-                        },
-                        {
-                            "id": "1029",
-                            "label": "字典删除",
-                            "parentId": "105"
-                        },
-                        {
-                            "id": "1030",
-                            "label": "字典导出",
-                            "parentId": "105"
-                        }
-                    ]
-                },
-                {
-                    "id": "132",
-                    "label": "字典数据",
-                    "parentId": "1"
-                },
-                {
-                    "id": "106",
-                    "label": "参数设置",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1031",
-                            "label": "参数查询",
-                            "parentId": "106"
-                        },
-                        {
-                            "id": "1032",
-                            "label": "参数新增",
-                            "parentId": "106"
-                        },
-                        {
-                            "id": "1033",
-                            "label": "参数修改",
-                            "parentId": "106"
-                        },
-                        {
-                            "id": "1034",
-                            "label": "参数删除",
-                            "parentId": "106"
-                        },
-                        {
-                            "id": "1035",
-                            "label": "参数导出",
-                            "parentId": "106"
-                        }
-                    ]
-                },
-                {
-                    "id": "107",
-                    "label": "通知公告",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1036",
-                            "label": "公告查询",
-                            "parentId": "107"
-                        },
-                        {
-                            "id": "1037",
-                            "label": "公告新增",
-                            "parentId": "107"
-                        },
-                        {
-                            "id": "1038",
-                            "label": "公告修改",
-                            "parentId": "107"
-                        },
-                        {
-                            "id": "1039",
-                            "label": "公告删除",
-                            "parentId": "107"
-                        }
-                    ]
-                },
-                {
-                    "id": "108",
-                    "label": "日志管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "500",
-                            "label": "操作日志",
-                            "parentId": "108",
-                            "children": [
-                                {
-                                    "id": "1040",
-                                    "label": "操作查询",
-                                    "parentId": "500"
-                                },
-                                {
-                                    "id": "1041",
-                                    "label": "操作删除",
-                                    "parentId": "500"
-                                },
-                                {
-                                    "id": "1042",
-                                    "label": "日志导出",
-                                    "parentId": "500"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "501",
-                            "label": "登录日志",
-                            "parentId": "108",
-                            "children": [
-                                {
-                                    "id": "1043",
-                                    "label": "登录查询",
-                                    "parentId": "501"
-                                },
-                                {
-                                    "id": "1044",
-                                    "label": "登录删除",
-                                    "parentId": "501"
-                                },
-                                {
-                                    "id": "1045",
-                                    "label": "日志导出",
-                                    "parentId": "501"
-                                },
-                                {
-                                    "id": "1050",
-                                    "label": "账户解锁",
-                                    "parentId": "501"
-                                }
-                            ]
-                        }
-                    ]
-                },
-                {
-                    "id": "118",
-                    "label": "文件管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1600",
-                            "label": "文件查询",
-                            "parentId": "118"
-                        },
-                        {
-                            "id": "1601",
-                            "label": "文件上传",
-                            "parentId": "118"
-                        },
-                        {
-                            "id": "1602",
-                            "label": "文件下载",
-                            "parentId": "118"
-                        },
-                        {
-                            "id": "1603",
-                            "label": "文件删除",
-                            "parentId": "118"
-                        },
-                        {
-                            "id": "1620",
-                            "label": "配置列表",
-                            "parentId": "118"
-                        },
-                        {
-                            "id": "1623",
-                            "label": "配置删除",
-                            "parentId": "118"
-                        },
-                        {
-                            "id": "1621",
-                            "label": "配置添加",
-                            "parentId": "118"
-                        },
-                        {
-                            "id": "1622",
-                            "label": "配置编辑",
-                            "parentId": "118"
-                        }
-                    ]
-                },
-                {
-                    "id": "133",
-                    "label": "文件配置管理",
-                    "parentId": "1"
-                },
-                {
-                    "id": "123",
-                    "label": "客户端管理",
-                    "parentId": "1",
-                    "children": [
-                        {
-                            "id": "1061",
-                            "label": "客户端管理查询",
-                            "parentId": "123"
-                        },
-                        {
-                            "id": "1062",
-                            "label": "客户端管理新增",
-                            "parentId": "123"
-                        },
-                        {
-                            "id": "1063",
-                            "label": "客户端管理修改",
-                            "parentId": "123"
-                        },
-                        {
-                            "id": "1064",
-                            "label": "客户端管理删除",
-                            "parentId": "123"
-                        },
-                        {
-                            "id": "1065",
-                            "label": "客户端管理导出",
-                            "parentId": "123"
-                        }
-                    ]
-                }
-            ]
-        },
-        {
-            "id": "2",
-            "label": "系统监控",
-            "parentId": "0",
-            "children": [
-                {
-                    "id": "109",
-                    "label": "在线用户",
-                    "parentId": "2",
-                    "children": [
-                        {
-                            "id": "1046",
-                            "label": "在线查询",
-                            "parentId": "109"
-                        },
-                        {
-                            "id": "1047",
-                            "label": "批量强退",
-                            "parentId": "109"
-                        },
-                        {
-                            "id": "1048",
-                            "label": "单条强退",
-                            "parentId": "109"
-                        }
-                    ]
-                },
-                {
-                    "id": "113",
-                    "label": "缓存监控",
-                    "parentId": "2"
-                }
-            ]
-        }
-    ]
+    "data": {
+        "checkedKeys": [
+            1,
+            100,
+            1001,
+            1002,
+            1003,
+            1004,
+            1005,
+            1006,
+            1007
+        ],
+        "menus": [
+            {
+                "id": "1",
+                "parentId": "0",
+                "name": "系统管理",
+                "weight": 1,
+                "menuType": "M",
+                "icon": "system",
+                "visible": "0",
+                "status": "0",
+                "children": [
+                    {
+                        "id": "100",
+                        "parentId": "1",
+                        "name": "用户管理",
+                        "weight": 1,
+                        "menuType": "C",
+                        "icon": "user",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1001",
+                                "parentId": "100",
+                                "name": "用户查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1002",
+                                "parentId": "100",
+                                "name": "用户新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1003",
+                                "parentId": "100",
+                                "name": "用户修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1004",
+                                "parentId": "100",
+                                "name": "用户删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1005",
+                                "parentId": "100",
+                                "name": "用户导出",
+                                "weight": 5,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1006",
+                                "parentId": "100",
+                                "name": "用户导入",
+                                "weight": 6,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1007",
+                                "parentId": "100",
+                                "name": "重置密码",
+                                "weight": 7,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "131",
+                        "parentId": "1",
+                        "name": "分配角色",
+                        "weight": 1,
+                        "menuType": "C",
+                        "icon": "#",
+                        "visible": "1",
+                        "status": "0"
+                    },
+                    {
+                        "id": "101",
+                        "parentId": "1",
+                        "name": "角色管理",
+                        "weight": 2,
+                        "menuType": "C",
+                        "icon": "peoples",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1008",
+                                "parentId": "101",
+                                "name": "角色查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1009",
+                                "parentId": "101",
+                                "name": "角色新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1010",
+                                "parentId": "101",
+                                "name": "角色修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1011",
+                                "parentId": "101",
+                                "name": "角色删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1012",
+                                "parentId": "101",
+                                "name": "角色导出",
+                                "weight": 5,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "130",
+                        "parentId": "1",
+                        "name": "分配用户",
+                        "weight": 2,
+                        "menuType": "C",
+                        "icon": "#",
+                        "visible": "1",
+                        "status": "0"
+                    },
+                    {
+                        "id": "102",
+                        "parentId": "1",
+                        "name": "菜单管理",
+                        "weight": 3,
+                        "menuType": "C",
+                        "icon": "tree-table",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1013",
+                                "parentId": "102",
+                                "name": "菜单查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1014",
+                                "parentId": "102",
+                                "name": "菜单新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1015",
+                                "parentId": "102",
+                                "name": "菜单修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1016",
+                                "parentId": "102",
+                                "name": "菜单删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "103",
+                        "parentId": "1",
+                        "name": "部门管理",
+                        "weight": 4,
+                        "menuType": "C",
+                        "icon": "tree",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1017",
+                                "parentId": "103",
+                                "name": "部门查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1018",
+                                "parentId": "103",
+                                "name": "部门新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1019",
+                                "parentId": "103",
+                                "name": "部门修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1020",
+                                "parentId": "103",
+                                "name": "部门删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "104",
+                        "parentId": "1",
+                        "name": "岗位管理",
+                        "weight": 5,
+                        "menuType": "C",
+                        "icon": "post",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1021",
+                                "parentId": "104",
+                                "name": "岗位查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1022",
+                                "parentId": "104",
+                                "name": "岗位新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1023",
+                                "parentId": "104",
+                                "name": "岗位修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1024",
+                                "parentId": "104",
+                                "name": "岗位删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1025",
+                                "parentId": "104",
+                                "name": "岗位导出",
+                                "weight": 5,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "105",
+                        "parentId": "1",
+                        "name": "字典管理",
+                        "weight": 6,
+                        "menuType": "C",
+                        "icon": "dict",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1026",
+                                "parentId": "105",
+                                "name": "字典查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1027",
+                                "parentId": "105",
+                                "name": "字典新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1028",
+                                "parentId": "105",
+                                "name": "字典修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1029",
+                                "parentId": "105",
+                                "name": "字典删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1030",
+                                "parentId": "105",
+                                "name": "字典导出",
+                                "weight": 5,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "132",
+                        "parentId": "1",
+                        "name": "字典数据",
+                        "weight": 6,
+                        "menuType": "C",
+                        "icon": "#",
+                        "visible": "1",
+                        "status": "0"
+                    },
+                    {
+                        "id": "106",
+                        "parentId": "1",
+                        "name": "参数设置",
+                        "weight": 7,
+                        "menuType": "C",
+                        "icon": "edit",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1031",
+                                "parentId": "106",
+                                "name": "参数查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1032",
+                                "parentId": "106",
+                                "name": "参数新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1033",
+                                "parentId": "106",
+                                "name": "参数修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1034",
+                                "parentId": "106",
+                                "name": "参数删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1035",
+                                "parentId": "106",
+                                "name": "参数导出",
+                                "weight": 5,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "107",
+                        "parentId": "1",
+                        "name": "通知公告",
+                        "weight": 8,
+                        "menuType": "C",
+                        "icon": "message",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1036",
+                                "parentId": "107",
+                                "name": "公告查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1037",
+                                "parentId": "107",
+                                "name": "公告新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1038",
+                                "parentId": "107",
+                                "name": "公告修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1039",
+                                "parentId": "107",
+                                "name": "公告删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "108",
+                        "parentId": "1",
+                        "name": "日志管理",
+                        "weight": 9,
+                        "menuType": "M",
+                        "icon": "log",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "500",
+                                "parentId": "108",
+                                "name": "操作日志",
+                                "weight": 1,
+                                "menuType": "C",
+                                "icon": "form",
+                                "visible": "0",
+                                "status": "0",
+                                "children": [
+                                    {
+                                        "id": "1040",
+                                        "parentId": "500",
+                                        "name": "操作查询",
+                                        "weight": 1,
+                                        "menuType": "F",
+                                        "icon": "#",
+                                        "visible": "0",
+                                        "status": "0"
+                                    },
+                                    {
+                                        "id": "1041",
+                                        "parentId": "500",
+                                        "name": "操作删除",
+                                        "weight": 2,
+                                        "menuType": "F",
+                                        "icon": "#",
+                                        "visible": "0",
+                                        "status": "0"
+                                    },
+                                    {
+                                        "id": "1042",
+                                        "parentId": "500",
+                                        "name": "日志导出",
+                                        "weight": 4,
+                                        "menuType": "F",
+                                        "icon": "#",
+                                        "visible": "0",
+                                        "status": "0"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "501",
+                                "parentId": "108",
+                                "name": "登录日志",
+                                "weight": 2,
+                                "menuType": "C",
+                                "icon": "logininfor",
+                                "visible": "0",
+                                "status": "0",
+                                "children": [
+                                    {
+                                        "id": "1043",
+                                        "parentId": "501",
+                                        "name": "登录查询",
+                                        "weight": 1,
+                                        "menuType": "F",
+                                        "icon": "#",
+                                        "visible": "0",
+                                        "status": "0"
+                                    },
+                                    {
+                                        "id": "1044",
+                                        "parentId": "501",
+                                        "name": "登录删除",
+                                        "weight": 2,
+                                        "menuType": "F",
+                                        "icon": "#",
+                                        "visible": "0",
+                                        "status": "0"
+                                    },
+                                    {
+                                        "id": "1045",
+                                        "parentId": "501",
+                                        "name": "日志导出",
+                                        "weight": 3,
+                                        "menuType": "F",
+                                        "icon": "#",
+                                        "visible": "0",
+                                        "status": "0"
+                                    },
+                                    {
+                                        "id": "1050",
+                                        "parentId": "501",
+                                        "name": "账户解锁",
+                                        "weight": 4,
+                                        "menuType": "F",
+                                        "icon": "#",
+                                        "visible": "0",
+                                        "status": "0"
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "id": "118",
+                        "parentId": "1",
+                        "name": "文件管理",
+                        "weight": 10,
+                        "menuType": "C",
+                        "icon": "upload",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1600",
+                                "parentId": "118",
+                                "name": "文件查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1601",
+                                "parentId": "118",
+                                "name": "文件上传",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1602",
+                                "parentId": "118",
+                                "name": "文件下载",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1603",
+                                "parentId": "118",
+                                "name": "文件删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1620",
+                                "parentId": "118",
+                                "name": "配置列表",
+                                "weight": 5,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1623",
+                                "parentId": "118",
+                                "name": "配置删除",
+                                "weight": 6,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1621",
+                                "parentId": "118",
+                                "name": "配置添加",
+                                "weight": 6,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1622",
+                                "parentId": "118",
+                                "name": "配置编辑",
+                                "weight": 6,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "133",
+                        "parentId": "1",
+                        "name": "文件配置管理",
+                        "weight": 10,
+                        "menuType": "C",
+                        "icon": "#",
+                        "visible": "1",
+                        "status": "0"
+                    },
+                    {
+                        "id": "123",
+                        "parentId": "1",
+                        "name": "客户端管理",
+                        "weight": 11,
+                        "menuType": "C",
+                        "icon": "international",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1061",
+                                "parentId": "123",
+                                "name": "客户端管理查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1062",
+                                "parentId": "123",
+                                "name": "客户端管理新增",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1063",
+                                "parentId": "123",
+                                "name": "客户端管理修改",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1064",
+                                "parentId": "123",
+                                "name": "客户端管理删除",
+                                "weight": 4,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1065",
+                                "parentId": "123",
+                                "name": "客户端管理导出",
+                                "weight": 5,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    }
+                ]
+            },
+            {
+                "id": "2",
+                "parentId": "0",
+                "name": "系统监控",
+                "weight": 3,
+                "menuType": "M",
+                "icon": "monitor",
+                "visible": "0",
+                "status": "0",
+                "children": [
+                    {
+                        "id": "109",
+                        "parentId": "2",
+                        "name": "在线用户",
+                        "weight": 1,
+                        "menuType": "C",
+                        "icon": "online",
+                        "visible": "0",
+                        "status": "0",
+                        "children": [
+                            {
+                                "id": "1046",
+                                "parentId": "109",
+                                "name": "在线查询",
+                                "weight": 1,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1047",
+                                "parentId": "109",
+                                "name": "批量强退",
+                                "weight": 2,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            },
+                            {
+                                "id": "1048",
+                                "parentId": "109",
+                                "name": "单条强退",
+                                "weight": 3,
+                                "menuType": "F",
+                                "icon": "#",
+                                "visible": "0",
+                                "status": "0"
+                            }
+                        ]
+                    },
+                    {
+                        "id": "113",
+                        "parentId": "2",
+                        "name": "缓存监控",
+                        "weight": 5,
+                        "menuType": "C",
+                        "icon": "redis",
+                        "visible": "0",
+                        "status": "0"
+                    }
+                ]
+            }
+        ]
+    }
 }

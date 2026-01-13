@@ -440,10 +440,26 @@ type MenuRoleMenuTreeselectReq struct {
 	RoleId int64 `path:"roleId,range=[1:]"` // 角色ID（必须大于0）
 }
 
+type MenuRoleMenuTreeselectResp struct {
+	BaseResp
+	Data MenuRoleMenuTreeselectVo `json:"data,omitempty"`
+}
+
+type MenuRoleMenuTreeselectVo struct {
+	CheckedKeys []int64      `json:"checkedKeys"` // 选中菜单列表
+	Menus       []MenuTreeVo `json:"menus"`       // 菜单下拉树结构列表
+}
+
 type MenuTreeVo struct {
 	Id       int64        `json:"id,string"`          // 菜单ID
-	Label    string       `json:"label"`              // 菜单名称
 	ParentId int64        `json:"parentId,string"`    // 父菜单ID
+	Name     string       `json:"name"`               // 菜单名称
+	Label    string       `json:"label"`              // 菜单名称（同name）
+	Weight   int32        `json:"weight"`             // 显示顺序
+	MenuType string       `json:"menuType"`           // 菜单类型（M目录 C菜单 F按钮）
+	Icon     string       `json:"icon"`               // 菜单图标
+	Visible  string       `json:"visible"`            // 显示状态（0显示 1隐藏）
+	Status   string       `json:"status"`             // 菜单状态（0正常 1停用）
 	Children []MenuTreeVo `json:"children,omitempty"` // 子菜单
 }
 

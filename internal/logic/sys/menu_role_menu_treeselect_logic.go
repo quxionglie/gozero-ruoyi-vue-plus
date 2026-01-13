@@ -29,7 +29,7 @@ func NewMenuRoleMenuTreeselectLogic(ctx context.Context, svcCtx *svc.ServiceCont
 	}
 }
 
-func (l *MenuRoleMenuTreeselectLogic) MenuRoleMenuTreeselect(req *types.MenuRoleMenuTreeselectReq) (resp *types.MenuTreeselectResp, err error) {
+func (l *MenuRoleMenuTreeselectLogic) MenuRoleMenuTreeselect(req *types.MenuRoleMenuTreeselectReq) (resp *types.MenuRoleMenuTreeselectResp, err error) {
 	// 1. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
@@ -48,7 +48,7 @@ func (l *MenuRoleMenuTreeselectLogic) MenuRoleMenuTreeselect(req *types.MenuRole
 	menus, err := l.svcCtx.SysMenuModel.FindAll(l.ctx, &model.MenuQuery{}, queryUserId)
 	if err != nil {
 		l.Errorf("查询菜单列表失败: %v", err)
-		return &types.MenuTreeselectResp{
+		return &types.MenuRoleMenuTreeselectResp{
 			BaseResp: types.BaseResp{
 				Code: 500,
 				Msg:  "查询菜单列表失败",
@@ -60,7 +60,7 @@ func (l *MenuRoleMenuTreeselectLogic) MenuRoleMenuTreeselect(req *types.MenuRole
 	menuIds, err := l.svcCtx.SysMenuModel.SelectMenuListByRoleId(l.ctx, req.RoleId)
 	if err != nil {
 		l.Errorf("查询角色菜单列表失败: %v", err)
-		return &types.MenuTreeselectResp{
+		return &types.MenuRoleMenuTreeselectResp{
 			BaseResp: types.BaseResp{
 				Code: 500,
 				Msg:  "查询角色菜单列表失败",
@@ -68,21 +68,18 @@ func (l *MenuRoleMenuTreeselectLogic) MenuRoleMenuTreeselect(req *types.MenuRole
 		}, err
 	}
 
-	// 5. 构建菜单ID集合（用于快速查找）
-	menuIdSet := make(map[int64]bool)
-	for _, menuId := range menuIds {
-		menuIdSet[menuId] = true
-	}
+	// 5. 构建树形结构（不传递 checkedMenuIds，因为我们要单独返回 checkedKeys）
+	treeList := l.buildMenuTreeSelect(menus, nil)
 
-	// 6. 构建树形结构
-	treeList := l.buildMenuTreeSelect(menus, menuIdSet)
-
-	return &types.MenuTreeselectResp{
+	return &types.MenuRoleMenuTreeselectResp{
 		BaseResp: types.BaseResp{
 			Code: 200,
 			Msg:  "操作成功",
 		},
-		Data: treeList,
+		Data: types.MenuRoleMenuTreeselectVo{
+			CheckedKeys: menuIds,
+			Menus:       treeList,
+		},
 	}, nil
 }
 
@@ -100,8 +97,14 @@ func (l *MenuRoleMenuTreeselectLogic) buildMenuTreeSelect(menus []*model.SysMenu
 			if menu.ParentId == parentId {
 				treeNode := types.MenuTreeVo{
 					Id:       menu.MenuId,
-					Label:    menu.MenuName,
 					ParentId: menu.ParentId,
+					Name:     menu.MenuName,
+					Label:    menu.MenuName,
+					Weight:   int32(menu.OrderNum),
+					MenuType: menu.MenuType,
+					Icon:     menu.Icon,
+					Visible:  menu.Visible,
+					Status:   menu.Status,
 					Children: buildTree(menu.MenuId),
 				}
 				children = append(children, treeNode)
