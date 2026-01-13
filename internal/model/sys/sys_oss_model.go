@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -101,42 +100,11 @@ func (m *customSysOssModel) FindPage(ctx context.Context, query *OssQuery, pageQ
 
 	// 构建 ORDER BY 子句（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase）
-	allowedOrderColumns := map[string]bool{
-		"oss_id":        true,
-		"ossId":         true,
-		"create_time":   true,
-		"createTime":    true,
-		"file_name":     true,
-		"fileName":      true,
-		"original_name": true,
-		"originalName":  true,
-		"file_suffix":   true,
-		"fileSuffix":    true,
-		"service":       true,
-	}
-
-	orderBy := "oss_id ASC"
-	if pageQuery.OrderByColumn != "" {
-		// 将 camelCase 转换为 snake_case
-		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
-		// 检查原始字段名和转换后的字段名是否在允许列表中
-		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
-		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
-			// 使用转换后的 snake_case 字段名
-			orderBy = columnName + " "
-			// 处理排序方向（兼容 asc、desc、descending 等）
-			isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-			if isAscStr == "asc" || isAscStr == "ascending" {
-				orderBy += "ASC"
-			} else {
-				orderBy += "DESC"
-			}
-		}
-	}
+	allowedOrderColumns := buildAllowedOrderColumns(sysOssFieldNames)
+	orderBy := pageQuery.GetOrderByWithDir("oss_id ASC", allowedOrderColumns, "asc")
 
 	// 计算分页参数
-	offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-	limit := pageQuery.PageSize
+	offset, limit := pageQuery.GetOffsetAndLimit()
 
 	// 查询数据
 	querySQL := fmt.Sprintf(`

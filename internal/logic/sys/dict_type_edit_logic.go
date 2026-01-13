@@ -67,7 +67,7 @@ func (l *DictTypeEditLogic) DictTypeEdit(req *types.DictTypeReq) (resp *types.Ba
 		}, nil
 	}
 
-	// 3. 查询原字典类型
+	// 3. 查询原字典类型（用于检查字典类型是否改变）
 	oldDictType, err := l.svcCtx.SysDictTypeModel.FindOne(l.ctx, req.DictId)
 	if err != nil {
 		if err == model.ErrNotFound {
@@ -86,20 +86,19 @@ func (l *DictTypeEditLogic) DictTypeEdit(req *types.DictTypeReq) (resp *types.Ba
 	// 4. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 5. 更新字典类型
+	// 5. 更新字典类型（只设置表单输入的字段）
 	dictType := &model.SysDictType{
 		DictId:     req.DictId,
 		DictName:   req.DictName,
 		DictType:   req.DictType,
-		Remark:     sql.NullString{String: req.Remark, Valid: req.Remark != ""},
-		CreateDept: oldDictType.CreateDept, // 保持原部门ID
-		CreateBy:   oldDictType.CreateBy,   // 保持原创建者
-		CreateTime: oldDictType.CreateTime, // 保持原创建时间
 		UpdateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
 		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
 	}
+	if req.Remark != "" {
+		dictType.Remark = sql.NullString{String: req.Remark, Valid: true}
+	}
 
-	err = l.svcCtx.SysDictTypeModel.Update(l.ctx, dictType)
+	err = l.svcCtx.SysDictTypeModel.UpdateById(l.ctx, dictType)
 	if err != nil {
 		l.Errorf("修改字典类型失败: %v", err)
 		return &types.BaseResp{

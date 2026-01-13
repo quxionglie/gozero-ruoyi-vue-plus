@@ -25,6 +25,7 @@ type (
 		sysNoticeModel
 		withSession(session sqlx.Session) SysNoticeModel
 		FindPage(ctx context.Context, query *NoticeQuery, pageQuery *PageQuery) ([]*SysNotice, int64, error)
+		UpdateById(ctx context.Context, data *SysNotice) error
 	}
 
 	customSysNoticeModel struct {
@@ -81,48 +82,16 @@ func (m *customSysNoticeModel) FindPage(ctx context.Context, query *NoticeQuery,
 
 	// 构建排序（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase）
-	allowedOrderColumns := map[string]bool{
-		"notice_id":    true,
-		"noticeId":     true,
-		"notice_title": true,
-		"noticeTitle":  true,
-		"notice_type":  true,
-		"noticeType":   true,
-		"status":       true,
-		"create_time":  true,
-		"createTime":   true,
-		"update_time":  true,
-		"updateTime":   true,
-	}
+	allowedOrderColumns := buildAllowedOrderColumns(sysNoticeFieldNames)
+	orderBy := pageQuery.GetOrderBy("notice_id", allowedOrderColumns)
 
-	orderBy := "notice_id"
-	if pageQuery.OrderByColumn != "" {
-		// 将 camelCase 转换为 snake_case
-		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
-		// 检查原始字段名和转换后的字段名是否在允许列表中
-		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
-		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
-			// 使用转换后的 snake_case 字段名
-			orderBy = columnName
-		}
-	}
-
-	// 处理排序方向（兼容 asc、desc、descending 等）
-	orderDir := "asc"
-	isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-	if isAscStr == "asc" || isAscStr == "ascending" {
-		orderDir = "asc"
-	} else if isAscStr == "desc" || isAscStr == "descending" {
-		orderDir = "desc"
-	}
+	// 获取排序方向（默认升序）
+	orderDir := pageQuery.GetOrderDir("asc")
 
 	// 构建分页查询
 	sqlQuery := fmt.Sprintf("select %s from %s where %s order by %s %s", sysNoticeRows, m.table, whereClause, orderBy, orderDir)
 	if pageQuery.PageSize > 0 {
-		offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-		if offset < 0 {
-			offset = 0
-		}
+		offset := pageQuery.GetOffset()
 		sqlQuery += fmt.Sprintf(" limit %d, %d", offset, pageQuery.PageSize)
 	}
 
@@ -132,4 +101,72 @@ func (m *customSysNoticeModel) FindPage(ctx context.Context, query *NoticeQuery,
 		return nil, 0, err
 	}
 	return resp, total, nil
+}
+
+// UpdateById 根据ID更新通知公告，只更新非零值字段
+func (m *customSysNoticeModel) UpdateById(ctx context.Context, data *SysNotice) error {
+	if data.NoticeId == 0 {
+		return fmt.Errorf("notice_id cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.TenantId != "" {
+		setParts = append(setParts, "`tenant_id` = ?")
+		args = append(args, data.TenantId)
+	}
+	if data.NoticeTitle != "" {
+		setParts = append(setParts, "`notice_title` = ?")
+		args = append(args, data.NoticeTitle)
+	}
+	if data.NoticeType != "" {
+		setParts = append(setParts, "`notice_type` = ?")
+		args = append(args, data.NoticeType)
+	}
+	if data.NoticeContent.Valid {
+		setParts = append(setParts, "`notice_content` = ?")
+		args = append(args, data.NoticeContent.String)
+	}
+	if data.Status != "" {
+		setParts = append(setParts, "`status` = ?")
+		args = append(args, data.Status)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+	if data.Remark.Valid {
+		setParts = append(setParts, "`remark` = ?")
+		args = append(args, data.Remark.String)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `notice_id` = ?", m.table, setClause)
+	args = append(args, data.NoticeId)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
 }

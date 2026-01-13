@@ -158,23 +158,38 @@ func (l *DeptEditLogic) DeptEdit(req *types.DeptReq) (resp *types.BaseResp, err 
 	// 9. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 10. 更新部门信息
-	dept.ParentId = req.ParentId
-	dept.Ancestors = ancestors
-	dept.DeptName = req.DeptName
-	dept.DeptCategory = sql.NullString{String: req.DeptCategory, Valid: req.DeptCategory != ""}
-	dept.OrderNum = int64(req.OrderNum)
-	dept.Leader = sql.NullInt64{Int64: req.Leader, Valid: req.Leader > 0}
-	dept.Phone = sql.NullString{String: req.Phone, Valid: req.Phone != ""}
-	dept.Email = sql.NullString{String: req.Email, Valid: req.Email != ""}
-	if req.Status != "" {
-		dept.Status = req.Status
+	// 10. 更新部门信息（只设置表单输入的字段）
+	updateDept := &model.SysDept{
+		DeptId:     req.DeptId,
+		DeptName:   req.DeptName,
+		Ancestors:  ancestors,
+		UpdateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
 	}
-	dept.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
-	dept.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
+	if req.ParentId > 0 {
+		updateDept.ParentId = req.ParentId
+	}
+	if req.DeptCategory != "" {
+		updateDept.DeptCategory = sql.NullString{String: req.DeptCategory, Valid: true}
+	}
+	if req.OrderNum > 0 {
+		updateDept.OrderNum = int64(req.OrderNum)
+	}
+	if req.Leader > 0 {
+		updateDept.Leader = sql.NullInt64{Int64: req.Leader, Valid: true}
+	}
+	if req.Phone != "" {
+		updateDept.Phone = sql.NullString{String: req.Phone, Valid: true}
+	}
+	if req.Email != "" {
+		updateDept.Email = sql.NullString{String: req.Email, Valid: true}
+	}
+	if req.Status != "" {
+		updateDept.Status = req.Status
+	}
 
 	// 11. 更新数据库
-	err = l.svcCtx.SysDeptModel.Update(l.ctx, dept)
+	err = l.svcCtx.SysDeptModel.UpdateById(l.ctx, updateDept)
 	if err != nil {
 		l.Errorf("修改部门失败: %v", err)
 		return &types.BaseResp{

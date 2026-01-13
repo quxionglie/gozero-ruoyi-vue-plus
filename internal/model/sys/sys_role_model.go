@@ -37,6 +37,8 @@ type (
 		CountUserRoleByRoleId(ctx context.Context, roleId int64) (int64, error)
 		// UpdateRoleStatus 更新角色状态
 		UpdateRoleStatus(ctx context.Context, roleId int64, status string) error
+		// UpdateById 根据ID更新角色，只更新非零值字段
+		UpdateById(ctx context.Context, data *SysRole) error
 	}
 
 	// RoleQuery 角色查询条件
@@ -213,39 +215,11 @@ func (m *customSysRoleModel) FindPage(ctx context.Context, query *RoleQuery, pag
 
 	// 构建 ORDER BY 子句（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase）
-	allowedOrderColumns := map[string]bool{
-		"role_id":     true,
-		"roleId":      true,
-		"role_sort":   true,
-		"roleSort":    true,
-		"create_time": true,
-		"createTime":  true,
-		"role_name":   true,
-		"roleName":    true,
-	}
-
-	orderBy := "role_sort ASC, create_time ASC"
-	if pageQuery.OrderByColumn != "" {
-		// 将 camelCase 转换为 snake_case
-		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
-		// 检查原始字段名和转换后的字段名是否在允许列表中
-		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
-		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
-			// 使用转换后的 snake_case 字段名
-			orderBy = columnName + " "
-			// 处理排序方向（兼容 asc、desc、descending 等）
-			isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-			if isAscStr == "asc" || isAscStr == "ascending" {
-				orderBy += "ASC"
-			} else {
-				orderBy += "DESC"
-			}
-		}
-	}
+	allowedOrderColumns := buildAllowedOrderColumns(sysRoleFieldNames)
+	orderBy := pageQuery.GetOrderByWithDir("role_sort ASC, create_time ASC", allowedOrderColumns, "asc")
 
 	// 计算分页参数
-	offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-	limit := pageQuery.PageSize
+	offset, limit := pageQuery.GetOffsetAndLimit()
 
 	// 查询数据（引用gen文件中的常量）
 	rows := "role_id,tenant_id,role_name,role_key,role_sort,data_scope,menu_check_strictly,dept_check_strictly,status,del_flag,create_dept,create_by,create_time,update_by,update_time,remark"
@@ -401,5 +375,89 @@ func (m *customSysRoleModel) CountUserRoleByRoleId(ctx context.Context, roleId i
 func (m *customSysRoleModel) UpdateRoleStatus(ctx context.Context, roleId int64, status string) error {
 	query := fmt.Sprintf("UPDATE %s SET status = ? WHERE role_id = ?", m.table)
 	_, err := m.conn.ExecCtx(ctx, query, status, roleId)
+	return err
+}
+
+// UpdateById 根据ID更新角色，只更新非零值字段
+func (m *customSysRoleModel) UpdateById(ctx context.Context, data *SysRole) error {
+	if data.RoleId == 0 {
+		return fmt.Errorf("role_id cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.TenantId != "" {
+		setParts = append(setParts, "`tenant_id` = ?")
+		args = append(args, data.TenantId)
+	}
+	if data.RoleName != "" {
+		setParts = append(setParts, "`role_name` = ?")
+		args = append(args, data.RoleName)
+	}
+	if data.RoleKey != "" {
+		setParts = append(setParts, "`role_key` = ?")
+		args = append(args, data.RoleKey)
+	}
+	if data.RoleSort > 0 {
+		setParts = append(setParts, "`role_sort` = ?")
+		args = append(args, data.RoleSort)
+	}
+	if data.DataScope != "" {
+		setParts = append(setParts, "`data_scope` = ?")
+		args = append(args, data.DataScope)
+	}
+	if data.MenuCheckStrictly > 0 {
+		setParts = append(setParts, "`menu_check_strictly` = ?")
+		args = append(args, data.MenuCheckStrictly)
+	}
+	if data.DeptCheckStrictly > 0 {
+		setParts = append(setParts, "`dept_check_strictly` = ?")
+		args = append(args, data.DeptCheckStrictly)
+	}
+	if data.Status != "" {
+		setParts = append(setParts, "`status` = ?")
+		args = append(args, data.Status)
+	}
+	if data.DelFlag != "" {
+		setParts = append(setParts, "`del_flag` = ?")
+		args = append(args, data.DelFlag)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+	if data.Remark.Valid {
+		setParts = append(setParts, "`remark` = ?")
+		args = append(args, data.Remark.String)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `role_id` = ?", m.table, setClause)
+	args = append(args, data.RoleId)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
 	return err
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 )
@@ -33,6 +34,7 @@ type (
 		CheckDeptExistUser(ctx context.Context, deptId int64) (bool, error)
 		CountNormalChildrenDeptById(ctx context.Context, deptId int64) (int64, error)
 		SelectDeptAndChildById(ctx context.Context, deptId int64) ([]int64, error)
+		UpdateById(ctx context.Context, data *SysDept) error
 	}
 
 	customSysDeptModel struct {
@@ -196,4 +198,92 @@ func (m *customSysDeptModel) SelectDeptAndChildById(ctx context.Context, deptId 
 		deptIds = append(deptIds, dept.DeptId)
 	}
 	return deptIds, nil
+}
+
+// UpdateById 根据ID更新部门，只更新非零值字段
+func (m *customSysDeptModel) UpdateById(ctx context.Context, data *SysDept) error {
+	if data.DeptId == 0 {
+		return fmt.Errorf("dept_id cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.TenantId != "" {
+		setParts = append(setParts, "`tenant_id` = ?")
+		args = append(args, data.TenantId)
+	}
+	if data.ParentId > 0 {
+		setParts = append(setParts, "`parent_id` = ?")
+		args = append(args, data.ParentId)
+	}
+	if data.Ancestors != "" {
+		setParts = append(setParts, "`ancestors` = ?")
+		args = append(args, data.Ancestors)
+	}
+	if data.DeptName != "" {
+		setParts = append(setParts, "`dept_name` = ?")
+		args = append(args, data.DeptName)
+	}
+	if data.DeptCategory.Valid {
+		setParts = append(setParts, "`dept_category` = ?")
+		args = append(args, data.DeptCategory.String)
+	}
+	if data.OrderNum > 0 {
+		setParts = append(setParts, "`order_num` = ?")
+		args = append(args, data.OrderNum)
+	}
+	if data.Leader.Valid {
+		setParts = append(setParts, "`leader` = ?")
+		args = append(args, data.Leader.Int64)
+	}
+	if data.Phone.Valid {
+		setParts = append(setParts, "`phone` = ?")
+		args = append(args, data.Phone.String)
+	}
+	if data.Email.Valid {
+		setParts = append(setParts, "`email` = ?")
+		args = append(args, data.Email.String)
+	}
+	if data.Status != "" {
+		setParts = append(setParts, "`status` = ?")
+		args = append(args, data.Status)
+	}
+	if data.DelFlag != "" {
+		setParts = append(setParts, "`del_flag` = ?")
+		args = append(args, data.DelFlag)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `dept_id` = ?", m.table, setClause)
+	args = append(args, data.DeptId)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
 }

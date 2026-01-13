@@ -27,6 +27,7 @@ type (
 		UpdateStatus(ctx context.Context, ossConfigId int64, status string) error
 		FindDefault(ctx context.Context, tenantId string) (*SysOssConfig, error)
 		FindByConfigKey(ctx context.Context, configKey string, tenantId string) (*SysOssConfig, error)
+		UpdateById(ctx context.Context, data *SysOssConfig) error
 	}
 
 	customSysOssConfigModel struct {
@@ -83,36 +84,14 @@ func (m *customSysOssConfigModel) FindPage(ctx context.Context, query *OssConfig
 
 	// 构建 ORDER BY 子句（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase）
-	allowedOrderColumns := map[string]bool{
-		"oss_config_id": true, "ossConfigId": true,
-		"config_key": true, "configKey": true,
-		"status":      true,
-		"create_time": true, "createTime": true,
-		"update_time": true, "updateTime": true,
-	}
+	allowedOrderColumns := buildAllowedOrderColumns(sysOssConfigFieldNames)
+	orderBy := pageQuery.GetOrderBy("oss_config_id", allowedOrderColumns)
 
-	orderBy := "oss_config_id"
-	if pageQuery.OrderByColumn != "" {
-		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
-		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
-		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
-			orderBy = columnName
-		}
-	}
-
-	orderDir := "desc"
-	isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-	if isAscStr == "asc" || isAscStr == "ascending" {
-		orderDir = "asc"
-	} else if isAscStr == "desc" || isAscStr == "descending" {
-		orderDir = "desc"
-	}
+	// 获取排序方向（默认降序）
+	orderDir := pageQuery.GetOrderDir("desc")
 
 	// 计算分页参数
-	offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-	if offset < 0 {
-		offset = 0
-	}
+	offset := pageQuery.GetOffset()
 
 	// 查询数据
 	querySQL := fmt.Sprintf("select %s from %s where %s order by %s %s limit %d, %d",
@@ -178,4 +157,104 @@ func (m *customSysOssConfigModel) FindByConfigKey(ctx context.Context, configKey
 	default:
 		return nil, err
 	}
+}
+
+// UpdateById 根据ID更新OSS配置，只更新非零值字段
+func (m *customSysOssConfigModel) UpdateById(ctx context.Context, data *SysOssConfig) error {
+	if data.OssConfigId == 0 {
+		return fmt.Errorf("oss_config_id cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.TenantId != "" {
+		setParts = append(setParts, "`tenant_id` = ?")
+		args = append(args, data.TenantId)
+	}
+	if data.ConfigKey != "" {
+		setParts = append(setParts, "`config_key` = ?")
+		args = append(args, data.ConfigKey)
+	}
+	if data.AccessKey != "" {
+		setParts = append(setParts, "`access_key` = ?")
+		args = append(args, data.AccessKey)
+	}
+	if data.SecretKey != "" {
+		setParts = append(setParts, "`secret_key` = ?")
+		args = append(args, data.SecretKey)
+	}
+	if data.BucketName != "" {
+		setParts = append(setParts, "`bucket_name` = ?")
+		args = append(args, data.BucketName)
+	}
+	if data.Prefix != "" {
+		setParts = append(setParts, "`prefix` = ?")
+		args = append(args, data.Prefix)
+	}
+	if data.Endpoint != "" {
+		setParts = append(setParts, "`endpoint` = ?")
+		args = append(args, data.Endpoint)
+	}
+	if data.Domain != "" {
+		setParts = append(setParts, "`domain` = ?")
+		args = append(args, data.Domain)
+	}
+	if data.IsHttps != "" {
+		setParts = append(setParts, "`is_https` = ?")
+		args = append(args, data.IsHttps)
+	}
+	if data.Region != "" {
+		setParts = append(setParts, "`region` = ?")
+		args = append(args, data.Region)
+	}
+	if data.AccessPolicy != "" {
+		setParts = append(setParts, "`access_policy` = ?")
+		args = append(args, data.AccessPolicy)
+	}
+	if data.Status != "" {
+		setParts = append(setParts, "`status` = ?")
+		args = append(args, data.Status)
+	}
+	if data.Ext1 != "" {
+		setParts = append(setParts, "`ext1` = ?")
+		args = append(args, data.Ext1)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+	if data.Remark.Valid {
+		setParts = append(setParts, "`remark` = ?")
+		args = append(args, data.Remark.String)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `oss_config_id` = ?", m.table, setClause)
+	args = append(args, data.OssConfigId)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
 }

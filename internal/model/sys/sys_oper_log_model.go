@@ -99,47 +99,16 @@ func (m *customSysOperLogModel) FindPage(ctx context.Context, query *OperLogQuer
 
 	// 构建排序（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase）
-	allowedOrderColumns := map[string]bool{
-		"oper_id":   true,
-		"operId":    true,
-		"title":     true,
-		"oper_ip":   true,
-		"operIp":    true,
-		"status":    true,
-		"oper_time": true,
-		"operTime":  true,
-		"cost_time": true,
-		"costTime":  true,
-	}
+	allowedOrderColumns := buildAllowedOrderColumns(sysOperLogFieldNames)
+	orderBy := pageQuery.GetOrderBy("oper_id", allowedOrderColumns)
 
-	orderBy := "oper_id"
-	if pageQuery.OrderByColumn != "" {
-		// 将 camelCase 转换为 snake_case
-		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
-		// 检查原始字段名和转换后的字段名是否在允许列表中
-		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
-		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
-			// 使用转换后的 snake_case 字段名
-			orderBy = columnName
-		}
-	}
-
-	// 处理排序方向（兼容 asc、desc、descending 等）
-	orderDir := "desc"
-	isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-	if isAscStr == "asc" || isAscStr == "ascending" {
-		orderDir = "asc"
-	} else if isAscStr == "desc" || isAscStr == "descending" {
-		orderDir = "desc"
-	}
+	// 获取排序方向（默认降序）
+	orderDir := pageQuery.GetOrderDir("desc")
 
 	// 构建分页查询
 	sqlQuery := fmt.Sprintf("select %s from %s where %s order by %s %s", sysOperLogRows, m.table, whereClause, orderBy, orderDir)
 	if pageQuery.PageSize > 0 {
-		offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-		if offset < 0 {
-			offset = 0
-		}
+		offset := pageQuery.GetOffset()
 		sqlQuery += fmt.Sprintf(" limit %d, %d", offset, pageQuery.PageSize)
 	}
 

@@ -30,6 +30,7 @@ type (
 		CountByDictType(ctx context.Context, dictType string) (int64, error)
 		UpdateDictTypeByOldDictType(ctx context.Context, oldDictType, newDictType string) error
 		FindPage(ctx context.Context, query *DictDataQuery, pageQuery *PageQuery) ([]*SysDictData, int64, error)
+		UpdateById(ctx context.Context, data *SysDictData) error
 	}
 
 	customSysDictDataModel struct {
@@ -143,25 +144,10 @@ func (m *customSysDictDataModel) FindPage(ctx context.Context, query *DictDataQu
 
 	// 构建排序（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase，支持多列排序，用逗号分隔）
-	allowedOrderColumns := map[string]bool{
-		"dict_code":   true,
-		"dictCode":    true,
-		"dict_sort":   true,
-		"dictSort":    true,
-		"dict_label":  true,
-		"dictLabel":   true,
-		"dict_value":  true,
-		"dictValue":   true,
-		"dict_type":   true,
-		"dictType":    true,
-		"create_time": true,
-		"createTime":  true,
-		"update_time": true,
-		"updateTime":  true,
-		// 支持多列排序
-		"dict_type, dict_sort": true,
-		"dictType, dictSort":   true,
-	}
+	allowedOrderColumns := buildAllowedOrderColumns(sysDictDataFieldNames)
+	// 支持多列排序
+	allowedOrderColumns["dict_type, dict_sort"] = true
+	allowedOrderColumns["dictType, dictSort"] = true
 
 	orderBy := "dict_type, dict_sort"
 	if pageQuery.OrderByColumn != "" {
@@ -196,22 +182,13 @@ func (m *customSysDictDataModel) FindPage(ctx context.Context, query *DictDataQu
 		}
 	}
 
-	// 处理排序方向（兼容 asc、desc、descending 等）
-	orderDir := "asc"
-	isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-	if isAscStr == "asc" || isAscStr == "ascending" {
-		orderDir = "asc"
-	} else if isAscStr == "desc" || isAscStr == "descending" {
-		orderDir = "desc"
-	}
+	// 获取排序方向（默认升序）
+	orderDir := pageQuery.GetOrderDir("asc")
 
 	// 构建分页查询
 	sqlQuery := fmt.Sprintf("select %s from %s where %s order by %s %s", sysDictDataRows, m.table, whereClause, orderBy, orderDir)
 	if pageQuery.PageSize > 0 {
-		offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-		if offset < 0 {
-			offset = 0
-		}
+		offset := pageQuery.GetOffset()
 		sqlQuery += fmt.Sprintf(" limit %d, %d", offset, pageQuery.PageSize)
 	}
 
@@ -221,4 +198,84 @@ func (m *customSysDictDataModel) FindPage(ctx context.Context, query *DictDataQu
 		return nil, 0, err
 	}
 	return resp, total, nil
+}
+
+// UpdateById 根据ID更新字典数据，只更新非零值字段
+func (m *customSysDictDataModel) UpdateById(ctx context.Context, data *SysDictData) error {
+	if data.DictCode == 0 {
+		return fmt.Errorf("dict_code cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.TenantId != "" {
+		setParts = append(setParts, "`tenant_id` = ?")
+		args = append(args, data.TenantId)
+	}
+	if data.DictSort > 0 {
+		setParts = append(setParts, "`dict_sort` = ?")
+		args = append(args, data.DictSort)
+	}
+	if data.DictLabel != "" {
+		setParts = append(setParts, "`dict_label` = ?")
+		args = append(args, data.DictLabel)
+	}
+	if data.DictValue != "" {
+		setParts = append(setParts, "`dict_value` = ?")
+		args = append(args, data.DictValue)
+	}
+	if data.DictType != "" {
+		setParts = append(setParts, "`dict_type` = ?")
+		args = append(args, data.DictType)
+	}
+	if data.IsDefault != "" {
+		setParts = append(setParts, "`is_default` = ?")
+		args = append(args, data.IsDefault)
+	}
+	if data.CssClass.Valid {
+		setParts = append(setParts, "`css_class` = ?")
+		args = append(args, data.CssClass.String)
+	}
+	if data.ListClass.Valid {
+		setParts = append(setParts, "`list_class` = ?")
+		args = append(args, data.ListClass.String)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+	if data.Remark.Valid {
+		setParts = append(setParts, "`remark` = ?")
+		args = append(args, data.Remark.String)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `dict_code` = ?", m.table, setClause)
+	args = append(args, data.DictCode)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
 }

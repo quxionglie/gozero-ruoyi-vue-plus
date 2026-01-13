@@ -34,6 +34,7 @@ type (
 		CheckPostCodeUnique(ctx context.Context, postCode string, excludePostId int64) (bool, error)
 		CountUserPostById(ctx context.Context, postId int64) (int64, error)
 		CountPostByDeptId(ctx context.Context, deptId int64) (int64, error)
+		UpdateById(ctx context.Context, data *SysPost) error
 	}
 
 	customSysPostModel struct {
@@ -103,50 +104,16 @@ func (m *customSysPostModel) FindPage(ctx context.Context, query *PostQuery, pag
 
 	// 构建排序（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase）
-	allowedOrderColumns := map[string]bool{
-		"post_id":     true,
-		"postId":      true,
-		"post_code":   true,
-		"postCode":    true,
-		"post_name":   true,
-		"postName":    true,
-		"post_sort":   true,
-		"postSort":    true,
-		"status":      true,
-		"create_time": true,
-		"createTime":  true,
-		"update_time": true,
-		"updateTime":  true,
-	}
+	allowedOrderColumns := buildAllowedOrderColumns(sysPostFieldNames)
+	orderBy := pageQuery.GetOrderBy("post_sort", allowedOrderColumns)
 
-	orderBy := "post_sort"
-	if pageQuery.OrderByColumn != "" {
-		// 将 camelCase 转换为 snake_case
-		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
-		// 检查原始字段名和转换后的字段名是否在允许列表中
-		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
-		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
-			// 使用转换后的 snake_case 字段名
-			orderBy = columnName
-		}
-	}
-
-	// 处理排序方向（兼容 asc、desc、descending 等）
-	orderDir := "asc"
-	isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-	if isAscStr == "asc" || isAscStr == "ascending" {
-		orderDir = "asc"
-	} else if isAscStr == "desc" || isAscStr == "descending" {
-		orderDir = "desc"
-	}
+	// 获取排序方向（默认升序）
+	orderDir := pageQuery.GetOrderDir("asc")
 
 	// 构建分页查询
 	sqlQuery := fmt.Sprintf("select %s from %s where %s order by %s %s", sysPostRows, m.table, whereClause, orderBy, orderDir)
 	if pageQuery.PageSize > 0 {
-		offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-		if offset < 0 {
-			offset = 0
-		}
+		offset := pageQuery.GetOffset()
 		sqlQuery += fmt.Sprintf(" limit %d, %d", offset, pageQuery.PageSize)
 	}
 
@@ -288,4 +255,80 @@ func (m *customSysPostModel) CountPostByDeptId(ctx context.Context, deptId int64
 		return 0, err
 	}
 	return count, nil
+}
+
+// UpdateById 根据ID更新岗位，只更新非零值字段
+func (m *customSysPostModel) UpdateById(ctx context.Context, data *SysPost) error {
+	if data.PostId == 0 {
+		return fmt.Errorf("post_id cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.TenantId != "" {
+		setParts = append(setParts, "`tenant_id` = ?")
+		args = append(args, data.TenantId)
+	}
+	if data.DeptId > 0 {
+		setParts = append(setParts, "`dept_id` = ?")
+		args = append(args, data.DeptId)
+	}
+	if data.PostCode != "" {
+		setParts = append(setParts, "`post_code` = ?")
+		args = append(args, data.PostCode)
+	}
+	if data.PostCategory.Valid {
+		setParts = append(setParts, "`post_category` = ?")
+		args = append(args, data.PostCategory.String)
+	}
+	if data.PostName != "" {
+		setParts = append(setParts, "`post_name` = ?")
+		args = append(args, data.PostName)
+	}
+	if data.PostSort > 0 {
+		setParts = append(setParts, "`post_sort` = ?")
+		args = append(args, data.PostSort)
+	}
+	if data.Status != "" {
+		setParts = append(setParts, "`status` = ?")
+		args = append(args, data.Status)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+	if data.Remark.Valid {
+		setParts = append(setParts, "`remark` = ?")
+		args = append(args, data.Remark.String)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `post_id` = ?", m.table, setClause)
+	args = append(args, data.PostId)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
 }

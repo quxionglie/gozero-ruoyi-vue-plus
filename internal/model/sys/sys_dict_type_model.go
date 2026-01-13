@@ -28,6 +28,7 @@ type (
 		CheckDictTypeUnique(ctx context.Context, dictType string, excludeDictId int64) (bool, error)
 		CountByDictType(ctx context.Context, dictType string) (int64, error)
 		FindPage(ctx context.Context, query *DictTypeQuery, pageQuery *PageQuery) ([]*SysDictType, int64, error)
+		UpdateById(ctx context.Context, data *SysDictType) error
 	}
 
 	customSysDictTypeModel struct {
@@ -123,47 +124,16 @@ func (m *customSysDictTypeModel) FindPage(ctx context.Context, query *DictTypeQu
 
 	// 构建排序（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase）
-	allowedOrderColumns := map[string]bool{
-		"dict_id":     true,
-		"dictId":      true,
-		"dict_name":   true,
-		"dictName":    true,
-		"dict_type":   true,
-		"dictType":    true,
-		"create_time": true,
-		"createTime":  true,
-		"update_time": true,
-		"updateTime":  true,
-	}
+	allowedOrderColumns := buildAllowedOrderColumns(sysDictTypeFieldNames)
+	orderBy := pageQuery.GetOrderBy("dict_id", allowedOrderColumns)
 
-	orderBy := "dict_id"
-	if pageQuery.OrderByColumn != "" {
-		// 将 camelCase 转换为 snake_case
-		columnName := camelToSnake(strings.TrimSpace(pageQuery.OrderByColumn))
-		// 检查原始字段名和转换后的字段名是否在允许列表中
-		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
-		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
-			// 使用转换后的 snake_case 字段名
-			orderBy = columnName
-		}
-	}
-
-	// 处理排序方向（兼容 asc、desc、descending 等）
-	orderDir := "asc"
-	isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-	if isAscStr == "asc" || isAscStr == "ascending" {
-		orderDir = "asc"
-	} else if isAscStr == "desc" || isAscStr == "descending" {
-		orderDir = "desc"
-	}
+	// 获取排序方向（默认升序）
+	orderDir := pageQuery.GetOrderDir("asc")
 
 	// 构建分页查询
 	sqlQuery := fmt.Sprintf("select %s from %s where %s order by %s %s", sysDictTypeRows, m.table, whereClause, orderBy, orderDir)
 	if pageQuery.PageSize > 0 {
-		offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-		if offset < 0 {
-			offset = 0
-		}
+		offset := pageQuery.GetOffset()
 		sqlQuery += fmt.Sprintf(" limit %d, %d", offset, pageQuery.PageSize)
 	}
 
@@ -173,4 +143,64 @@ func (m *customSysDictTypeModel) FindPage(ctx context.Context, query *DictTypeQu
 		return nil, 0, err
 	}
 	return resp, total, nil
+}
+
+// UpdateById 根据ID更新字典类型，只更新非零值字段
+func (m *customSysDictTypeModel) UpdateById(ctx context.Context, data *SysDictType) error {
+	if data.DictId == 0 {
+		return fmt.Errorf("dict_id cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.TenantId != "" {
+		setParts = append(setParts, "`tenant_id` = ?")
+		args = append(args, data.TenantId)
+	}
+	if data.DictName != "" {
+		setParts = append(setParts, "`dict_name` = ?")
+		args = append(args, data.DictName)
+	}
+	if data.DictType != "" {
+		setParts = append(setParts, "`dict_type` = ?")
+		args = append(args, data.DictType)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+	if data.Remark.Valid {
+		setParts = append(setParts, "`remark` = ?")
+		args = append(args, data.Remark.String)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `dict_id` = ?", m.table, setClause)
+	args = append(args, data.DictId)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
 }

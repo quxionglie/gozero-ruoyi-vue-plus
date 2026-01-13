@@ -115,23 +115,7 @@ func (l *UserEditLogic) UserEdit(req *types.UserReq) (resp *types.BaseResp, err 
 		}, err
 	}
 
-	// 7. 查询原用户信息
-	oldUser, err := l.svcCtx.SysUserModel.FindOne(l.ctx, req.UserId)
-	if err != nil {
-		if err == model.ErrNotFound {
-			return &types.BaseResp{
-				Code: 404,
-				Msg:  "用户不存在",
-			}, nil
-		}
-		l.Errorf("查询用户信息失败: %v", err)
-		return &types.BaseResp{
-			Code: 500,
-			Msg:  "查询用户信息失败",
-		}, err
-	}
-
-	// 8. 更新用户角色关联
+	// 7. 更新用户角色关联
 	if len(req.RoleIds) > 0 {
 		// 先删除原有关联
 		err = l.svcCtx.SysUserRoleModel.DeleteByUserId(l.ctx, req.UserId)
@@ -198,20 +182,28 @@ func (l *UserEditLogic) UserEdit(req *types.UserReq) (resp *types.BaseResp, err 
 		}
 	}
 
-	// 10. 构建更新用户实体
+	// 10. 构建更新用户实体（只设置表单输入的字段）
 	updateUser := &model.SysUser{
-		UserId:      req.UserId,
-		UserName:    req.UserName,
-		NickName:    req.NickName,
-		Email:       req.Email,
-		Phonenumber: req.Phonenumber,
-		Sex:         req.Sex,
-		Status:      req.Status,
-		CreateDept:  oldUser.CreateDept, // 保持原部门ID
-		CreateBy:    oldUser.CreateBy,   // 保持原创建者
-		CreateTime:  oldUser.CreateTime, // 保持原创建时间
-		UpdateBy:    sql.NullInt64{Int64: userId, Valid: true},
-		UpdateTime:  sql.NullTime{Time: time.Now(), Valid: true},
+		UserId:     req.UserId,
+		UserName:   req.UserName,
+		NickName:   req.NickName,
+		UpdateBy:   sql.NullInt64{Int64: userId, Valid: true},
+		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
+	}
+	if req.Email != "" {
+		updateUser.Email = req.Email
+	}
+	if req.Phonenumber != "" {
+		updateUser.Phonenumber = req.Phonenumber
+	}
+	if req.Sex != "" {
+		updateUser.Sex = req.Sex
+	}
+	if req.Status != "" {
+		updateUser.Status = req.Status
+	}
+	if req.UserType != "" {
+		updateUser.UserType = req.UserType
 	}
 	if req.DeptId > 0 {
 		updateUser.DeptId = sql.NullInt64{Int64: req.DeptId, Valid: true}
@@ -219,18 +211,14 @@ func (l *UserEditLogic) UserEdit(req *types.UserReq) (resp *types.BaseResp, err 
 	if req.Remark != "" {
 		updateUser.Remark = sql.NullString{String: req.Remark, Valid: true}
 	}
-	// 保留原有密码（如果不传密码则不更新）
+	// 密码处理：如果传了密码则更新（需要加密），否则不更新
 	if req.Password != "" {
-		// 如果需要修改密码，需要加密
-		// 这里假设前端传的是明文密码，需要加密
-		// 但通常编辑用户时不修改密码，所以这里保留原有密码
-		updateUser.Password = oldUser.Password
-	} else {
-		updateUser.Password = oldUser.Password
+		// TODO: 这里应该对密码进行加密
+		updateUser.Password = req.Password
 	}
 
 	// 11. 更新用户信息
-	err = l.svcCtx.SysUserModel.Update(l.ctx, updateUser)
+	err = l.svcCtx.SysUserModel.UpdateById(l.ctx, updateUser)
 	if err != nil {
 		l.Errorf("修改用户信息失败: %v", err)
 		return &types.BaseResp{

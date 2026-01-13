@@ -71,8 +71,8 @@ func (l *OssConfigEditLogic) OssConfigEdit(req *types.OssConfigReq) (resp *types
 		}, nil
 	}
 
-	// 2. 查询原配置
-	oldOssConfig, err := l.svcCtx.SysOssConfigModel.FindOne(l.ctx, req.OssConfigId)
+	// 2. 检查配置是否存在
+	_, err = l.svcCtx.SysOssConfigModel.FindOne(l.ctx, req.OssConfigId)
 	if err != nil {
 		if err == model.ErrNotFound {
 			return &types.BaseResp{
@@ -90,31 +90,43 @@ func (l *OssConfigEditLogic) OssConfigEdit(req *types.OssConfigReq) (resp *types
 	// 3. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 4. 更新OSS配置
+	// 4. 更新OSS配置（只设置表单输入的字段）
 	ossConfig := &model.SysOssConfig{
-		OssConfigId:  req.OssConfigId,
-		TenantId:     oldOssConfig.TenantId, // 保持原租户ID
-		ConfigKey:    req.ConfigKey,
-		AccessKey:    req.AccessKey,
-		SecretKey:    req.SecretKey,
-		BucketName:   req.BucketName,
-		Prefix:       req.Prefix,
-		Endpoint:     req.Endpoint,
-		Domain:       req.Domain,
-		IsHttps:      req.IsHttps,
-		Region:       req.Region,
-		AccessPolicy: req.AccessPolicy,
-		Status:       req.Status,
-		Ext1:         req.Ext1,
-		CreateDept:   oldOssConfig.CreateDept, // 保持原部门ID
-		CreateBy:     oldOssConfig.CreateBy,   // 保持原创建者
-		CreateTime:   oldOssConfig.CreateTime, // 保持原创建时间
-		UpdateBy:     sql.NullInt64{Int64: userId, Valid: userId > 0},
-		UpdateTime:   sql.NullTime{Time: time.Now(), Valid: true},
-		Remark:       sql.NullString{String: req.Remark, Valid: req.Remark != ""},
+		OssConfigId: req.OssConfigId,
+		ConfigKey:   req.ConfigKey,
+		AccessKey:   req.AccessKey,
+		SecretKey:   req.SecretKey,
+		BucketName:  req.BucketName,
+		Endpoint:    req.Endpoint,
+		UpdateBy:    sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime:  sql.NullTime{Time: time.Now(), Valid: true},
+	}
+	if req.Prefix != "" {
+		ossConfig.Prefix = req.Prefix
+	}
+	if req.Domain != "" {
+		ossConfig.Domain = req.Domain
+	}
+	if req.IsHttps != "" {
+		ossConfig.IsHttps = req.IsHttps
+	}
+	if req.Region != "" {
+		ossConfig.Region = req.Region
+	}
+	if req.AccessPolicy != "" {
+		ossConfig.AccessPolicy = req.AccessPolicy
+	}
+	if req.Status != "" {
+		ossConfig.Status = req.Status
+	}
+	if req.Ext1 != "" {
+		ossConfig.Ext1 = req.Ext1
+	}
+	if req.Remark != "" {
+		ossConfig.Remark = sql.NullString{String: req.Remark, Valid: true}
 	}
 
-	err = l.svcCtx.SysOssConfigModel.Update(l.ctx, ossConfig)
+	err = l.svcCtx.SysOssConfigModel.UpdateById(l.ctx, ossConfig)
 	if err != nil {
 		l.Errorf("修改对象存储配置失败: %v", err)
 		return &types.BaseResp{

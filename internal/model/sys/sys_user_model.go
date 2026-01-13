@@ -61,6 +61,8 @@ type (
 		UpdateUserAvatar(ctx context.Context, userId int64, avatar int64) error
 		// SelectUserListByDept 根据部门查询用户列表
 		SelectUserListByDept(ctx context.Context, deptId int64) ([]*SysUser, error)
+		// UpdateById 根据ID更新用户，只更新非零值字段
+		UpdateById(ctx context.Context, data *SysUser) error
 	}
 
 	customSysUserModel struct {

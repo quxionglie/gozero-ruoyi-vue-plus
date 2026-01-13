@@ -91,38 +91,8 @@ func (m *customSysUserModel) FindPage(ctx context.Context, query *UserQuery, pag
 
 	// 构建排序（防止 SQL 注入）
 	// 允许的排序列（支持 snake_case 和 camelCase，需要包含表别名）
-	allowedOrderColumns := map[string]bool{
-		"u.user_id":     true,
-		"u.userId":      true,
-		"u.user_name":   true,
-		"u.userName":    true,
-		"u.create_time": true,
-		"u.createTime":  true,
-		"u.status":      true,
-	}
-
-	orderBy := "u.user_id ASC"
-	if pageQuery.OrderByColumn != "" {
-		originalColumn := strings.TrimSpace(pageQuery.OrderByColumn)
-		// 如果没有表别名，添加 u. 前缀
-		if !strings.Contains(originalColumn, ".") {
-			originalColumn = "u." + originalColumn
-		}
-		// 将 camelCase 转换为 snake_case
-		columnName := camelToSnake(originalColumn)
-		// 检查原始字段名和转换后的字段名是否在允许列表中
-		if allowedOrderColumns[originalColumn] || allowedOrderColumns[columnName] {
-			// 使用转换后的 snake_case 字段名
-			orderBy = columnName
-			// 处理排序方向（兼容 asc、desc、descending 等）
-			isAscStr := strings.ToLower(strings.TrimSpace(pageQuery.IsAsc))
-			if isAscStr == "asc" || isAscStr == "ascending" {
-				orderBy += " ASC"
-			} else {
-				orderBy += " DESC"
-			}
-		}
-	}
+	allowedOrderColumns := buildAllowedOrderColumnsWithPrefix(sysUserFieldNames, "u.")
+	orderBy := pageQuery.GetOrderByWithDirAndPrefix("u.user_id ASC", allowedOrderColumns, "u.", "asc")
 
 	// 计算总数
 	countQuery := fmt.Sprintf(`
@@ -139,8 +109,7 @@ func (m *customSysUserModel) FindPage(ctx context.Context, query *UserQuery, pag
 	}
 
 	// 计算分页参数
-	offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
-	limit := pageQuery.PageSize
+	offset, limit := pageQuery.GetOffsetAndLimit()
 
 	// 查询数据
 	// 将 sysUserRows 转换为别名形式（u.xxx）
@@ -380,6 +349,110 @@ func (m *customSysUserModel) SelectUserListByDept(ctx context.Context, deptId in
 	}
 
 	return userList, nil
+}
+
+// UpdateById 根据ID更新用户，只更新非零值字段
+func (m *customSysUserModel) UpdateById(ctx context.Context, data *SysUser) error {
+	if data.UserId == 0 {
+		return fmt.Errorf("user_id cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.TenantId != "" {
+		setParts = append(setParts, "`tenant_id` = ?")
+		args = append(args, data.TenantId)
+	}
+	if data.UserName != "" {
+		setParts = append(setParts, "`user_name` = ?")
+		args = append(args, data.UserName)
+	}
+	if data.NickName != "" {
+		setParts = append(setParts, "`nick_name` = ?")
+		args = append(args, data.NickName)
+	}
+	if data.UserType != "" {
+		setParts = append(setParts, "`user_type` = ?")
+		args = append(args, data.UserType)
+	}
+	if data.Email != "" {
+		setParts = append(setParts, "`email` = ?")
+		args = append(args, data.Email)
+	}
+	if data.Phonenumber != "" {
+		setParts = append(setParts, "`phonenumber` = ?")
+		args = append(args, data.Phonenumber)
+	}
+	if data.Sex != "" {
+		setParts = append(setParts, "`sex` = ?")
+		args = append(args, data.Sex)
+	}
+	if data.Password != "" {
+		setParts = append(setParts, "`password` = ?")
+		args = append(args, data.Password)
+	}
+	if data.Status != "" {
+		setParts = append(setParts, "`status` = ?")
+		args = append(args, data.Status)
+	}
+	if data.DelFlag != "" {
+		setParts = append(setParts, "`del_flag` = ?")
+		args = append(args, data.DelFlag)
+	}
+	if data.LoginIp != "" {
+		setParts = append(setParts, "`login_ip` = ?")
+		args = append(args, data.LoginIp)
+	}
+	if data.DeptId.Valid {
+		setParts = append(setParts, "`dept_id` = ?")
+		args = append(args, data.DeptId.Int64)
+	}
+	if data.Avatar.Valid {
+		setParts = append(setParts, "`avatar` = ?")
+		args = append(args, data.Avatar.Int64)
+	}
+	if data.LoginDate.Valid {
+		setParts = append(setParts, "`login_date` = ?")
+		args = append(args, data.LoginDate.Time)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+	if data.Remark.Valid {
+		setParts = append(setParts, "`remark` = ?")
+		args = append(args, data.Remark.String)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `user_id` = ?", m.table, setClause)
+	args = append(args, data.UserId)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
 }
 
 // parseIds 解析ID串（逗号分隔）为int64数组

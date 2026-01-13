@@ -119,21 +119,32 @@ func (l *PostEditLogic) PostEdit(req *types.PostReq) (resp *types.BaseResp, err 
 	// 7. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 8. 更新岗位信息
-	post.DeptId = req.DeptId
-	post.PostCode = req.PostCode
-	post.PostCategory = sql.NullString{String: req.PostCategory, Valid: req.PostCategory != ""}
-	post.PostName = req.PostName
-	post.PostSort = int64(req.PostSort)
-	if req.Status != "" {
-		post.Status = req.Status
+	// 8. 更新岗位信息（只设置表单输入的字段）
+	updatePost := &model.SysPost{
+		PostId:     req.PostId,
+		PostCode:   req.PostCode,
+		PostName:   req.PostName,
+		UpdateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
 	}
-	post.Remark = sql.NullString{String: req.Remark, Valid: req.Remark != ""}
-	post.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
-	post.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
+	if req.DeptId > 0 {
+		updatePost.DeptId = req.DeptId
+	}
+	if req.PostCategory != "" {
+		updatePost.PostCategory = sql.NullString{String: req.PostCategory, Valid: true}
+	}
+	if req.PostSort > 0 {
+		updatePost.PostSort = int64(req.PostSort)
+	}
+	if req.Status != "" {
+		updatePost.Status = req.Status
+	}
+	if req.Remark != "" {
+		updatePost.Remark = sql.NullString{String: req.Remark, Valid: true}
+	}
 
 	// 9. 更新数据库
-	err = l.svcCtx.SysPostModel.Update(l.ctx, post)
+	err = l.svcCtx.SysPostModel.UpdateById(l.ctx, updatePost)
 	if err != nil {
 		l.Errorf("修改岗位失败: %v", err)
 		return &types.BaseResp{

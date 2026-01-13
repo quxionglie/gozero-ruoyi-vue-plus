@@ -737,3 +737,30 @@ pageQuery.Normalize()移到*mode.go的分页查询类中调用
 2026-01-12T19:56:38+08:00
 添加数据时create_dept、create_by 、create_time成功，update时会把上面值update为空。检查原因并修改代码
 
+2026-01-13T09:46:42+08:00
+*model.go生成updateById类，只有非0值才update。*edit_logic.go只需要update表单输入的字段
+
+
+2026-01-13T10:00:00+08:00
+继续实现所有文件
+
+2026-01-13T10:05:00+08:00
+全部实现
+
+2026-01-13T10:10:00+08:00
+分页查询的allowedOrderColumns从对应*FieldNames常量生成，不直接写死代码
+
+2026-01-13T10:15:00+08:00
+检查编译
+
+2026-01-13T10:20:00+08:00
+处理排序方向（兼容 asc、desc、descending 等） 也在PageQuery增加方法处理
+
+2026-01-13T10:32:12+08:00
+
+
+2026-01-13T10:45:00+08:00
+下面类似代码也在PageQuery增加方法处理。
+// 计算分页参数
+offset := (pageQuery.PageNum - 1) * pageQuery.PageSize
+limit := pageQuery.PageSize

@@ -160,36 +160,29 @@ func (l *RoleEditLogic) RoleEdit(req *types.RoleReq) (resp *types.BaseResp, err 
 	// 10. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 11. 构建角色实体（更新字段）
-	roleSort := int64(req.RoleSort)
-	if req.Status == "" {
-		req.Status = role.Status
-	}
-	if req.DataScope == "" {
-		req.DataScope = role.DataScope
-	}
-
+	// 11. 构建角色实体（只设置表单输入的字段）
 	updateRole := &model.SysRole{
-		RoleId:            req.RoleId,
-		TenantId:          role.TenantId, // 保持原租户ID
-		RoleName:          req.RoleName,
-		RoleKey:           req.RoleKey,
-		RoleSort:          roleSort,
-		DataScope:         req.DataScope,
-		MenuCheckStrictly: role.MenuCheckStrictly, // 保持原值
-		DeptCheckStrictly: role.DeptCheckStrictly, // 保持原值
-		Status:            req.Status,
-		DelFlag:           role.DelFlag,    // 保持原值
-		CreateDept:        role.CreateDept, // 保持原值
-		CreateBy:          role.CreateBy,   // 保持原值
-		CreateTime:        role.CreateTime, // 保持原创建时间
-		UpdateBy:          sql.NullInt64{Int64: userId, Valid: userId > 0},
-		UpdateTime:        sql.NullTime{Time: time.Now(), Valid: true},
-		Remark:            sql.NullString{String: req.Remark, Valid: req.Remark != ""},
+		RoleId:     req.RoleId,
+		RoleName:   req.RoleName,
+		RoleKey:    req.RoleKey,
+		UpdateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
+	}
+	if req.RoleSort > 0 {
+		updateRole.RoleSort = int64(req.RoleSort)
+	}
+	if req.DataScope != "" {
+		updateRole.DataScope = req.DataScope
+	}
+	if req.Status != "" {
+		updateRole.Status = req.Status
+	}
+	if req.Remark != "" {
+		updateRole.Remark = sql.NullString{String: req.Remark, Valid: true}
 	}
 
 	// 12. 更新角色
-	err = l.svcCtx.SysRoleModel.Update(l.ctx, updateRole)
+	err = l.svcCtx.SysRoleModel.UpdateById(l.ctx, updateRole)
 	if err != nil {
 		l.Errorf("更新角色失败: %v", err)
 		return &types.BaseResp{

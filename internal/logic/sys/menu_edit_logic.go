@@ -69,7 +69,7 @@ func (l *MenuEditLogic) MenuEdit(req *types.MenuReq) (resp *types.BaseResp, err 
 	}
 
 	// 3. 检查菜单是否存在
-	menu, err := l.svcCtx.SysMenuModel.FindOne(l.ctx, req.MenuId)
+	_, err = l.svcCtx.SysMenuModel.FindOne(l.ctx, req.MenuId)
 	if err != nil {
 		if err == model.ErrNotFound {
 			return &types.BaseResp{
@@ -136,30 +136,49 @@ func (l *MenuEditLogic) MenuEdit(req *types.MenuReq) (resp *types.BaseResp, err 
 		isCache = 0
 	}
 
-	// 10. 更新菜单信息
-	menu.ParentId = req.ParentId
-	menu.MenuName = req.MenuName
-	menu.OrderNum = int64(req.OrderNum)
-	menu.Path = req.Path
-	menu.Component = sql.NullString{String: req.Component, Valid: req.Component != ""}
-	menu.QueryParam = sql.NullString{String: req.QueryParam, Valid: req.QueryParam != ""}
-	menu.IsFrame = isFrame
-	menu.IsCache = isCache
-	menu.MenuType = req.MenuType
+	// 10. 更新菜单信息（只设置表单输入的字段）
+	updateMenu := &model.SysMenu{
+		MenuId:     req.MenuId,
+		MenuName:   req.MenuName,
+		MenuType:   req.MenuType,
+		UpdateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
+	}
+	if req.ParentId > 0 {
+		updateMenu.ParentId = req.ParentId
+	}
+	if req.OrderNum > 0 {
+		updateMenu.OrderNum = int64(req.OrderNum)
+	}
+	if req.Path != "" {
+		updateMenu.Path = req.Path
+	}
+	if req.Component != "" {
+		updateMenu.Component = sql.NullString{String: req.Component, Valid: true}
+	}
+	if req.QueryParam != "" {
+		updateMenu.QueryParam = sql.NullString{String: req.QueryParam, Valid: true}
+	}
+	updateMenu.IsFrame = isFrame
+	updateMenu.IsCache = isCache
 	if req.Visible != "" {
-		menu.Visible = req.Visible
+		updateMenu.Visible = req.Visible
 	}
 	if req.Status != "" {
-		menu.Status = req.Status
+		updateMenu.Status = req.Status
 	}
-	menu.Perms = sql.NullString{String: req.Perms, Valid: req.Perms != ""}
-	menu.Icon = req.Icon
-	menu.Remark = req.Remark
-	menu.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
-	menu.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
+	if req.Perms != "" {
+		updateMenu.Perms = sql.NullString{String: req.Perms, Valid: true}
+	}
+	if req.Icon != "" {
+		updateMenu.Icon = req.Icon
+	}
+	if req.Remark != "" {
+		updateMenu.Remark = req.Remark
+	}
 
 	// 11. 更新数据库
-	err = l.svcCtx.SysMenuModel.Update(l.ctx, menu)
+	err = l.svcCtx.SysMenuModel.UpdateById(l.ctx, updateMenu)
 	if err != nil {
 		l.Errorf("修改菜单失败: %v", err)
 		return &types.BaseResp{

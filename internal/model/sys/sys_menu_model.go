@@ -35,6 +35,8 @@ type (
 		CheckMenuExistRole(ctx context.Context, menuId int64) (bool, error)
 		// SelectMenuListByRoleId 根据角色ID查询菜单ID列表
 		SelectMenuListByRoleId(ctx context.Context, roleId int64) ([]int64, error)
+		// UpdateById 根据ID更新菜单，只更新非零值字段
+		UpdateById(ctx context.Context, data *SysMenu) error
 	}
 
 	// MenuQuery 菜单查询条件
@@ -331,4 +333,104 @@ func (m *customSysMenuModel) SelectMenuListByRoleId(ctx context.Context, roleId 
 		return nil, err
 	}
 	return menuIds, nil
+}
+
+// UpdateById 根据ID更新菜单，只更新非零值字段
+func (m *customSysMenuModel) UpdateById(ctx context.Context, data *SysMenu) error {
+	if data.MenuId == 0 {
+		return fmt.Errorf("menu_id cannot be zero")
+	}
+
+	var setParts []string
+	var args []interface{}
+
+	// 检查每个字段是否为非零值，如果是则加入更新列表
+	if data.MenuName != "" {
+		setParts = append(setParts, "`menu_name` = ?")
+		args = append(args, data.MenuName)
+	}
+	if data.ParentId > 0 {
+		setParts = append(setParts, "`parent_id` = ?")
+		args = append(args, data.ParentId)
+	}
+	if data.OrderNum > 0 {
+		setParts = append(setParts, "`order_num` = ?")
+		args = append(args, data.OrderNum)
+	}
+	if data.Path != "" {
+		setParts = append(setParts, "`path` = ?")
+		args = append(args, data.Path)
+	}
+	if data.Component.Valid {
+		setParts = append(setParts, "`component` = ?")
+		args = append(args, data.Component.String)
+	}
+	if data.QueryParam.Valid {
+		setParts = append(setParts, "`query_param` = ?")
+		args = append(args, data.QueryParam.String)
+	}
+	if data.IsFrame > 0 {
+		setParts = append(setParts, "`is_frame` = ?")
+		args = append(args, data.IsFrame)
+	}
+	if data.IsCache > 0 {
+		setParts = append(setParts, "`is_cache` = ?")
+		args = append(args, data.IsCache)
+	}
+	if data.MenuType != "" {
+		setParts = append(setParts, "`menu_type` = ?")
+		args = append(args, data.MenuType)
+	}
+	if data.Visible != "" {
+		setParts = append(setParts, "`visible` = ?")
+		args = append(args, data.Visible)
+	}
+	if data.Status != "" {
+		setParts = append(setParts, "`status` = ?")
+		args = append(args, data.Status)
+	}
+	if data.Perms.Valid {
+		setParts = append(setParts, "`perms` = ?")
+		args = append(args, data.Perms.String)
+	}
+	if data.Icon != "" {
+		setParts = append(setParts, "`icon` = ?")
+		args = append(args, data.Icon)
+	}
+	if data.Remark != "" {
+		setParts = append(setParts, "`remark` = ?")
+		args = append(args, data.Remark)
+	}
+	if data.CreateDept.Valid {
+		setParts = append(setParts, "`create_dept` = ?")
+		args = append(args, data.CreateDept.Int64)
+	}
+	if data.CreateBy.Valid {
+		setParts = append(setParts, "`create_by` = ?")
+		args = append(args, data.CreateBy.Int64)
+	}
+	if data.CreateTime.Valid {
+		setParts = append(setParts, "`create_time` = ?")
+		args = append(args, data.CreateTime.Time)
+	}
+	if data.UpdateBy.Valid {
+		setParts = append(setParts, "`update_by` = ?")
+		args = append(args, data.UpdateBy.Int64)
+	}
+	if data.UpdateTime.Valid {
+		setParts = append(setParts, "`update_time` = ?")
+		args = append(args, data.UpdateTime.Time)
+	}
+
+	if len(setParts) == 0 {
+		return nil // 没有需要更新的字段
+	}
+
+	// 构建更新SQL
+	setClause := strings.Join(setParts, ", ")
+	query := fmt.Sprintf("UPDATE %s SET %s WHERE `menu_id` = ?", m.table, setClause)
+	args = append(args, data.MenuId)
+
+	_, err := m.conn.ExecCtx(ctx, query, args...)
+	return err
 }

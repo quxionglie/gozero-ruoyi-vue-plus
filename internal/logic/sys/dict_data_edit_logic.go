@@ -72,44 +72,33 @@ func (l *DictDataEditLogic) DictDataEdit(req *types.DictDataReq) (resp *types.Ba
 		}, nil
 	}
 
-	// 3. 查询原字典数据（用于保留创建信息）
-	oldDictData, err := l.svcCtx.SysDictDataModel.FindOne(l.ctx, req.DictCode)
-	if err != nil {
-		if err == model.ErrNotFound {
-			return &types.BaseResp{
-				Code: 500,
-				Msg:  "字典数据不存在",
-			}, nil
-		}
-		l.Errorf("查询字典数据失败: %v", err)
-		return &types.BaseResp{
-			Code: 500,
-			Msg:  "查询字典数据失败",
-		}, err
-	}
-
-	// 4. 获取当前用户ID
+	// 3. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 5. 更新字典数据
+	// 4. 更新字典数据（只设置表单输入的字段）
 	dictData := &model.SysDictData{
 		DictCode:   req.DictCode,
 		DictSort:   int64(req.DictSort),
 		DictLabel:  req.DictLabel,
 		DictValue:  req.DictValue,
 		DictType:   req.DictType,
-		CssClass:   sql.NullString{String: req.CssClass, Valid: req.CssClass != ""},
-		ListClass:  sql.NullString{String: req.ListClass, Valid: req.ListClass != ""},
-		IsDefault:  req.IsDefault,
-		Remark:     sql.NullString{String: req.Remark, Valid: req.Remark != ""},
-		CreateDept: oldDictData.CreateDept, // 保持原部门ID
-		CreateBy:   oldDictData.CreateBy,   // 保持原创建者
-		CreateTime: oldDictData.CreateTime, // 保持原创建时间
 		UpdateBy:   sql.NullInt64{Int64: userId, Valid: userId > 0},
 		UpdateTime: sql.NullTime{Time: time.Now(), Valid: true},
 	}
+	if req.CssClass != "" {
+		dictData.CssClass = sql.NullString{String: req.CssClass, Valid: true}
+	}
+	if req.ListClass != "" {
+		dictData.ListClass = sql.NullString{String: req.ListClass, Valid: true}
+	}
+	if req.IsDefault != "" {
+		dictData.IsDefault = req.IsDefault
+	}
+	if req.Remark != "" {
+		dictData.Remark = sql.NullString{String: req.Remark, Valid: true}
+	}
 
-	err = l.svcCtx.SysDictDataModel.Update(l.ctx, dictData)
+	err = l.svcCtx.SysDictDataModel.UpdateById(l.ctx, dictData)
 	if err != nil {
 		l.Errorf("修改字典数据失败: %v", err)
 		return &types.BaseResp{

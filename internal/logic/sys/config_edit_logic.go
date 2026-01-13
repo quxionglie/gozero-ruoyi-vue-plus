@@ -86,22 +86,21 @@ func (l *ConfigEditLogic) ConfigEdit(req *types.ConfigReq) (resp *types.BaseResp
 	// 4. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 5. 更新参数配置
+	// 5. 更新参数配置（只更新表单输入的字段）
 	config := &model.SysConfig{
 		ConfigId:    req.ConfigId,
 		ConfigName:  req.ConfigName,
 		ConfigKey:   req.ConfigKey,
 		ConfigValue: req.ConfigValue,
 		ConfigType:  req.ConfigType,
-		Remark:      sql.NullString{String: req.Remark, Valid: req.Remark != ""},
-		CreateDept:  oldConfig.CreateDept, // 保持原部门ID
-		CreateBy:    oldConfig.CreateBy,   // 保持原创建者
-		CreateTime:  oldConfig.CreateTime, // 保持原创建时间
 		UpdateBy:    sql.NullInt64{Int64: userId, Valid: userId > 0},
 		UpdateTime:  sql.NullTime{Time: time.Now(), Valid: true},
 	}
+	if req.Remark != "" {
+		config.Remark = sql.NullString{String: req.Remark, Valid: true}
+	}
 
-	err = l.svcCtx.SysConfigModel.Update(l.ctx, config)
+	err = l.svcCtx.SysConfigModel.UpdateById(l.ctx, config)
 	if err != nil {
 		l.Errorf("修改参数配置失败: %v", err)
 		return &types.BaseResp{

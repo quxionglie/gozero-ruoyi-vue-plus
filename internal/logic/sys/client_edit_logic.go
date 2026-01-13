@@ -69,7 +69,7 @@ func (l *ClientEditLogic) ClientEdit(req *types.ClientReq) (resp *types.BaseResp
 	}
 
 	// 3. 检查客户端是否存在
-	client, err := l.svcCtx.SysClientModel.FindOne(l.ctx, req.Id)
+	_, err = l.svcCtx.SysClientModel.FindOne(l.ctx, req.Id)
 	if err != nil {
 		if err == model.ErrNotFound {
 			return &types.BaseResp{
@@ -95,22 +95,31 @@ func (l *ClientEditLogic) ClientEdit(req *types.ClientReq) (resp *types.BaseResp
 	// 6. 将 grantTypeList 转换为逗号分隔的字符串
 	grantTypeStr := strings.Join(req.GrantTypeList, ",")
 
-	// 7. 更新客户端信息
-	client.ClientId = sql.NullString{String: clientId, Valid: true}
-	client.ClientKey = sql.NullString{String: req.ClientKey, Valid: true}
-	client.ClientSecret = sql.NullString{String: req.ClientSecret, Valid: true}
-	client.GrantType = sql.NullString{String: grantTypeStr, Valid: true}
-	client.DeviceType = sql.NullString{String: req.DeviceType, Valid: req.DeviceType != ""}
-	client.ActiveTimeout = req.ActiveTimeout
-	client.Timeout = req.Timeout
-	if req.Status != "" {
-		client.Status = req.Status
+	// 7. 更新客户端信息（只设置表单输入的字段）
+	updateClient := &model.SysClient{
+		Id:           req.Id,
+		ClientId:     sql.NullString{String: clientId, Valid: true},
+		ClientKey:    sql.NullString{String: req.ClientKey, Valid: true},
+		ClientSecret: sql.NullString{String: req.ClientSecret, Valid: true},
+		GrantType:    sql.NullString{String: grantTypeStr, Valid: true},
+		UpdateBy:     sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime:   sql.NullTime{Time: time.Now(), Valid: true},
 	}
-	client.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
-	client.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
+	if req.DeviceType != "" {
+		updateClient.DeviceType = sql.NullString{String: req.DeviceType, Valid: true}
+	}
+	if req.ActiveTimeout > 0 {
+		updateClient.ActiveTimeout = req.ActiveTimeout
+	}
+	if req.Timeout > 0 {
+		updateClient.Timeout = req.Timeout
+	}
+	if req.Status != "" {
+		updateClient.Status = req.Status
+	}
 
 	// 8. 更新数据库
-	err = l.svcCtx.SysClientModel.Update(l.ctx, client)
+	err = l.svcCtx.SysClientModel.UpdateById(l.ctx, updateClient)
 	if err != nil {
 		l.Errorf("修改客户端管理失败: %v", err)
 		return &types.BaseResp{

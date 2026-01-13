@@ -46,7 +46,7 @@ func (l *NoticeEditLogic) NoticeEdit(req *types.NoticeReq) (resp *types.BaseResp
 	}
 
 	// 3. 检查公告是否存在
-	notice, err := l.svcCtx.SysNoticeModel.FindOne(l.ctx, req.NoticeId)
+	_, err = l.svcCtx.SysNoticeModel.FindOne(l.ctx, req.NoticeId)
 	if err != nil {
 		if err == model.ErrNotFound {
 			return &types.BaseResp{
@@ -64,21 +64,28 @@ func (l *NoticeEditLogic) NoticeEdit(req *types.NoticeReq) (resp *types.BaseResp
 	// 4. 获取当前用户ID
 	userId, _ := util.GetUserIdFromContext(l.ctx)
 
-	// 5. 更新通知公告信息
-	notice.NoticeTitle = req.NoticeTitle
+	// 5. 更新通知公告信息（只设置表单输入的字段）
+	updateNotice := &model.SysNotice{
+		NoticeId:    req.NoticeId,
+		NoticeTitle: req.NoticeTitle,
+		UpdateBy:    sql.NullInt64{Int64: userId, Valid: userId > 0},
+		UpdateTime:  sql.NullTime{Time: time.Now(), Valid: true},
+	}
 	if req.NoticeType != "" {
-		notice.NoticeType = req.NoticeType
+		updateNotice.NoticeType = req.NoticeType
 	}
-	notice.NoticeContent = sql.NullString{String: req.NoticeContent, Valid: req.NoticeContent != ""}
+	if req.NoticeContent != "" {
+		updateNotice.NoticeContent = sql.NullString{String: req.NoticeContent, Valid: true}
+	}
 	if req.Status != "" {
-		notice.Status = req.Status
+		updateNotice.Status = req.Status
 	}
-	notice.Remark = sql.NullString{String: req.Remark, Valid: req.Remark != ""}
-	notice.UpdateBy = sql.NullInt64{Int64: userId, Valid: userId > 0}
-	notice.UpdateTime = sql.NullTime{Time: time.Now(), Valid: true}
+	if req.Remark != "" {
+		updateNotice.Remark = sql.NullString{String: req.Remark, Valid: true}
+	}
 
 	// 6. 更新数据库
-	err = l.svcCtx.SysNoticeModel.Update(l.ctx, notice)
+	err = l.svcCtx.SysNoticeModel.UpdateById(l.ctx, updateNotice)
 	if err != nil {
 		l.Errorf("修改通知公告失败: %v", err)
 		return &types.BaseResp{
