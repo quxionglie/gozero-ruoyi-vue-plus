@@ -30,6 +30,11 @@ type CaptchaVo struct {
 	Img            string `json:"img,omitempty"`  // 验证码图片（base64）
 }
 
+type ClientChangeStatusReq struct {
+	ClientId string `json:"clientId"`           // 客户端ID（必填）
+	Status   string `json:"status,options=0|1"` // 状态（0正常 1停用）
+}
+
 type ClientGetInfoReq struct {
 	Id int64 `path:"id,range=[1:]"` // id（必须大于0）
 }

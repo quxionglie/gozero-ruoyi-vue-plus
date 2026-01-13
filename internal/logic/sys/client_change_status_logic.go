@@ -27,22 +27,8 @@ func NewClientChangeStatusLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	}
 }
 
-func (l *ClientChangeStatusLogic) ClientChangeStatus(req *types.ClientReq) (resp *types.BaseResp, err error) {
-	// 1. 参数校验
-	if req.ClientId == "" {
-		return &types.BaseResp{
-			Code: 400,
-			Msg:  "客户端ID不能为空",
-		}, nil
-	}
-	if req.Status == "" {
-		return &types.BaseResp{
-			Code: 400,
-			Msg:  "状态不能为空",
-		}, nil
-	}
-
-	// 2. 更新客户端状态（根据 clientId 更新）
+func (l *ClientChangeStatusLogic) ClientChangeStatus(req *types.ClientChangeStatusReq) (resp *types.BaseResp, err error) {
+	// 更新客户端状态（根据 clientId 更新）
 	err = l.svcCtx.SysClientModel.UpdateClientStatus(l.ctx, req.ClientId, req.Status)
 	if err != nil {
 		l.Errorf("修改客户端状态失败: %v", err)

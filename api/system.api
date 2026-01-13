@@ -243,7 +243,7 @@ service admin-api {
 
 	@doc "状态修改"
 	@handler ClientChangeStatus
-	put /system/client/changeStatus (ClientReq) returns (BaseResp)
+	put /system/client/changeStatus (ClientChangeStatusReq) returns (BaseResp)
 
 	@doc "删除客户端管理"
 	@handler ClientRemove
@@ -696,6 +696,11 @@ type ClientListReq {
 	ClientSecret string `form:"clientSecret,optional"` // 客户端秘钥
 	Status       string `form:"status,optional"`       // 状态（0正常 1停用）
 	PageQuery
+}
+
+type ClientChangeStatusReq {
+	ClientId string `json:"clientId"`                      // 客户端ID（必填）
+	Status   string `json:"status,options=0|1"`           // 状态（0正常 1停用）
 }
 
 type ClientRemoveReq {
