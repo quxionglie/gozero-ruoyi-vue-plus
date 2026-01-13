@@ -5,7 +5,7 @@ alwaysApply: false
 
 ## 必须支持的规则
 
-- 自动把我发出的请求文字记录到cursor_chat.txt，你自己的操作日志不要添加。格式：第一行：时间，第二行：请求内容。每次联天请求间空一行
+- 自动把我发出的请求文字记录到cursor_chat.txt，你自己的操作日志不要添加。格式：第一行：时间，第二行：请求内容。每次聊天请求间空一行
 - 响应json int64数据，统一以字符串输出。
 - logic*.go不要直接写sql语句，把访问db的统一抽取到相关model类中。model包中*_gen.go是自动生成的不要修改，如如sysdict只在sysdicttypemodel.go中修改
 - model类统一使用snake case风格，如sys_client_model.go、sys_client_model_gen.go。以后goctl model mysql需指定--style go_zero
@@ -21,3 +21,4 @@ alwaysApply: false
 
 ## *.api限制
 - 响应json int64数据，统一以字符串输出，但Total除外。
+- 所有*.api文件不使用tag的options=X|Y 限定输入

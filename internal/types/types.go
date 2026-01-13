@@ -31,8 +31,8 @@ type CaptchaVo struct {
 }
 
 type ClientChangeStatusReq struct {
-	ClientId string `json:"clientId"`           // 客户端ID（必填）
-	Status   string `json:"status,options=0|1"` // 状态（0正常 1停用）
+	ClientId string `json:"clientId"` // 客户端ID（必填）
+	Status   string `json:"status"`   // 状态（0正常 1停用）
 }
 
 type ClientGetInfoReq struct {
@@ -52,16 +52,16 @@ type ClientRemoveReq struct {
 }
 
 type ClientReq struct {
-	Id            int64    `json:"id,optional,string"`          // id
-	ClientId      string   `json:"clientId,optional"`           // 客户端id（自动生成）
-	ClientKey     string   `json:"clientKey"`                   // 客户端key（必填）
-	ClientSecret  string   `json:"clientSecret"`                // 客户端秘钥（必填）
-	GrantTypeList []string `json:"grantTypeList"`               // 授权类型列表（必填）
-	GrantType     string   `json:"grantType,optional"`          // 授权类型（逗号分隔）
-	DeviceType    string   `json:"deviceType,optional"`         // 设备类型
-	ActiveTimeout int64    `json:"activeTimeout,optional"`      // token活跃超时时间
-	Timeout       int64    `json:"timeout,optional"`            // token固定超时时间
-	Status        string   `json:"status,optional,options=0|1"` // 状态（0正常 1停用）
+	Id            int64    `json:"id,optional,string"`     // id
+	ClientId      string   `json:"clientId,optional"`      // 客户端id（自动生成）
+	ClientKey     string   `json:"clientKey"`              // 客户端key（必填）
+	ClientSecret  string   `json:"clientSecret"`           // 客户端秘钥（必填）
+	GrantTypeList []string `json:"grantTypeList"`          // 授权类型列表（必填）
+	GrantType     string   `json:"grantType,optional"`     // 授权类型（逗号分隔）
+	DeviceType    string   `json:"deviceType,optional"`    // 设备类型
+	ActiveTimeout int64    `json:"activeTimeout,optional"` // token活跃超时时间
+	Timeout       int64    `json:"timeout,optional"`       // token固定超时时间
+	Status        string   `json:"status,optional"`        // 状态（0正常 1停用）
 }
 
 type ClientResp struct {
@@ -102,12 +102,12 @@ type ConfigRemoveReq struct {
 }
 
 type ConfigReq struct {
-	ConfigId    int64  `json:"configId,optional,string"`        // 参数主键
-	ConfigName  string `json:"configName"`                      // 参数名称（必填，最大100字符）
-	ConfigKey   string `json:"configKey"`                       // 参数键名（必填，最大100字符）
-	ConfigValue string `json:"configValue"`                     // 参数键值（必填，最大500字符）
-	ConfigType  string `json:"configType,optional,options=Y|N"` // 系统内置（Y是 N否）
-	Remark      string `json:"remark,optional"`                 // 备注
+	ConfigId    int64  `json:"configId,optional,string"` // 参数主键
+	ConfigName  string `json:"configName"`               // 参数名称（必填，最大100字符）
+	ConfigKey   string `json:"configKey"`                // 参数键名（必填，最大100字符）
+	ConfigValue string `json:"configValue"`              // 参数键值（必填，最大500字符）
+	ConfigType  string `json:"configType,optional"`      // 系统内置（Y是 N否）
+	Remark      string `json:"remark,optional"`          // 备注
 }
 
 type ConfigResp struct {
@@ -161,15 +161,15 @@ type DeptRemoveReq struct {
 }
 
 type DeptReq struct {
-	DeptId       int64  `json:"deptId,optional,string"`      // 部门id
-	ParentId     int64  `json:"parentId,optional"`           // 父部门ID
-	DeptName     string `json:"deptName"`                    // 部门名称（必填，最大30字符）
-	DeptCategory string `json:"deptCategory,optional"`       // 部门类别编码
-	OrderNum     int32  `json:"orderNum,optional"`           // 显示顺序
-	Leader       int64  `json:"leader,optional,string"`      // 负责人
-	Phone        string `json:"phone,optional"`              // 联系电话（最大11字符）
-	Email        string `json:"email,optional"`              // 邮箱（最大50字符）
-	Status       string `json:"status,optional,options=0|1"` // 状态（0正常 1停用）
+	DeptId       int64  `json:"deptId,optional,string"` // 部门id
+	ParentId     int64  `json:"parentId,optional"`      // 父部门ID
+	DeptName     string `json:"deptName"`               // 部门名称（必填，最大30字符）
+	DeptCategory string `json:"deptCategory,optional"`  // 部门类别编码
+	OrderNum     int32  `json:"orderNum,optional"`      // 显示顺序
+	Leader       int64  `json:"leader,optional,string"` // 负责人
+	Phone        string `json:"phone,optional"`         // 联系电话（最大11字符）
+	Email        string `json:"email,optional"`         // 邮箱（最大50字符）
+	Status       string `json:"status,optional"`        // 状态（0正常 1停用）
 }
 
 type DeptResp struct {
@@ -243,15 +243,15 @@ type DictDataRemoveReq struct {
 }
 
 type DictDataReq struct {
-	DictCode  int64  `json:"dictCode,optional,string"`       // 字典编码
-	DictSort  int32  `json:"dictSort,optional"`              // 字典排序
-	DictLabel string `json:"dictLabel"`                      // 字典标签（必填，最大100字符）
-	DictValue string `json:"dictValue"`                      // 字典键值（必填，最大100字符）
-	DictType  string `json:"dictType"`                       // 字典类型（必填，最大100字符）
-	CssClass  string `json:"cssClass,optional"`              // 样式属性（最大100字符）
-	ListClass string `json:"listClass,optional"`             // 表格回显样式
-	IsDefault string `json:"isDefault,optional,options=Y|N"` // 是否默认（Y是 N否）
-	Remark    string `json:"remark,optional"`                // 备注
+	DictCode  int64  `json:"dictCode,optional,string"` // 字典编码
+	DictSort  int32  `json:"dictSort,optional"`        // 字典排序
+	DictLabel string `json:"dictLabel"`                // 字典标签（必填，最大100字符）
+	DictValue string `json:"dictValue"`                // 字典键值（必填，最大100字符）
+	DictType  string `json:"dictType"`                 // 字典类型（必填，最大100字符）
+	CssClass  string `json:"cssClass,optional"`        // 样式属性（最大100字符）
+	ListClass string `json:"listClass,optional"`       // 表格回显样式
+	IsDefault string `json:"isDefault,optional"`       // 是否默认（Y是 N否）
+	Remark    string `json:"remark,optional"`          // 备注
 }
 
 type DictDataResp struct {
@@ -414,21 +414,21 @@ type MenuRemoveReq struct {
 }
 
 type MenuReq struct {
-	MenuId     int64  `json:"menuId,optional,string"`       // 菜单ID
-	ParentId   int64  `json:"parentId,optional,string"`     // 父菜单ID
-	MenuName   string `json:"menuName"`                     // 菜单名称（必填，最大50字符）
-	OrderNum   int32  `json:"orderNum,optional"`            // 显示顺序
-	Path       string `json:"path,optional"`                // 路由地址（最大200字符）
-	Component  string `json:"component,optional"`           // 组件路径（最大200字符）
-	QueryParam string `json:"queryParam,optional"`          // 路由参数
-	IsFrame    string `json:"isFrame,optional,options=0|1"` // 是否为外链（0是 1否）
-	IsCache    string `json:"isCache,optional,options=0|1"` // 是否缓存（0缓存 1不缓存）
-	MenuType   string `json:"menuType"`                     // 菜单类型（M目录 C菜单 F按钮）
-	Visible    string `json:"visible,optional,options=0|1"` // 显示状态（0显示 1隐藏）
-	Status     string `json:"status,optional,options=0|1"`  // 菜单状态（0正常 1停用）
-	Perms      string `json:"perms,optional"`               // 权限标识（最大100字符）
-	Icon       string `json:"icon,optional"`                // 菜单图标
-	Remark     string `json:"remark,optional"`              // 备注
+	MenuId     int64  `json:"menuId,optional,string"`   // 菜单ID
+	ParentId   int64  `json:"parentId,optional,string"` // 父菜单ID
+	MenuName   string `json:"menuName"`                 // 菜单名称（必填，最大50字符）
+	OrderNum   int32  `json:"orderNum,optional"`        // 显示顺序
+	Path       string `json:"path,optional"`            // 路由地址（最大200字符）
+	Component  string `json:"component,optional"`       // 组件路径（最大200字符）
+	QueryParam string `json:"queryParam,optional"`      // 路由参数
+	IsFrame    string `json:"isFrame,optional"`         // 是否为外链（0是 1否）
+	IsCache    string `json:"isCache,optional"`         // 是否缓存（0缓存 1不缓存）
+	MenuType   string `json:"menuType"`                 // 菜单类型（M目录 C菜单 F按钮）
+	Visible    string `json:"visible,optional"`         // 显示状态（0显示 1隐藏）
+	Status     string `json:"status,optional"`          // 菜单状态（0正常 1停用）
+	Perms      string `json:"perms,optional"`           // 权限标识（最大100字符）
+	Icon       string `json:"icon,optional"`            // 菜单图标
+	Remark     string `json:"remark,optional"`          // 备注
 }
 
 type MenuResp struct {
@@ -520,12 +520,12 @@ type NoticeRemoveReq struct {
 }
 
 type NoticeReq struct {
-	NoticeId      int64  `json:"noticeId,optional,string"`    // 公告ID
-	NoticeTitle   string `json:"noticeTitle"`                 // 公告标题（必填，最大50字符）
-	NoticeType    string `json:"noticeType,optional"`         // 公告类型（1通知 2公告）
-	NoticeContent string `json:"noticeContent,optional"`      // 公告内容
-	Status        string `json:"status,optional,options=0|1"` // 公告状态（0正常 1关闭）
-	Remark        string `json:"remark,optional"`             // 备注
+	NoticeId      int64  `json:"noticeId,optional,string"` // 公告ID
+	NoticeTitle   string `json:"noticeTitle"`              // 公告标题（必填，最大50字符）
+	NoticeType    string `json:"noticeType,optional"`      // 公告类型（1通知 2公告）
+	NoticeContent string `json:"noticeContent,optional"`   // 公告内容
+	Status        string `json:"status,optional"`          // 公告状态（0正常 1关闭）
+	Remark        string `json:"remark,optional"`          // 备注
 }
 
 type NoticeResp struct {
@@ -612,7 +612,7 @@ type OperLogVo struct {
 
 type OssConfigChangeStatusReq struct {
 	OssConfigId int64  `json:"ossConfigId,range=[1:]"` // 主键（必须大于0）
-	Status      string `json:"status,options=0|1"`     // 状态（0是 1否）
+	Status      string `json:"status"`                 // 状态（0是 1否）
 }
 
 type OssConfigGetInfoReq struct {
@@ -636,20 +636,20 @@ type OssConfigRemoveReq struct {
 }
 
 type OssConfigReq struct {
-	OssConfigId  int64  `json:"ossConfigId,optional,string"`         // 主键
-	ConfigKey    string `json:"configKey"`                           // 配置key（必填）
-	AccessKey    string `json:"accessKey"`                           // accessKey（必填）
-	SecretKey    string `json:"secretKey"`                           // 秘钥（必填）
-	BucketName   string `json:"bucketName"`                          // 桶名称（必填）
-	Prefix       string `json:"prefix,optional"`                     // 前缀
-	Endpoint     string `json:"endpoint"`                            // 访问站点（必填）
-	Domain       string `json:"domain,optional"`                     // 自定义域名
-	IsHttps      string `json:"isHttps,optional,options=Y|N"`        // 是否https（Y=是,N=否）
-	Region       string `json:"region,optional"`                     // 域
-	AccessPolicy string `json:"accessPolicy,optional,options=0|1|2"` // 桶权限类型(0=private 1=public 2=custom)
-	Status       string `json:"status,optional,options=0|1"`         // 是否默认（0=是,1=否）
-	Ext1         string `json:"ext1,optional"`                       // 扩展字段
-	Remark       string `json:"remark,optional"`                     // 备注
+	OssConfigId  int64  `json:"ossConfigId,optional,string"` // 主键
+	ConfigKey    string `json:"configKey"`                   // 配置key（必填）
+	AccessKey    string `json:"accessKey"`                   // accessKey（必填）
+	SecretKey    string `json:"secretKey"`                   // 秘钥（必填）
+	BucketName   string `json:"bucketName"`                  // 桶名称（必填）
+	Prefix       string `json:"prefix,optional"`             // 前缀
+	Endpoint     string `json:"endpoint"`                    // 访问站点（必填）
+	Domain       string `json:"domain,optional"`             // 自定义域名
+	IsHttps      string `json:"isHttps,optional"`            // 是否https（Y=是,N=否）
+	Region       string `json:"region,optional"`             // 域
+	AccessPolicy string `json:"accessPolicy,optional"`       // 桶权限类型(0=private 1=public 2=custom)
+	Status       string `json:"status,optional"`             // 是否默认（0=是,1=否）
+	Ext1         string `json:"ext1,optional"`               // 扩展字段
+	Remark       string `json:"remark,optional"`             // 备注
 }
 
 type OssConfigResp struct {
@@ -777,7 +777,7 @@ type PostReq struct {
 	PostCategory string `json:"postCategory,optional"`        // 岗位类别编码
 	PostName     string `json:"postName"`                     // 岗位名称（必填，最大50字符）
 	PostSort     int32  `json:"postSort,optional"`            // 显示顺序
-	Status       string `json:"status,optional,options=0|1"`  // 状态（0正常 1停用）
+	Status       string `json:"status,optional"`              // 状态（0正常 1停用）
 	Remark       string `json:"remark,optional"`              // 备注
 }
 
@@ -848,7 +848,7 @@ type RoleAuthUserUnallocatedListReq struct {
 
 type RoleChangeStatusReq struct {
 	RoleId int64  `json:"roleId,range=[1:],string"` // 角色ID（必须大于0）
-	Status string `json:"status,options=0|1"`       // 角色状态（0正常 1停用）
+	Status string `json:"status"`                   // 角色状态（0正常 1停用）
 }
 
 type RoleDeptTreeReq struct {
@@ -887,15 +887,15 @@ type RoleRemoveReq struct {
 }
 
 type RoleReq struct {
-	RoleId    int64   `json:"roleId,optional,string"`      // 角色ID
-	RoleName  string  `json:"roleName"`                    // 角色名称（必填，最大30字符）
-	RoleKey   string  `json:"roleKey"`                     // 角色权限标识（必填，最大100字符）
-	RoleSort  int32   `json:"roleSort,optional"`           // 显示顺序
-	DataScope string  `json:"dataScope,optional"`          // 数据范围（1全部数据权限 2自定义数据权限 3本部门数据权限 4本部门及以下数据权限 5仅本人数据权限）
-	MenuIds   []int64 `json:"menuIds,optional"`            // 菜单ID列表
-	DeptIds   []int64 `json:"deptIds,optional"`            // 部门ID列表（数据权限）
-	Status    string  `json:"status,optional,options=0|1"` // 角色状态（0正常 1停用）
-	Remark    string  `json:"remark,optional"`             // 备注（最大500字符）
+	RoleId    int64   `json:"roleId,optional,string"` // 角色ID
+	RoleName  string  `json:"roleName"`               // 角色名称（必填，最大30字符）
+	RoleKey   string  `json:"roleKey"`                // 角色权限标识（必填，最大100字符）
+	RoleSort  int32   `json:"roleSort,optional"`      // 显示顺序
+	DataScope string  `json:"dataScope,optional"`     // 数据范围（1全部数据权限 2自定义数据权限 3本部门数据权限 4本部门及以下数据权限 5仅本人数据权限）
+	MenuIds   []int64 `json:"menuIds,optional"`       // 菜单ID列表
+	DeptIds   []int64 `json:"deptIds,optional"`       // 部门ID列表（数据权限）
+	Status    string  `json:"status,optional"`        // 角色状态（0正常 1停用）
+	Remark    string  `json:"remark,optional"`        // 备注（最大500字符）
 }
 
 type RoleResp struct {
@@ -1049,8 +1049,8 @@ type UserAuthRoleReq struct {
 }
 
 type UserChangeStatusReq struct {
-	UserId int64  `json:"userId,range=[1:]"`  // 用户ID（必须大于0）
-	Status string `json:"status,options=0|1"` // 帐号状态（0正常 1停用）
+	UserId int64  `json:"userId,range=[1:]"` // 用户ID（必须大于0）
+	Status string `json:"status"`            // 帐号状态（0正常 1停用）
 }
 
 type UserDetailResp struct {
@@ -1126,10 +1126,10 @@ type UserPasswordReq struct {
 }
 
 type UserProfileReq struct {
-	NickName    string `json:"nickName,optional"`          // 用户昵称（最大30字符）
-	Email       string `json:"email,optional"`             // 用户邮箱（最大50字符）
-	Phonenumber string `json:"phonenumber,optional"`       // 手机号码
-	Sex         string `json:"sex,optional,options=0|1|2"` // 用户性别（0男 1女 2未知）
+	NickName    string `json:"nickName,optional"`    // 用户昵称（最大30字符）
+	Email       string `json:"email,optional"`       // 用户邮箱（最大50字符）
+	Phonenumber string `json:"phonenumber,optional"` // 手机号码
+	Sex         string `json:"sex,optional"`         // 用户性别（0男 1女 2未知）
 }
 
 type UserProfileResp struct {
@@ -1142,19 +1142,19 @@ type UserRemoveReq struct {
 }
 
 type UserReq struct {
-	UserId      int64   `json:"userId,optional,string"`      // 用户ID
-	DeptId      int64   `json:"deptId,optional,string"`      // 部门ID
-	UserName    string  `json:"userName"`                    // 用户账号（必填，最大30字符）
-	NickName    string  `json:"nickName"`                    // 用户昵称（必填，最大30字符）
-	UserType    string  `json:"userType,optional"`           // 用户类型（sys_user系统用户）
-	Email       string  `json:"email,optional"`              // 用户邮箱（最大50字符）
-	Phonenumber string  `json:"phonenumber,optional"`        // 手机号码
-	Sex         string  `json:"sex,optional,options=0|1|2"`  // 用户性别（0男 1女 2未知）
-	Password    string  `json:"password,optional"`           // 密码
-	Status      string  `json:"status,optional,options=0|1"` // 帐号状态（0正常 1停用）
-	Remark      string  `json:"remark,optional"`             // 备注
-	RoleIds     []int64 `json:"roleIds,optional"`            // 角色组
-	PostIds     []int64 `json:"postIds,optional"`            // 岗位组
+	UserId      int64   `json:"userId,optional,string"` // 用户ID
+	DeptId      int64   `json:"deptId,optional,string"` // 部门ID
+	UserName    string  `json:"userName"`               // 用户账号（必填，最大30字符）
+	NickName    string  `json:"nickName"`               // 用户昵称（必填，最大30字符）
+	UserType    string  `json:"userType,optional"`      // 用户类型（sys_user系统用户）
+	Email       string  `json:"email,optional"`         // 用户邮箱（最大50字符）
+	Phonenumber string  `json:"phonenumber,optional"`   // 手机号码
+	Sex         string  `json:"sex,optional"`           // 用户性别（0男 1女 2未知）
+	Password    string  `json:"password,optional"`      // 密码
+	Status      string  `json:"status,optional"`        // 帐号状态（0正常 1停用）
+	Remark      string  `json:"remark,optional"`        // 备注
+	RoleIds     []int64 `json:"roleIds,optional"`       // 角色组
+	PostIds     []int64 `json:"postIds,optional"`       // 岗位组
 }
 
 type UserResetPwdReq struct {

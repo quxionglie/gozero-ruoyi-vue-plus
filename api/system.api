@@ -537,7 +537,7 @@ type DictDataReq {
 	DictType  string `json:"dictType"`                     // 字典类型（必填，最大100字符）
 	CssClass  string `json:"cssClass,optional"`            // 样式属性（最大100字符）
 	ListClass string `json:"listClass,optional"`           // 表格回显样式
-	IsDefault string `json:"isDefault,optional,options=Y|N"` // 是否默认（Y是 N否）
+	IsDefault string `json:"isDefault,optional"` // 是否默认（Y是 N否）
 	Remark    string `json:"remark,optional"`              // 备注
 }
 
@@ -589,7 +589,7 @@ type ConfigReq {
 	ConfigName  string `json:"configName"`                     // 参数名称（必填，最大100字符）
 	ConfigKey   string `json:"configKey"`                      // 参数键名（必填，最大100字符）
 	ConfigValue string `json:"configValue"`                    // 参数键值（必填，最大500字符）
-	ConfigType  string `json:"configType,optional,options=Y|N"` // 系统内置（Y是 N否）
+	ConfigType  string `json:"configType,optional"` // 系统内置（Y是 N否）
 	Remark      string `json:"remark,optional"`                // 备注
 }
 
@@ -638,7 +638,7 @@ type NoticeReq {
 	NoticeTitle   string `json:"noticeTitle"`                   // 公告标题（必填，最大50字符）
 	NoticeType    string `json:"noticeType,optional"`           // 公告类型（1通知 2公告）
 	NoticeContent string `json:"noticeContent,optional"`        // 公告内容
-	Status        string `json:"status,optional,options=0|1"`   // 公告状态（0正常 1关闭）
+	Status        string `json:"status,optional"`   // 公告状态（0正常 1关闭）
 	Remark        string `json:"remark,optional"`               // 备注
 }
 
@@ -683,7 +683,7 @@ type ClientReq {
 	DeviceType    string   `json:"deviceType,optional"`            // 设备类型
 	ActiveTimeout int64    `json:"activeTimeout,optional"`         // token活跃超时时间
 	Timeout       int64    `json:"timeout,optional"`               // token固定超时时间
-	Status        string   `json:"status,optional,options=0|1"`    // 状态（0正常 1停用）
+	Status        string   `json:"status,optional"`    // 状态（0正常 1停用）
 }
 
 type ClientGetInfoReq {
@@ -700,7 +700,7 @@ type ClientListReq {
 
 type ClientChangeStatusReq {
 	ClientId string `json:"clientId"`                      // 客户端ID（必填）
-	Status   string `json:"status,options=0|1"`           // 状态（0正常 1停用）
+	Status   string `json:"status"`           // 状态（0正常 1停用）
 }
 
 type ClientRemoveReq {
@@ -734,7 +734,7 @@ type PostReq {
 	PostCategory string `json:"postCategory,optional"`       // 岗位类别编码
 	PostName     string `json:"postName"`                    // 岗位名称（必填，最大50字符）
 	PostSort     int32  `json:"postSort,optional"`           // 显示顺序
-	Status       string `json:"status,optional,options=0|1"` // 状态（0正常 1停用）
+	Status       string `json:"status,optional"` // 状态（0正常 1停用）
 	Remark       string `json:"remark,optional"`             // 备注
 }
 
@@ -794,7 +794,7 @@ type DeptReq {
 	Leader       int64  `json:"leader,optional,string"`       // 负责人
 	Phone        string `json:"phone,optional"`               // 联系电话（最大11字符）
 	Email        string `json:"email,optional"`               // 邮箱（最大50字符）
-	Status       string `json:"status,optional,options=0|1"`   // 状态（0正常 1停用）
+	Status       string `json:"status,optional"`   // 状态（0正常 1停用）
 }
 
 type DeptGetInfoReq {
@@ -863,11 +863,11 @@ type MenuReq {
 	Path       string `json:"path,optional"`                // 路由地址（最大200字符）
 	Component  string `json:"component,optional"`           // 组件路径（最大200字符）
 	QueryParam string `json:"queryParam,optional"`          // 路由参数
-	IsFrame    string `json:"isFrame,optional,options=0|1"` // 是否为外链（0是 1否）
-	IsCache    string `json:"isCache,optional,options=0|1"` // 是否缓存（0缓存 1不缓存）
+	IsFrame    string `json:"isFrame,optional"` // 是否为外链（0是 1否）
+	IsCache    string `json:"isCache,optional"` // 是否缓存（0缓存 1不缓存）
 	MenuType   string `json:"menuType"`                     // 菜单类型（M目录 C菜单 F按钮）
-	Visible    string `json:"visible,optional,options=0|1"` // 显示状态（0显示 1隐藏）
-	Status     string `json:"status,optional,options=0|1"`  // 菜单状态（0正常 1停用）
+	Visible    string `json:"visible,optional"` // 显示状态（0显示 1隐藏）
+	Status     string `json:"status,optional"`  // 菜单状态（0正常 1停用）
 	Perms      string `json:"perms,optional"`               // 权限标识（最大100字符）
 	Icon       string `json:"icon,optional"`                // 菜单图标
 	Remark     string `json:"remark,optional"`              // 备注
@@ -970,13 +970,13 @@ type RoleReq {
 	DataScope string  `json:"dataScope,optional"`        // 数据范围（1全部数据权限 2自定义数据权限 3本部门数据权限 4本部门及以下数据权限 5仅本人数据权限）
 	MenuIds  []int64  `json:"menuIds,optional"`          // 菜单ID列表
 	DeptIds  []int64  `json:"deptIds,optional"`          // 部门ID列表（数据权限）
-	Status   string   `json:"status,optional,options=0|1"` // 角色状态（0正常 1停用）
+	Status   string   `json:"status,optional"` // 角色状态（0正常 1停用）
 	Remark   string   `json:"remark,optional"`           // 备注（最大500字符）
 }
 
 type RoleChangeStatusReq {
 	RoleId int64  `json:"roleId,range=[1:],string"`            // 角色ID（必须大于0）
-	Status string `json:"status,options=0|1"`           // 角色状态（0正常 1停用）
+	Status string `json:"status"`           // 角色状态（0正常 1停用）
 }
 
 type RoleRemoveReq {
@@ -1119,9 +1119,9 @@ type UserReq {
 	UserType    string  `json:"userType,optional"`          // 用户类型（sys_user系统用户）
 	Email       string  `json:"email,optional"`             // 用户邮箱（最大50字符）
 	Phonenumber string  `json:"phonenumber,optional"`       // 手机号码
-	Sex         string  `json:"sex,optional,options=0|1|2"` // 用户性别（0男 1女 2未知）
+	Sex         string  `json:"sex,optional"` // 用户性别（0男 1女 2未知）
 	Password    string  `json:"password,optional"`          // 密码
-	Status      string  `json:"status,optional,options=0|1"` // 帐号状态（0正常 1停用）
+	Status      string  `json:"status,optional"` // 帐号状态（0正常 1停用）
 	Remark      string  `json:"remark,optional"`            // 备注
 	RoleIds     []int64 `json:"roleIds,optional"`           // 角色组
 	PostIds     []int64 `json:"postIds,optional"`           // 岗位组
@@ -1147,7 +1147,7 @@ type UserResetPwdReq {
 
 type UserChangeStatusReq {
 	UserId int64  `json:"userId,range=[1:]"` // 用户ID（必须大于0）
-	Status string `json:"status,options=0|1"` // 帐号状态（0正常 1停用）
+	Status string `json:"status"` // 帐号状态（0正常 1停用）
 }
 
 type UserAuthRoleGetReq {
@@ -1188,7 +1188,7 @@ type UserProfileReq {
 	NickName    string `json:"nickName,optional"`           // 用户昵称（最大30字符）
 	Email       string `json:"email,optional"`              // 用户邮箱（最大50字符）
 	Phonenumber string `json:"phonenumber,optional"`        // 手机号码
-	Sex         string `json:"sex,optional,options=0|1|2"`  // 用户性别（0男 1女 2未知）
+	Sex         string `json:"sex,optional"`  // 用户性别（0男 1女 2未知）
 }
 
 type UserPasswordReq {

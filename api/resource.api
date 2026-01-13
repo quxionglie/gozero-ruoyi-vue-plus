@@ -78,10 +78,10 @@ type OssConfigReq {
 	Prefix       string `json:"prefix,optional"`               // 前缀
 	Endpoint     string `json:"endpoint"`                      // 访问站点（必填）
 	Domain       string `json:"domain,optional"`               // 自定义域名
-	IsHttps      string `json:"isHttps,optional,options=Y|N"` // 是否https（Y=是,N=否）
+	IsHttps      string `json:"isHttps,optional"` // 是否https（Y=是,N=否）
 	Region       string `json:"region,optional"`               // 域
-	AccessPolicy string `json:"accessPolicy,optional,options=0|1|2"` // 桶权限类型(0=private 1=public 2=custom)
-	Status       string `json:"status,optional,options=0|1"`   // 是否默认（0=是,1=否）
+	AccessPolicy string `json:"accessPolicy,optional"` // 桶权限类型(0=private 1=public 2=custom)
+	Status       string `json:"status,optional"`   // 是否默认（0=是,1=否）
 	Ext1         string `json:"ext1,optional"`                 // 扩展字段
 	Remark       string `json:"remark,optional"`               // 备注
 }
@@ -102,7 +102,7 @@ type OssConfigRemoveReq {
 
 type OssConfigChangeStatusReq {
 	OssConfigId int64  `json:"ossConfigId,range=[1:]"`  // 主键（必须大于0）
-	Status      string `json:"status,options=0|1"`      // 状态（0是 1否）
+	Status      string `json:"status"`      // 状态（0是 1否）
 }
 
 type OssConfigResp {
