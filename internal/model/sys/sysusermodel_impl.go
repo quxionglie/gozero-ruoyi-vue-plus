@@ -352,9 +352,9 @@ func (m *customSysUserModel) SelectUserListByDept(ctx context.Context, deptId in
 }
 
 // UpdateById 根据ID更新用户，只更新非零值字段
-func (m *customSysUserModel) UpdateById(ctx context.Context, data *SysUser) error {
+func (m *customSysUserModel) UpdateById(ctx context.Context, data *SysUser) (int64, error) {
 	if data.UserId == 0 {
-		return fmt.Errorf("user_id cannot be zero")
+		return 0, fmt.Errorf("user_id cannot be zero")
 	}
 
 	var setParts []string
@@ -443,7 +443,7 @@ func (m *customSysUserModel) UpdateById(ctx context.Context, data *SysUser) erro
 	}
 
 	if len(setParts) == 0 {
-		return nil // 没有需要更新的字段
+		return 0, nil // 没有需要更新的字段
 	}
 
 	// 构建更新SQL
@@ -451,8 +451,15 @@ func (m *customSysUserModel) UpdateById(ctx context.Context, data *SysUser) erro
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE `user_id` = ?", m.table, setClause)
 	args = append(args, data.UserId)
 
-	_, err := m.conn.ExecCtx(ctx, query, args...)
-	return err
+	result, err := m.conn.ExecCtx(ctx, query, args...)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }
 
 // parseIds 解析ID串（逗号分隔）为int64数组

@@ -31,7 +31,7 @@ type (
 		FindByConfigKey(ctx context.Context, configKey string) (*SysConfig, error)
 		CheckConfigKeyUnique(ctx context.Context, configKey string, excludeConfigId int64) (bool, error)
 		FindPage(ctx context.Context, query *ConfigQuery, pageQuery *PageQuery) ([]*SysConfig, int64, error)
-		UpdateById(ctx context.Context, data *SysConfig) error
+		UpdateById(ctx context.Context, data *SysConfig) (int64, error)
 	}
 
 	customSysConfigModel struct {
@@ -156,9 +156,9 @@ func (m *customSysConfigModel) FindPage(ctx context.Context, query *ConfigQuery,
 }
 
 // UpdateById 根据ID更新配置，只更新非零值字段
-func (m *customSysConfigModel) UpdateById(ctx context.Context, data *SysConfig) error {
+func (m *customSysConfigModel) UpdateById(ctx context.Context, data *SysConfig) (int64, error) {
 	if data.ConfigId == 0 {
-		return fmt.Errorf("config_id cannot be zero")
+		return 0, fmt.Errorf("config_id cannot be zero")
 	}
 
 	var setParts []string
@@ -211,7 +211,7 @@ func (m *customSysConfigModel) UpdateById(ctx context.Context, data *SysConfig) 
 	}
 
 	if len(setParts) == 0 {
-		return nil // 没有需要更新的字段
+		return 0, nil // 没有需要更新的字段
 	}
 
 	// 构建更新SQL
@@ -219,6 +219,13 @@ func (m *customSysConfigModel) UpdateById(ctx context.Context, data *SysConfig) 
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE `config_id` = ?", m.table, setClause)
 	args = append(args, data.ConfigId)
 
-	_, err := m.conn.ExecCtx(ctx, query, args...)
-	return err
+	result, err := m.conn.ExecCtx(ctx, query, args...)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }

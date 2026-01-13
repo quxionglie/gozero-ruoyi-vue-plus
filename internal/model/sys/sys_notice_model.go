@@ -25,7 +25,7 @@ type (
 		sysNoticeModel
 		withSession(session sqlx.Session) SysNoticeModel
 		FindPage(ctx context.Context, query *NoticeQuery, pageQuery *PageQuery) ([]*SysNotice, int64, error)
-		UpdateById(ctx context.Context, data *SysNotice) error
+		UpdateById(ctx context.Context, data *SysNotice) (int64, error)
 	}
 
 	customSysNoticeModel struct {
@@ -104,9 +104,9 @@ func (m *customSysNoticeModel) FindPage(ctx context.Context, query *NoticeQuery,
 }
 
 // UpdateById 根据ID更新通知公告，只更新非零值字段
-func (m *customSysNoticeModel) UpdateById(ctx context.Context, data *SysNotice) error {
+func (m *customSysNoticeModel) UpdateById(ctx context.Context, data *SysNotice) (int64, error) {
 	if data.NoticeId == 0 {
-		return fmt.Errorf("notice_id cannot be zero")
+		return 0, fmt.Errorf("notice_id cannot be zero")
 	}
 
 	var setParts []string
@@ -159,7 +159,7 @@ func (m *customSysNoticeModel) UpdateById(ctx context.Context, data *SysNotice) 
 	}
 
 	if len(setParts) == 0 {
-		return nil // 没有需要更新的字段
+		return 0, nil // 没有需要更新的字段
 	}
 
 	// 构建更新SQL
@@ -167,6 +167,13 @@ func (m *customSysNoticeModel) UpdateById(ctx context.Context, data *SysNotice) 
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE `notice_id` = ?", m.table, setClause)
 	args = append(args, data.NoticeId)
 
-	_, err := m.conn.ExecCtx(ctx, query, args...)
-	return err
+	result, err := m.conn.ExecCtx(ctx, query, args...)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }

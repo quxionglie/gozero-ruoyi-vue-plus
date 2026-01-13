@@ -182,7 +182,7 @@ func (l *RoleEditLogic) RoleEdit(req *types.RoleReq) (resp *types.BaseResp, err 
 	}
 
 	// 12. 更新角色
-	err = l.svcCtx.SysRoleModel.UpdateById(l.ctx, updateRole)
+	_, err = l.svcCtx.SysRoleModel.UpdateById(l.ctx, updateRole)
 	if err != nil {
 		l.Errorf("更新角色失败: %v", err)
 		return &types.BaseResp{

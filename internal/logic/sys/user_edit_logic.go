@@ -218,7 +218,7 @@ func (l *UserEditLogic) UserEdit(req *types.UserReq) (resp *types.BaseResp, err 
 	}
 
 	// 11. 更新用户信息
-	err = l.svcCtx.SysUserModel.UpdateById(l.ctx, updateUser)
+	_, err = l.svcCtx.SysUserModel.UpdateById(l.ctx, updateUser)
 	if err != nil {
 		l.Errorf("修改用户信息失败: %v", err)
 		return &types.BaseResp{

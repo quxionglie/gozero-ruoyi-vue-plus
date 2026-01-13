@@ -144,7 +144,7 @@ func (l *PostEditLogic) PostEdit(req *types.PostReq) (resp *types.BaseResp, err 
 	}
 
 	// 9. 更新数据库
-	err = l.svcCtx.SysPostModel.UpdateById(l.ctx, updatePost)
+	_, err = l.svcCtx.SysPostModel.UpdateById(l.ctx, updatePost)
 	if err != nil {
 		l.Errorf("修改岗位失败: %v", err)
 		return &types.BaseResp{

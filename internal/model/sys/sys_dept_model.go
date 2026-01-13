@@ -34,7 +34,7 @@ type (
 		CheckDeptExistUser(ctx context.Context, deptId int64) (bool, error)
 		CountNormalChildrenDeptById(ctx context.Context, deptId int64) (int64, error)
 		SelectDeptAndChildById(ctx context.Context, deptId int64) ([]int64, error)
-		UpdateById(ctx context.Context, data *SysDept) error
+		UpdateById(ctx context.Context, data *SysDept) (int64, error)
 	}
 
 	customSysDeptModel struct {
@@ -201,9 +201,9 @@ func (m *customSysDeptModel) SelectDeptAndChildById(ctx context.Context, deptId 
 }
 
 // UpdateById 根据ID更新部门，只更新非零值字段
-func (m *customSysDeptModel) UpdateById(ctx context.Context, data *SysDept) error {
+func (m *customSysDeptModel) UpdateById(ctx context.Context, data *SysDept) (int64, error) {
 	if data.DeptId == 0 {
-		return fmt.Errorf("dept_id cannot be zero")
+		return 0, fmt.Errorf("dept_id cannot be zero")
 	}
 
 	var setParts []string
@@ -276,7 +276,7 @@ func (m *customSysDeptModel) UpdateById(ctx context.Context, data *SysDept) erro
 	}
 
 	if len(setParts) == 0 {
-		return nil // 没有需要更新的字段
+		return 0, nil // 没有需要更新的字段
 	}
 
 	// 构建更新SQL
@@ -284,6 +284,13 @@ func (m *customSysDeptModel) UpdateById(ctx context.Context, data *SysDept) erro
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE `dept_id` = ?", m.table, setClause)
 	args = append(args, data.DeptId)
 
-	_, err := m.conn.ExecCtx(ctx, query, args...)
-	return err
+	result, err := m.conn.ExecCtx(ctx, query, args...)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }

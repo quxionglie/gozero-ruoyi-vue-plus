@@ -29,7 +29,7 @@ type (
 		CheckClientKeyUnique(ctx context.Context, clientKey string, excludeId int64) (bool, error)
 		FindPage(ctx context.Context, query *ClientQuery, pageQuery *PageQuery) ([]*SysClient, int64, error)
 		UpdateClientStatus(ctx context.Context, clientId string, status string) error
-		UpdateById(ctx context.Context, data *SysClient) error
+		UpdateById(ctx context.Context, data *SysClient) (int64, error)
 	}
 
 	customSysClientModel struct {
@@ -154,9 +154,9 @@ func (m *customSysClientModel) UpdateClientStatus(ctx context.Context, clientId 
 }
 
 // UpdateById 根据ID更新客户端，只更新非零值字段
-func (m *customSysClientModel) UpdateById(ctx context.Context, data *SysClient) error {
+func (m *customSysClientModel) UpdateById(ctx context.Context, data *SysClient) (int64, error) {
 	if data.Id == 0 {
-		return fmt.Errorf("id cannot be zero")
+		return 0, fmt.Errorf("id cannot be zero")
 	}
 
 	var setParts []string
@@ -221,7 +221,7 @@ func (m *customSysClientModel) UpdateById(ctx context.Context, data *SysClient) 
 	}
 
 	if len(setParts) == 0 {
-		return nil // 没有需要更新的字段
+		return 0, nil // 没有需要更新的字段
 	}
 
 	// 构建更新SQL
@@ -229,6 +229,13 @@ func (m *customSysClientModel) UpdateById(ctx context.Context, data *SysClient) 
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE `id` = ?", m.table, setClause)
 	args = append(args, data.Id)
 
-	_, err := m.conn.ExecCtx(ctx, query, args...)
-	return err
+	result, err := m.conn.ExecCtx(ctx, query, args...)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }

@@ -189,7 +189,7 @@ func (l *DeptEditLogic) DeptEdit(req *types.DeptReq) (resp *types.BaseResp, err 
 	}
 
 	// 11. 更新数据库
-	err = l.svcCtx.SysDeptModel.UpdateById(l.ctx, updateDept)
+	_, err = l.svcCtx.SysDeptModel.UpdateById(l.ctx, updateDept)
 	if err != nil {
 		l.Errorf("修改部门失败: %v", err)
 		return &types.BaseResp{

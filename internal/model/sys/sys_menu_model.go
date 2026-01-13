@@ -36,7 +36,7 @@ type (
 		// SelectMenuListByRoleId 根据角色ID查询菜单ID列表
 		SelectMenuListByRoleId(ctx context.Context, roleId int64) ([]int64, error)
 		// UpdateById 根据ID更新菜单，只更新非零值字段
-		UpdateById(ctx context.Context, data *SysMenu) error
+		UpdateById(ctx context.Context, data *SysMenu) (int64, error)
 	}
 
 	// MenuQuery 菜单查询条件
@@ -336,9 +336,9 @@ func (m *customSysMenuModel) SelectMenuListByRoleId(ctx context.Context, roleId 
 }
 
 // UpdateById 根据ID更新菜单，只更新非零值字段
-func (m *customSysMenuModel) UpdateById(ctx context.Context, data *SysMenu) error {
+func (m *customSysMenuModel) UpdateById(ctx context.Context, data *SysMenu) (int64, error) {
 	if data.MenuId == 0 {
-		return fmt.Errorf("menu_id cannot be zero")
+		return 0, fmt.Errorf("menu_id cannot be zero")
 	}
 
 	var setParts []string
@@ -423,7 +423,7 @@ func (m *customSysMenuModel) UpdateById(ctx context.Context, data *SysMenu) erro
 	}
 
 	if len(setParts) == 0 {
-		return nil // 没有需要更新的字段
+		return 0, nil // 没有需要更新的字段
 	}
 
 	// 构建更新SQL
@@ -431,6 +431,13 @@ func (m *customSysMenuModel) UpdateById(ctx context.Context, data *SysMenu) erro
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE `menu_id` = ?", m.table, setClause)
 	args = append(args, data.MenuId)
 
-	_, err := m.conn.ExecCtx(ctx, query, args...)
-	return err
+	result, err := m.conn.ExecCtx(ctx, query, args...)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }

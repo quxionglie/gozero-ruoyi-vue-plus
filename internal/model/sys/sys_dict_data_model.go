@@ -30,7 +30,7 @@ type (
 		CountByDictType(ctx context.Context, dictType string) (int64, error)
 		UpdateDictTypeByOldDictType(ctx context.Context, oldDictType, newDictType string) error
 		FindPage(ctx context.Context, query *DictDataQuery, pageQuery *PageQuery) ([]*SysDictData, int64, error)
-		UpdateById(ctx context.Context, data *SysDictData) error
+		UpdateById(ctx context.Context, data *SysDictData) (int64, error)
 	}
 
 	customSysDictDataModel struct {
@@ -201,9 +201,9 @@ func (m *customSysDictDataModel) FindPage(ctx context.Context, query *DictDataQu
 }
 
 // UpdateById 根据ID更新字典数据，只更新非零值字段
-func (m *customSysDictDataModel) UpdateById(ctx context.Context, data *SysDictData) error {
+func (m *customSysDictDataModel) UpdateById(ctx context.Context, data *SysDictData) (int64, error) {
 	if data.DictCode == 0 {
-		return fmt.Errorf("dict_code cannot be zero")
+		return 0, fmt.Errorf("dict_code cannot be zero")
 	}
 
 	var setParts []string
@@ -268,7 +268,7 @@ func (m *customSysDictDataModel) UpdateById(ctx context.Context, data *SysDictDa
 	}
 
 	if len(setParts) == 0 {
-		return nil // 没有需要更新的字段
+		return 0, nil // 没有需要更新的字段
 	}
 
 	// 构建更新SQL
@@ -276,6 +276,13 @@ func (m *customSysDictDataModel) UpdateById(ctx context.Context, data *SysDictDa
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE `dict_code` = ?", m.table, setClause)
 	args = append(args, data.DictCode)
 
-	_, err := m.conn.ExecCtx(ctx, query, args...)
-	return err
+	result, err := m.conn.ExecCtx(ctx, query, args...)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }

@@ -178,7 +178,7 @@ func (l *MenuEditLogic) MenuEdit(req *types.MenuReq) (resp *types.BaseResp, err 
 	}
 
 	// 11. 更新数据库
-	err = l.svcCtx.SysMenuModel.UpdateById(l.ctx, updateMenu)
+	_, err = l.svcCtx.SysMenuModel.UpdateById(l.ctx, updateMenu)
 	if err != nil {
 		l.Errorf("修改菜单失败: %v", err)
 		return &types.BaseResp{

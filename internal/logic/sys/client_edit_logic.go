@@ -119,7 +119,7 @@ func (l *ClientEditLogic) ClientEdit(req *types.ClientReq) (resp *types.BaseResp
 	}
 
 	// 8. 更新数据库
-	err = l.svcCtx.SysClientModel.UpdateById(l.ctx, updateClient)
+	_, err = l.svcCtx.SysClientModel.UpdateById(l.ctx, updateClient)
 	if err != nil {
 		l.Errorf("修改客户端管理失败: %v", err)
 		return &types.BaseResp{

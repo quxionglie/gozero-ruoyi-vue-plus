@@ -98,7 +98,7 @@ func (l *DictDataEditLogic) DictDataEdit(req *types.DictDataReq) (resp *types.Ba
 		dictData.Remark = sql.NullString{String: req.Remark, Valid: true}
 	}
 
-	err = l.svcCtx.SysDictDataModel.UpdateById(l.ctx, dictData)
+	_, err = l.svcCtx.SysDictDataModel.UpdateById(l.ctx, dictData)
 	if err != nil {
 		l.Errorf("修改字典数据失败: %v", err)
 		return &types.BaseResp{

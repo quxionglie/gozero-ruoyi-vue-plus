@@ -85,7 +85,7 @@ func (l *NoticeEditLogic) NoticeEdit(req *types.NoticeReq) (resp *types.BaseResp
 	}
 
 	// 6. 更新数据库
-	err = l.svcCtx.SysNoticeModel.UpdateById(l.ctx, updateNotice)
+	_, err = l.svcCtx.SysNoticeModel.UpdateById(l.ctx, updateNotice)
 	if err != nil {
 		l.Errorf("修改通知公告失败: %v", err)
 		return &types.BaseResp{

@@ -100,7 +100,7 @@ func (l *ConfigEditLogic) ConfigEdit(req *types.ConfigReq) (resp *types.BaseResp
 		config.Remark = sql.NullString{String: req.Remark, Valid: true}
 	}
 
-	err = l.svcCtx.SysConfigModel.UpdateById(l.ctx, config)
+	_, err = l.svcCtx.SysConfigModel.UpdateById(l.ctx, config)
 	if err != nil {
 		l.Errorf("修改参数配置失败: %v", err)
 		return &types.BaseResp{

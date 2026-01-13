@@ -98,7 +98,7 @@ func (l *DictTypeEditLogic) DictTypeEdit(req *types.DictTypeReq) (resp *types.Ba
 		dictType.Remark = sql.NullString{String: req.Remark, Valid: true}
 	}
 
-	err = l.svcCtx.SysDictTypeModel.UpdateById(l.ctx, dictType)
+	_, err = l.svcCtx.SysDictTypeModel.UpdateById(l.ctx, dictType)
 	if err != nil {
 		l.Errorf("修改字典类型失败: %v", err)
 		return &types.BaseResp{

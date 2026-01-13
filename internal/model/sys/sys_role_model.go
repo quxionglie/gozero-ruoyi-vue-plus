@@ -38,7 +38,7 @@ type (
 		// UpdateRoleStatus 更新角色状态
 		UpdateRoleStatus(ctx context.Context, roleId int64, status string) error
 		// UpdateById 根据ID更新角色，只更新非零值字段
-		UpdateById(ctx context.Context, data *SysRole) error
+		UpdateById(ctx context.Context, data *SysRole) (int64, error)
 	}
 
 	// RoleQuery 角色查询条件
@@ -379,9 +379,9 @@ func (m *customSysRoleModel) UpdateRoleStatus(ctx context.Context, roleId int64,
 }
 
 // UpdateById 根据ID更新角色，只更新非零值字段
-func (m *customSysRoleModel) UpdateById(ctx context.Context, data *SysRole) error {
+func (m *customSysRoleModel) UpdateById(ctx context.Context, data *SysRole) (int64, error) {
 	if data.RoleId == 0 {
-		return fmt.Errorf("role_id cannot be zero")
+		return 0, fmt.Errorf("role_id cannot be zero")
 	}
 
 	var setParts []string
@@ -450,7 +450,7 @@ func (m *customSysRoleModel) UpdateById(ctx context.Context, data *SysRole) erro
 	}
 
 	if len(setParts) == 0 {
-		return nil // 没有需要更新的字段
+		return 0, nil // 没有需要更新的字段
 	}
 
 	// 构建更新SQL
@@ -458,6 +458,13 @@ func (m *customSysRoleModel) UpdateById(ctx context.Context, data *SysRole) erro
 	query := fmt.Sprintf("UPDATE %s SET %s WHERE `role_id` = ?", m.table, setClause)
 	args = append(args, data.RoleId)
 
-	_, err := m.conn.ExecCtx(ctx, query, args...)
-	return err
+	result, err := m.conn.ExecCtx(ctx, query, args...)
+	if err != nil {
+		return 0, err
+	}
+	rowsAffected, err := result.RowsAffected()
+	if err != nil {
+		return 0, err
+	}
+	return rowsAffected, nil
 }

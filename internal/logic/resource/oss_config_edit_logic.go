@@ -126,7 +126,7 @@ func (l *OssConfigEditLogic) OssConfigEdit(req *types.OssConfigReq) (resp *types
 		ossConfig.Remark = sql.NullString{String: req.Remark, Valid: true}
 	}
 
-	err = l.svcCtx.SysOssConfigModel.UpdateById(l.ctx, ossConfig)
+	_, err = l.svcCtx.SysOssConfigModel.UpdateById(l.ctx, ossConfig)
 	if err != nil {
 		l.Errorf("修改对象存储配置失败: %v", err)
 		return &types.BaseResp{
