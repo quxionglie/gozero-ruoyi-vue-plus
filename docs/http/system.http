@@ -49,3 +49,9 @@ Authorization: {{jwtToken}}
 clientid: {{clientid}}
 Content-Type: application/json;charset=UTF-8
 ###
+
+GET {{baseUrl}}/system/menu/roleMenuTreeselect/269310750932074496
+Authorization: {{jwtToken}}
+clientid: {{clientid}}
+Content-Type: application/json;charset=UTF-8
+###

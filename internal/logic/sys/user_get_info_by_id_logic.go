@@ -6,6 +6,7 @@ import (
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
+	"gozero-ruoyi-vue-plus/internal/util"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -70,7 +71,7 @@ func (l *UserGetInfoByIdLogic) UserGetInfoById(req *types.UserGetInfoReq) (resp 
 			for _, ur := range userRoles {
 				roleIds = append(roleIds, ur.RoleId)
 			}
-			userInfoDataVo.RoleIds = roleIds
+			userInfoDataVo.RoleIds = util.Int64SliceToStringSlice(roleIds)
 		}
 
 		// 5. 查询用户已拥有的角色（用于 user.roles）
@@ -91,7 +92,7 @@ func (l *UserGetInfoByIdLogic) UserGetInfoById(req *types.UserGetInfoReq) (resp 
 		if err != nil {
 			l.Errorf("查询用户岗位ID列表失败: %v", err)
 		} else {
-			userInfoDataVo.PostIds = postIds
+			userInfoDataVo.PostIds = util.Int64SliceToStringSlice(postIds)
 		}
 
 		// 7. 根据用户的部门ID查询岗位列表

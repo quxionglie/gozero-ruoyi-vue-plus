@@ -20,4 +20,4 @@ alwaysApply: false
 
 
 ## *.api限制
-- 响应json int64数据，统一以字符串输出。但RoleId、DeptId、PostId字段除外不要转为string,tag移除string。
+- 响应json int64数据，统一以字符串输出，但Total除外。

@@ -22,8 +22,8 @@ func convertRoleToVo(role *model.SysRole) types.RoleVo {
 		UpdateBy:          0,
 		UpdateTime:        "",
 		Remark:            "",
-		MenuIds:           []int64{},
-		DeptIds:           []int64{},
+		MenuIds:           []string{},
+		DeptIds:           []string{},
 	}
 
 	if role.CreateBy.Valid {

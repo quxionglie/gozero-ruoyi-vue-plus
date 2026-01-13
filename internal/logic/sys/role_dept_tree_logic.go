@@ -9,6 +9,7 @@ import (
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
+	"gozero-ruoyi-vue-plus/internal/util"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -62,7 +63,7 @@ func (l *RoleDeptTreeLogic) RoleDeptTree(req *types.RoleDeptTreeReq) (resp *type
 			Msg:  "操作成功",
 		},
 		Data: types.DeptTreeSelectVo{
-			CheckedKeys: deptIds,
+			CheckedKeys: util.Int64SliceToStringSlice(deptIds),
 			Depts:       deptTreeList,
 		},
 	}, nil

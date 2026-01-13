@@ -770,3 +770,21 @@ UpdateById 需要返回响应条数
 
 2026-01-13T11:30:00+08:00
 /system/client/changeStatus只需要下面参数{"clientId":"428a8310cd442757ae699df5d894f051","status":"1"}，*.api文件新建ClientChangeStatusReq对象
+
+2026-01-13T11:50:00+08:00
+json生成，如果是int64能不能如果值不超过2^53就输出数值，否则转为字符串输出
+
+2026-01-13T12:05:00+08:00
+go-zero是使用httpx.OkJsonCtx(r.Context(), w, resp) 统一输出json的，能统一处理吗
+
+2026-01-13T12:15:00+08:00
+RoleId、DeptId、PostId统一以字符串输出
+
+2026-01-13T12:25:00+08:00
+RoleIds     []int64 `json:"roleIds,optional"` 如何输出字符串数组？
+
+2026-01-13T12:40:00+08:00
+*.api响应的[]int64 统一改为[]string,请求对象不修改
+
+2026-01-13T12:45:00+08:00
+UserReq的RoleIds，PostIds 也还是用[]int64

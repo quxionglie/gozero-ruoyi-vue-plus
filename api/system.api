@@ -21,7 +21,7 @@ type UserInfoVo {
 type SysUserVo {
 	UserId      int64       `json:"userId,string"`      // 用户ID
 	TenantId    string      `json:"tenantId"`    // 租户ID
-	DeptId      int64       `json:"deptId"`      // 部门ID
+	DeptId      int64       `json:"deptId,string"`      // 部门ID
 	UserName    string      `json:"userName"`    // 用户账号
 	NickName    string      `json:"nickName"`    // 用户昵称
 	UserType    string      `json:"userType"`    // 用户类型（sys_user系统用户）
@@ -36,13 +36,13 @@ type SysUserVo {
 	CreateTime  string      `json:"createTime"`  // 创建时间
 	DeptName    string      `json:"deptName"`    // 部门名
 	Roles       []SysRoleVo `json:"roles"`       // 角色对象
-	RoleIds     []int64     `json:"roleIds,omitempty"`     // 角色ID列表
-	PostIds     []int64     `json:"postIds,omitempty"`     // 岗位ID列表
-	RoleId      *int64      `json:"roleId,omitempty"`      // 角色ID
+	RoleIds     []string     `json:"roleIds,omitempty"`     // 角色ID列表
+	PostIds     []string     `json:"postIds,omitempty"`     // 岗位ID列表
+	RoleId      *int64      `json:"roleId,omitempty,string"`      // 角色ID
 }
 
 type SysRoleVo {
-	RoleId            int64   `json:"roleId"`      // 角色ID
+	RoleId            int64   `json:"roleId,string"`      // 角色ID
 	RoleName          string  `json:"roleName"`    // 角色名称
 	RoleKey           string  `json:"roleKey"`     // 角色权限字符串
 	RoleSort          int32   `json:"roleSort"`    // 显示顺序
@@ -727,8 +727,8 @@ type ClientVo {
 
 // ========== 岗位管理相关类型定义 ==========
 type PostReq {
-	PostId       int64  `json:"postId,optional"`      // 岗位ID
-	DeptId       int64  `json:"deptId,optional"`      // 部门id（单部门）
+	PostId       int64  `json:"postId,optional,string"`      // 岗位ID
+	DeptId       int64  `json:"deptId,optional,string"`      // 部门id（单部门）
 	BelongDeptId int64  `json:"belongDeptId,optional,string"` // 归属部门id（部门树）
 	PostCode     string `json:"postCode"`                    // 岗位编码（必填，最大64字符）
 	PostCategory string `json:"postCategory,optional"`       // 岗位类别编码
@@ -772,8 +772,8 @@ type PostOptionSelectResp {
 }
 
 type PostVo {
-	PostId       int64  `json:"postId"` // 岗位ID
-	DeptId       int64  `json:"deptId"` // 部门id
+	PostId       int64  `json:"postId,string"` // 岗位ID
+	DeptId       int64  `json:"deptId,string"` // 部门id
 	PostCode     string `json:"postCode"`      // 岗位编码
 	PostCategory string `json:"postCategory"`  // 岗位类别编码
 	PostName     string `json:"postName"`      // 岗位名称
@@ -786,7 +786,7 @@ type PostVo {
 
 // ========== 部门管理相关类型定义 ==========
 type DeptReq {
-	DeptId       int64  `json:"deptId,optional"`       // 部门id
+	DeptId       int64  `json:"deptId,optional,string"`       // 部门id
 	ParentId     int64  `json:"parentId,optional"`     // 父部门ID
 	DeptName     string `json:"deptName"`                     // 部门名称（必填，最大30字符）
 	DeptCategory string `json:"deptCategory,optional"`        // 部门类别编码
@@ -957,7 +957,7 @@ type RoleGetInfoReq {
 }
 
 type RoleReq {
-	RoleId   int64    `json:"roleId,optional"`    // 角色ID
+	RoleId   int64    `json:"roleId,optional,string"`    // 角色ID
 	RoleName string   `json:"roleName"`                  // 角色名称（必填，最大30字符）
 	RoleKey  string   `json:"roleKey"`                   // 角色权限标识（必填，最大100字符）
 	RoleSort int32    `json:"roleSort,optional"`         // 显示顺序
@@ -969,7 +969,7 @@ type RoleReq {
 }
 
 type RoleChangeStatusReq {
-	RoleId int64  `json:"roleId,range=[1:]"`            // 角色ID（必须大于0）
+	RoleId int64  `json:"roleId,range=[1:],string"`            // 角色ID（必须大于0）
 	Status string `json:"status,options=0|1"`           // 角色状态（0正常 1停用）
 }
 
@@ -998,17 +998,17 @@ type RoleAuthUserUnallocatedListReq {
 }
 
 type RoleAuthUserCancelReq {
-	RoleId int64 `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
+	RoleId int64 `json:"roleId,range=[1:],string"` // 角色ID（必须大于0）
 	UserId int64 `json:"userId,range=[1:]"` // 用户ID（必须大于0）
 }
 
 type RoleAuthUserCancelAllReq {
-	RoleId int64   `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
+	RoleId int64   `json:"roleId,range=[1:],string"` // 角色ID（必须大于0）
 	UserIds []int64 `json:"userIds"`          // 用户ID列表
 }
 
 type RoleAuthUserSelectAllReq {
-	RoleId int64   `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
+	RoleId int64   `json:"roleId,range=[1:],string"` // 角色ID（必须大于0）
 	UserIds []int64 `json:"userIds"`          // 用户ID列表
 }
 
@@ -1042,7 +1042,7 @@ type DeptTreeSelectResp {
 }
 
 type DeptTreeSelectVo {
-	CheckedKeys []int64    `json:"checkedKeys"` // 选中的部门ID列表
+	CheckedKeys []string    `json:"checkedKeys"` // 选中的部门ID列表
 	Depts       []DeptTreeVo `json:"depts"`     // 部门树列表
 }
 
@@ -1056,7 +1056,7 @@ type DeptTreeVo {
 }
 
 type RoleVo {
-	RoleId    int64    `json:"roleId"`    // 角色ID
+	RoleId    int64    `json:"roleId,string"`    // 角色ID
 	RoleName  string   `json:"roleName"`         // 角色名称
 	RoleKey   string   `json:"roleKey"`          // 角色权限标识
 	RoleSort  int32    `json:"roleSort"`         // 显示顺序
@@ -1070,8 +1070,8 @@ type RoleVo {
 	UpdateBy  int64    `json:"updateBy,string"`  // 更新者
 	UpdateTime string  `json:"updateTime"`       // 更新时间
 	Remark    string   `json:"remark"`           // 备注
-	MenuIds   []int64  `json:"menuIds,omitempty"` // 菜单ID列表
-	DeptIds   []int64  `json:"deptIds,omitempty"` // 部门ID列表（数据权限）
+	MenuIds   []string  `json:"menuIds,omitempty"` // 菜单ID列表
+	DeptIds   []string  `json:"deptIds,omitempty"` // 部门ID列表（数据权限）
 }
 
 type UserListResp {
@@ -1097,7 +1097,7 @@ type UserListReq {
 
 type UserReq {
 	UserId      int64   `json:"userId,optional,string"`     // 用户ID
-	DeptId      int64   `json:"deptId,optional"`     // 部门ID
+	DeptId      int64   `json:"deptId,optional,string"`     // 部门ID
 	UserName    string  `json:"userName"`                   // 用户账号（必填，最大30字符）
 	NickName    string  `json:"nickName"`                   // 用户昵称（必填，最大30字符）
 	UserType    string  `json:"userType,optional"`          // 用户类型（sys_user系统用户）
@@ -1187,9 +1187,9 @@ type UserDetailResp {
 
 type UserInfoDataVo {
 	User    SysUserVo   `json:"user"`    // 用户信息
-	RoleIds []int64     `json:"roleIds"` // 角色ID列表
+	RoleIds []string     `json:"roleIds"` // 角色ID列表
 	Roles   []RoleVo    `json:"roles"`   // 角色列表
-	PostIds []int64     `json:"postIds"` // 岗位ID列表
+	PostIds []string     `json:"postIds"` // 岗位ID列表
 	Posts   []PostVo    `json:"posts"`   // 岗位列表
 }
 

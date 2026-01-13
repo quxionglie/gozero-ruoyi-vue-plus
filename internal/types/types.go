@@ -161,7 +161,7 @@ type DeptRemoveReq struct {
 }
 
 type DeptReq struct {
-	DeptId       int64  `json:"deptId,optional"`             // 部门id
+	DeptId       int64  `json:"deptId,optional,string"`      // 部门id
 	ParentId     int64  `json:"parentId,optional"`           // 父部门ID
 	DeptName     string `json:"deptName"`                    // 部门名称（必填，最大30字符）
 	DeptCategory string `json:"deptCategory,optional"`       // 部门类别编码
@@ -188,7 +188,7 @@ type DeptTreeSelectResp struct {
 }
 
 type DeptTreeSelectVo struct {
-	CheckedKeys []int64      `json:"checkedKeys"` // 选中的部门ID列表
+	CheckedKeys []string     `json:"checkedKeys"` // 选中的部门ID列表
 	Depts       []DeptTreeVo `json:"depts"`       // 部门树列表
 }
 
@@ -754,8 +754,8 @@ type PostRemoveReq struct {
 }
 
 type PostReq struct {
-	PostId       int64  `json:"postId,optional"`              // 岗位ID
-	DeptId       int64  `json:"deptId,optional"`              // 部门id（单部门）
+	PostId       int64  `json:"postId,optional,string"`       // 岗位ID
+	DeptId       int64  `json:"deptId,optional,string"`       // 部门id（单部门）
 	BelongDeptId int64  `json:"belongDeptId,optional,string"` // 归属部门id（部门树）
 	PostCode     string `json:"postCode"`                     // 岗位编码（必填，最大64字符）
 	PostCategory string `json:"postCategory,optional"`        // 岗位类别编码
@@ -771,16 +771,16 @@ type PostResp struct {
 }
 
 type PostVo struct {
-	PostId       int64  `json:"postId"`       // 岗位ID
-	DeptId       int64  `json:"deptId"`       // 部门id
-	PostCode     string `json:"postCode"`     // 岗位编码
-	PostCategory string `json:"postCategory"` // 岗位类别编码
-	PostName     string `json:"postName"`     // 岗位名称
-	PostSort     int32  `json:"postSort"`     // 显示顺序
-	Status       string `json:"status"`       // 状态（0正常 1停用）
-	Remark       string `json:"remark"`       // 备注
-	CreateTime   string `json:"createTime"`   // 创建时间
-	DeptName     string `json:"deptName"`     // 部门名
+	PostId       int64  `json:"postId,string"` // 岗位ID
+	DeptId       int64  `json:"deptId,string"` // 部门id
+	PostCode     string `json:"postCode"`      // 岗位编码
+	PostCategory string `json:"postCategory"`  // 岗位类别编码
+	PostName     string `json:"postName"`      // 岗位名称
+	PostSort     int32  `json:"postSort"`      // 显示顺序
+	Status       string `json:"status"`        // 状态（0正常 1停用）
+	Remark       string `json:"remark"`        // 备注
+	CreateTime   string `json:"createTime"`    // 创建时间
+	DeptName     string `json:"deptName"`      // 部门名
 }
 
 type ProfileUserVo struct {
@@ -808,18 +808,18 @@ type RoleAuthUserAllocatedListReq struct {
 }
 
 type RoleAuthUserCancelAllReq struct {
-	RoleId  int64   `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
-	UserIds []int64 `json:"userIds"`           // 用户ID列表
+	RoleId  int64   `json:"roleId,range=[1:],string"` // 角色ID（必须大于0）
+	UserIds []int64 `json:"userIds"`                  // 用户ID列表
 }
 
 type RoleAuthUserCancelReq struct {
-	RoleId int64 `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
-	UserId int64 `json:"userId,range=[1:]"` // 用户ID（必须大于0）
+	RoleId int64 `json:"roleId,range=[1:],string"` // 角色ID（必须大于0）
+	UserId int64 `json:"userId,range=[1:]"`        // 用户ID（必须大于0）
 }
 
 type RoleAuthUserSelectAllReq struct {
-	RoleId  int64   `json:"roleId,range=[1:]"` // 角色ID（必须大于0）
-	UserIds []int64 `json:"userIds"`           // 用户ID列表
+	RoleId  int64   `json:"roleId,range=[1:],string"` // 角色ID（必须大于0）
+	UserIds []int64 `json:"userIds"`                  // 用户ID列表
 }
 
 type RoleAuthUserUnallocatedListReq struct {
@@ -831,8 +831,8 @@ type RoleAuthUserUnallocatedListReq struct {
 }
 
 type RoleChangeStatusReq struct {
-	RoleId int64  `json:"roleId,range=[1:]"`  // 角色ID（必须大于0）
-	Status string `json:"status,options=0|1"` // 角色状态（0正常 1停用）
+	RoleId int64  `json:"roleId,range=[1:],string"` // 角色ID（必须大于0）
+	Status string `json:"status,options=0|1"`       // 角色状态（0正常 1停用）
 }
 
 type RoleDeptTreeReq struct {
@@ -871,7 +871,7 @@ type RoleRemoveReq struct {
 }
 
 type RoleReq struct {
-	RoleId    int64   `json:"roleId,optional"`             // 角色ID
+	RoleId    int64   `json:"roleId,optional,string"`      // 角色ID
 	RoleName  string  `json:"roleName"`                    // 角色名称（必填，最大30字符）
 	RoleKey   string  `json:"roleKey"`                     // 角色权限标识（必填，最大100字符）
 	RoleSort  int32   `json:"roleSort,optional"`           // 显示顺序
@@ -888,22 +888,22 @@ type RoleResp struct {
 }
 
 type RoleVo struct {
-	RoleId            int64   `json:"roleId"`            // 角色ID
-	RoleName          string  `json:"roleName"`          // 角色名称
-	RoleKey           string  `json:"roleKey"`           // 角色权限标识
-	RoleSort          int32   `json:"roleSort"`          // 显示顺序
-	DataScope         string  `json:"dataScope"`         // 数据范围（1全部数据权限 2自定义数据权限 3本部门数据权限 4本部门及以下数据权限 5仅本人数据权限）
-	MenuCheckStrictly bool    `json:"menuCheckStrictly"` // 菜单树选择项是否关联显示
-	DeptCheckStrictly bool    `json:"deptCheckStrictly"` // 部门树选择项是否关联显示
-	Status            string  `json:"status"`            // 角色状态（0正常 1停用）
-	DelFlag           string  `json:"delFlag"`           // 删除标志（0代表存在 2代表删除）
-	CreateBy          int64   `json:"createBy,string"`   // 创建者
-	CreateTime        string  `json:"createTime"`        // 创建时间
-	UpdateBy          int64   `json:"updateBy,string"`   // 更新者
-	UpdateTime        string  `json:"updateTime"`        // 更新时间
-	Remark            string  `json:"remark"`            // 备注
-	MenuIds           []int64 `json:"menuIds,omitempty"` // 菜单ID列表
-	DeptIds           []int64 `json:"deptIds,omitempty"` // 部门ID列表（数据权限）
+	RoleId            int64    `json:"roleId,string"`     // 角色ID
+	RoleName          string   `json:"roleName"`          // 角色名称
+	RoleKey           string   `json:"roleKey"`           // 角色权限标识
+	RoleSort          int32    `json:"roleSort"`          // 显示顺序
+	DataScope         string   `json:"dataScope"`         // 数据范围（1全部数据权限 2自定义数据权限 3本部门数据权限 4本部门及以下数据权限 5仅本人数据权限）
+	MenuCheckStrictly bool     `json:"menuCheckStrictly"` // 菜单树选择项是否关联显示
+	DeptCheckStrictly bool     `json:"deptCheckStrictly"` // 部门树选择项是否关联显示
+	Status            string   `json:"status"`            // 角色状态（0正常 1停用）
+	DelFlag           string   `json:"delFlag"`           // 删除标志（0代表存在 2代表删除）
+	CreateBy          int64    `json:"createBy,string"`   // 创建者
+	CreateTime        string   `json:"createTime"`        // 创建时间
+	UpdateBy          int64    `json:"updateBy,string"`   // 更新者
+	UpdateTime        string   `json:"updateTime"`        // 更新时间
+	Remark            string   `json:"remark"`            // 备注
+	MenuIds           []string `json:"menuIds,omitempty"` // 菜单ID列表
+	DeptIds           []string `json:"deptIds,omitempty"` // 部门ID列表（数据权限）
 }
 
 type RouterResp struct {
@@ -929,7 +929,7 @@ type SocialListResp struct {
 }
 
 type SysRoleVo struct {
-	RoleId            int64   `json:"roleId"`                      // 角色ID
+	RoleId            int64   `json:"roleId,string"`               // 角色ID
 	RoleName          string  `json:"roleName"`                    // 角色名称
 	RoleKey           string  `json:"roleKey"`                     // 角色权限字符串
 	RoleSort          int32   `json:"roleSort"`                    // 显示顺序
@@ -984,26 +984,26 @@ type SysUserOnlineVo struct {
 }
 
 type SysUserVo struct {
-	UserId      int64       `json:"userId,string"`     // 用户ID
-	TenantId    string      `json:"tenantId"`          // 租户ID
-	DeptId      int64       `json:"deptId"`            // 部门ID
-	UserName    string      `json:"userName"`          // 用户账号
-	NickName    string      `json:"nickName"`          // 用户昵称
-	UserType    string      `json:"userType"`          // 用户类型（sys_user系统用户）
-	Email       string      `json:"email"`             // 用户邮箱
-	Phonenumber string      `json:"phonenumber"`       // 手机号码
-	Sex         string      `json:"sex"`               // 用户性别（0男 1女 2未知）
-	Avatar      *string     `json:"avatar,omitempty"`  // 头像地址
-	Status      string      `json:"status"`            // 帐号状态（0正常 1停用）
-	LoginIp     string      `json:"loginIp"`           // 最后登录IP
-	LoginDate   string      `json:"loginDate"`         // 最后登录时间
-	Remark      string      `json:"remark"`            // 备注
-	CreateTime  string      `json:"createTime"`        // 创建时间
-	DeptName    string      `json:"deptName"`          // 部门名
-	Roles       []SysRoleVo `json:"roles"`             // 角色对象
-	RoleIds     []int64     `json:"roleIds,omitempty"` // 角色ID列表
-	PostIds     []int64     `json:"postIds,omitempty"` // 岗位ID列表
-	RoleId      *int64      `json:"roleId,omitempty"`  // 角色ID
+	UserId      int64       `json:"userId,string"`           // 用户ID
+	TenantId    string      `json:"tenantId"`                // 租户ID
+	DeptId      int64       `json:"deptId,string"`           // 部门ID
+	UserName    string      `json:"userName"`                // 用户账号
+	NickName    string      `json:"nickName"`                // 用户昵称
+	UserType    string      `json:"userType"`                // 用户类型（sys_user系统用户）
+	Email       string      `json:"email"`                   // 用户邮箱
+	Phonenumber string      `json:"phonenumber"`             // 手机号码
+	Sex         string      `json:"sex"`                     // 用户性别（0男 1女 2未知）
+	Avatar      *string     `json:"avatar,omitempty"`        // 头像地址
+	Status      string      `json:"status"`                  // 帐号状态（0正常 1停用）
+	LoginIp     string      `json:"loginIp"`                 // 最后登录IP
+	LoginDate   string      `json:"loginDate"`               // 最后登录时间
+	Remark      string      `json:"remark"`                  // 备注
+	CreateTime  string      `json:"createTime"`              // 创建时间
+	DeptName    string      `json:"deptName"`                // 部门名
+	Roles       []SysRoleVo `json:"roles"`                   // 角色对象
+	RoleIds     []string    `json:"roleIds,omitempty"`       // 角色ID列表
+	PostIds     []string    `json:"postIds,omitempty"`       // 岗位ID列表
+	RoleId      *int64      `json:"roleId,omitempty,string"` // 角色ID
 }
 
 type TableDataInfoResp struct {
@@ -1048,9 +1048,9 @@ type UserGetInfoReq struct {
 
 type UserInfoDataVo struct {
 	User    SysUserVo `json:"user"`    // 用户信息
-	RoleIds []int64   `json:"roleIds"` // 角色ID列表
+	RoleIds []string  `json:"roleIds"` // 角色ID列表
 	Roles   []RoleVo  `json:"roles"`   // 角色列表
-	PostIds []int64   `json:"postIds"` // 岗位ID列表
+	PostIds []string  `json:"postIds"` // 岗位ID列表
 	Posts   []PostVo  `json:"posts"`   // 岗位列表
 }
 
@@ -1127,7 +1127,7 @@ type UserRemoveReq struct {
 
 type UserReq struct {
 	UserId      int64   `json:"userId,optional,string"`      // 用户ID
-	DeptId      int64   `json:"deptId,optional"`             // 部门ID
+	DeptId      int64   `json:"deptId,optional,string"`      // 部门ID
 	UserName    string  `json:"userName"`                    // 用户账号（必填，最大30字符）
 	NickName    string  `json:"nickName"`                    // 用户昵称（必填，最大30字符）
 	UserType    string  `json:"userType,optional"`           // 用户类型（sys_user系统用户）

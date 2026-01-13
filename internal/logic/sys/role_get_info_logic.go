@@ -9,6 +9,7 @@ import (
 	model "gozero-ruoyi-vue-plus/internal/model/sys"
 	"gozero-ruoyi-vue-plus/internal/svc"
 	"gozero-ruoyi-vue-plus/internal/types"
+	"gozero-ruoyi-vue-plus/internal/util"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -65,8 +66,8 @@ func (l *RoleGetInfoLogic) RoleGetInfo(req *types.RoleGetInfoReq) (resp *types.R
 
 	// 4. 转换为响应格式
 	roleVo := convertRoleToVo(role)
-	roleVo.MenuIds = menuIds
-	roleVo.DeptIds = deptIds
+	roleVo.MenuIds = util.Int64SliceToStringSlice(menuIds)
+	roleVo.DeptIds = util.Int64SliceToStringSlice(deptIds)
 
 	return &types.RoleResp{
 		BaseResp: types.BaseResp{
