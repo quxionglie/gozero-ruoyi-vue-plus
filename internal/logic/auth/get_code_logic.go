@@ -49,8 +49,14 @@ func (l *GetCodeLogic) GetCode() (resp *types.CaptchaResp, err error) {
 		return resp, nil
 	}
 
-	// 生成4位数字验证码
-	code, imgBase64, _, err := util.GenerateCaptcha()
+	// 根据配置生成验证码
+	captchaCfg := util.CaptchaConfig{
+		Type:         l.svcCtx.Config.Captcha.Type,
+		Category:     l.svcCtx.Config.Captcha.Category,
+		NumberLength: l.svcCtx.Config.Captcha.NumberLength,
+		CharLength:   l.svcCtx.Config.Captcha.CharLength,
+	}
+	code, imgBase64, _, err := util.GenerateCaptcha(captchaCfg)
 	if err != nil {
 		l.Errorf("生成验证码失败: %v", err)
 		return &types.CaptchaResp{
